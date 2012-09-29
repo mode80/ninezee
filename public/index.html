@@ -2,26 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>Yahtzee.js</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Le styles -->
+    <meta name="description" content="An experiment in javascript front end development">
     <link href="../assets/css/bootstrap.css" rel="stylesheet">
-    <style>
-        body {
-            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-        }
-    </style>
     <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <!-- Le fav and touch icons -->
+    <!-- fav and touch icons -->
     <link rel="shortcut icon" href="../assets/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
@@ -39,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#">Project name</a>
+            <a class="brand" href="#">Yahtzee.js</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     <li class="active"><a href="#">Home</a></li>
@@ -53,12 +46,62 @@
 
 <div class="container">
 
-    <h1>Bootstrap starter template</h1>
-    <p>Use this document as a way to quick start any new project.<br> All you get is this message and a barebones HTML document.</p>
+    <em><h1>Yahtzee</h1></em>
+
+    <hr>
+
+    <div id=layout class=row>
+        <div id=scorecard-section class=span7>
+
+            <div class=score-boxes>
+                <table id=scorecard class="table table-bordered table-condensed">
+                    <tr><td>UPPER SECTION</td><td>HOW TO SCORE</td><td>GAME #1</td></tr>
+                    <tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td><td></td></tr>
+                    <tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td><td></td></tr>
+                    <tr><td>Threes <small class=scorebox-note>= 3</small></td><td>Count and Add Only Threes</td><td></td></tr>
+                    <tr><td>Fours <small class=scorebox-note>= 4</small></td><td>Count and Add Only Fours</td><td></td></tr>
+                    <tr><td>Fives <small class=scorebox-note>= 5</small></td><td>Count and Add Only Fives</td><td></td></tr>
+                    <tr><td>Sixes <small class=scorebox-note>= 6</small></td><td>Count and Add Only Sixes</td><td></td></tr>
+                    <tr><td>TOTAL SCORE</td><td>---></td><td></td></tr>
+                    <tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td><td></td></tr>
+                    <tr><td>TOTAL SCORE</td><td>---></td><td></td></tr>
+                    <tr><td></td><td></td><td></td></tr>
+
+                    <tr><td>LOWER SECTION</td><td></td><td></td></tr>
+                    <tr><td>3 of a kind</td><td>Count and Add Only Aces</td><td></td></tr>
+                    <tr><td>4 of a kind</td><td>Count and Add Only Twos</td><td></td></tr>
+                    <tr><td>Full House</td><td>Count and Add Only Threes</td><td></td></tr>
+                    <tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Count and Add Only Fours</td><td></td></tr>
+                    <tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Count and Add Only Fives</td><td></td></tr>
+                    <tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Count and Add Only Sixes</td><td></td></tr>
+                    <tr><td>Change</td><td>---></td><td></td></tr>
+                    <tr><td style="text-algin:center">YAHTZEE <br>BONUS </td><td></td><td></td></tr>
+                    <tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td>---></td><td></td></tr>
+                    <tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td>---></td><td></td></tr>
+                    <tr><td>GRAND TOTAL </td><td>---></td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+        <div id=dice-section class=span5>
+            <div class=die id=die1></div>
+            <div class=die id=die2></div>
+            <div class=die id=die3></div>
+            <div class=die id=die4></div>
+            <div class=die id=die5></div>
+        </div>
+    </div>
+
+
+
 
 </div> <!-- /container -->
 
-<!-- Le javascript
+
+<!-- Bootstrap javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="../assets/js/jquery.js"></script>

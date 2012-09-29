@@ -1,0 +1,58 @@
+body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+.score-boxes {
+    border: 1px solid lightgrey;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+#scorecard {
+    margin-bottom: 0px;
+}
+
+
+/* scorecard column 1 */
+#scorecard tr td:first-child {
+    width: 100px;
+}
+
+/* scorecard column 2 */
+#scorecard tr td:nth-child(2) {
+    width: 100px;
+    text-align: center;
+}
+
+/* scorecard column 3 */
+#scorecard tr td:last-child {
+    width: 10px;
+}
+
+.scorebox-note {
+    font-size: 85%;
+    float:right;
+    color: gray;
+}
+
+.die {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    margin: 30px auto;
+}
+
+#die1 {
+}
+
+#die2 {
+}
+
+#die3 {
+}
+
+#die4 {
+}
+
+#die5 {
+}
