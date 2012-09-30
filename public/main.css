@@ -2,7 +2,7 @@ body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 }
 
-.score-boxes {
+.left-side {
     border: 1px solid lightgrey;
     padding: 4px;
     border-radius: 4px;
@@ -35,11 +35,17 @@ body {
     color: gray;
 }
 
+#dice-section {
+    text-align: center;
+}
+
 .die {
     border: 1px solid black;
-    width: 100px;
-    height: 100px;
+    width: 98px;
+    height: 98px;
     margin: 30px auto;
+    font-size: 90px;
+    line-height: 98px;
 }
 
 #die1 {
@@ -55,4 +61,8 @@ body {
 }
 
 #die5 {
+}
+
+#section-button {
+    margin: 0 auto;
 }
