@@ -40,12 +40,16 @@ body {
 }
 
 .die {
-    border: 1px solid black;
-    width: 98px;
-    height: 98px;
+    border: 2px solid black;
+    width: 96px;
+    height: 96px;
     margin: 30px auto;
     font-size: 90px;
     line-height: 98px;
+}
+
+.die:hover {
+    font-weight: bold;
 }
 
 #die1 {
@@ -61,6 +65,11 @@ body {
 }
 
 #die5 {
+}
+
+.reverse-video {
+    background-color: black;
+    color: white;
 }
 
 #section-button {
