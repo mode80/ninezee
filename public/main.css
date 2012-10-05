@@ -47,6 +47,7 @@ body {
     margin: 30px auto;
     font-size: 90px;
     line-height: 98px;
+    cursor: pointer;
 }
 
 .die:hover {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="yahtzeejs">
 <head>
     <meta charset="utf-8">
     <title>Yahtzee.js</title>
@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 </head>
 
-<body>
+<body ng-controller="controller">
 
 <div class="container">
 
@@ -61,7 +61,7 @@
 
         </div>
 
-        <div id=dice-section class=span4>
+        <div id=dice-section class=span3>
             <p class=die id=die1>1</p>
             <p class=die id=die2>2</p>
             <p class=die id=die3>3</p>
@@ -69,8 +69,10 @@
             <p class=die id=die5>5</p>
         </div>
 
-        <div id=right-gutter class=span1>
-            <button id=btnRoll class="section-btn btn btn-success">ROLL!</button>
+        <div id=right-gutter class=span2>
+            <button id=btnRoll class="section-btn btn btn-block btn-success ">ROLL!</button>
+            <button id=btnSelectAll class="section-btn btn btn-block btn-info">Select All</button>
+            <button id=btnSelectNone class="section-btn btn btn-block btn-info">Select None</button>
         </div>
 
     </div> 
@@ -81,6 +83,7 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="../assets/js/jquery.js"></script>
+
 <script src="../assets/js/bootstrap-transition.js"></script>
 <script src="../assets/js/bootstrap-alert.js"></script>
 <script src="../assets/js/bootstrap-modal.js"></script>
@@ -93,6 +96,10 @@
 <script src="../assets/js/bootstrap-collapse.js"></script>
 <script src="../assets/js/bootstrap-carousel.js"></script>
 <script src="../assets/js/bootstrap-typeahead.js"></script>
+
+<script src="../assets/js/underscore.js"></script>
+
+<script src="../assets/js/angular.js"></script>
 
 
 <script src="main.js"></script>
