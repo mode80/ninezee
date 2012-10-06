@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="yahtzeejs">
+<html lang="en" ng-app>
 <head>
     <meta charset="utf-8">
     <title>Yahtzee.js</title>
@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 </head>
 
-<body ng-controller="controller">
+<body ng-controller="bodyController">
 
 <div class="container">
 
@@ -62,15 +62,11 @@
         </div>
 
         <div id=dice-section class=span3>
-            <p class=die id=die1>1</p>
-            <p class=die id=die2>2</p>
-            <p class=die id=die3>3</p>
-            <p class=die id=die4>4</p>
-            <p class=die id=die5>5</p>
+            <p  ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.value}}</p>
         </div>
 
         <div id=right-gutter class=span2>
-            <button id=btnRoll class="section-btn btn btn-block btn-success ">ROLL!</button>
+            <button id=btnRoll class="section-btn btn btn-block btn-success " ng-click="rollSelected()">ROLL!</button>
             <button id=btnSelectAll class="section-btn btn btn-block btn-info">Select All</button>
             <button id=btnSelectNone class="section-btn btn btn-block btn-info">Select None</button>
         </div>

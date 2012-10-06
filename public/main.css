@@ -69,7 +69,7 @@ body {
 #die5 {
 }
 
-.reverse-video {
+.selected {
     background-color: black;
     color: white;
 }
