@@ -1,13 +1,14 @@
 function bodyController ($scope) {
 
   // Die "class"
-  function Die(value) {
-    this.value = value
-    this.selected = false
-  }
-  Die.prototype.roll = function roll(){
-    this.value = Math.ceil(Math.random()*6)
-  }
+    function Die(value) {
+      this.value = value
+      this.selected = false
+    }
+    Die.prototype.roll = function roll(){
+      this.value = Math.ceil(Math.random()*6)
+    }
+
 
   // Make array of dice with default
   $scope.dice = []

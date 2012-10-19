@@ -51,7 +51,7 @@ body {
 }
 
 .die:hover {
-    font-weight: bold;
+    border-style: dashed;
 }
 
 #die1 {
@@ -72,6 +72,7 @@ body {
 .selected {
     background-color: black;
     color: white;
+    border-color: white;
 }
 
 #section-button {
