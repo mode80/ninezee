@@ -28,6 +28,7 @@ body {
 /* scorecard column 3 */
 #scorecard tr td:last-child {
     width: 10px;
+    text-align: center;
 }
 
 .scorebox-note {
@@ -77,5 +78,17 @@ body {
 
 #section-button {
     margin: 0 auto;
+}
+
+.val {
+    font-weight: bold;
+    font-size: 18;
+    color: black;
+}
+
+.maybe-val {
+    font-weight: bold;
+    font-size: 18;
+    color: grey;
 }
 

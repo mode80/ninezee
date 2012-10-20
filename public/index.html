@@ -1,81 +1,86 @@
 <!DOCTYPE html>
 <html lang="en" ng-app>
 <head>
-    <meta charset="utf-8">
-    <title>Yahtzee.js</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="An experiment in javascript front end development">
-    <link href="../assets/css/bootstrap.css" rel="stylesheet">
-    <link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet">
+	<meta charset="utf-8">
+	<title>Yahtzee.js</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="An experiment in javascript front end development">
+	<link href="../assets/css/bootstrap.css" rel="stylesheet">
+	<link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="main.css" rel="stylesheet">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 
-    <!-- fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+	<!-- fav and touch icons -->
+	<link rel="shortcut icon" href="../assets/ico/favicon.ico">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 </head>
 
 <body ng-controller="bodyController">
 
 <div class="container">
 
-    <h1><em>Yahtzee </em></h1>
+	<h1><em>Yahtzee </em></h1>
 
-    <div id=layout class=row>
-        <div id=scorecard-section class=span7>
+	<div id=layout class=row>
+		<div id=scorecard-section class=span7>
 
-            <div class=left-side>
-                <table id=scorecard class="table table-bordered table-condensed">
-                    <tr><td>UPPER SECTION</td><td>HOW TO SCORE</td><td>{{p1.name}} </td></tr>
-                    <tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
-                        <td ng-mouseenter="p1.aces.maybeVal=p1.aces.calcVal(dice)" ng-mouseleave="p1.aces.maybeVal = null">
-                            {{p1.aces.maybeVal || p1.aces.val}}
-                        </td>
-                    </tr>
-                    <tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td><td>{{player1.twos.val}}</td></tr>
-                    <tr><td>Threes <small class=scorebox-note>= 3</small></td><td>Count and Add Only Threes</td><td>{{player1.threes.val}}</td></tr>
-                    <tr><td>Fours <small class=scorebox-note>= 4</small></td><td>Count and Add Only Fours</td><td>{{player1.fours.val}}</td></tr>
-                    <tr><td>Fives <small class=scorebox-note>= 5</small></td><td>Count and Add Only Fives</td><td>{{player1.fives.val}}</td></tr>
-                    <tr><td>Sixes <small class=scorebox-note>= 6</small></td><td>Count and Add Only Sixes</td><td>{{player1.sixes.val}}</td></tr>
-                    <tr><td>TOTAL SCORE</td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                    <tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td><td></td></tr>
-                    <tr><td>TOTAL SCORE</td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td>LOWER SECTION</td><td></td><td></td></tr>
-                    <tr><td>3 of a kind</td><td>Count and Add Only Aces</td><td></td></tr>
-                    <tr><td>4 of a kind</td><td>Count and Add Only Twos</td><td></td></tr>
-                    <tr><td>Full House</td><td>Count and Add Only Threes</td><td></td></tr>
-                    <tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Count and Add Only Fours</td><td></td></tr>
-                    <tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Count and Add Only Fives</td><td></td></tr>
-                    <tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Count and Add Only Sixes</td><td></td></tr>
-                    <tr><td>Change</td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                    <tr><td>YAHTZEE <br>BONUS </td><td></td><td></td></tr>
-                    <tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                    <tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                    <tr><td>GRAND TOTAL </td><td><i class=icon-arrow-right></i></td><td></td></tr>
-                </table>
-            </div>
+			<div class=left-side>
+				<table id=scorecard class="table table-bordered table-condensed">
+					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td><td>{{p1.name}} </td></tr>
+					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
+						<td 
+						ng-mouseenter="p1.aces.maybeVal=p1.aces.calcVal(dice)" 
+						ng-mouseleave="p1.aces.maybeVal = null"
+						ng-click="p1.aces.val = p1.aces.calcVal(dice)"
+						>
+							<div class="maybe-val" ng-hide="p1.aces.maybeVal==null">{{p1.aces.maybeVal}}</div>
+							<div class="val" ng-show="p1.aces.maybeVal==null">{{p1.aces.val}}</div>
+						</td>
+					</tr>
+					<tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td><td>{{player1.twos.val}}</td></tr>
+					<tr><td>Threes <small class=scorebox-note>= 3</small></td><td>Count and Add Only Threes</td><td>{{player1.threes.val}}</td></tr>
+					<tr><td>Fours <small class=scorebox-note>= 4</small></td><td>Count and Add Only Fours</td><td>{{player1.fours.val}}</td></tr>
+					<tr><td>Fives <small class=scorebox-note>= 5</small></td><td>Count and Add Only Fives</td><td>{{player1.fives.val}}</td></tr>
+					<tr><td>Sixes <small class=scorebox-note>= 6</small></td><td>Count and Add Only Sixes</td><td>{{player1.sixes.val}}</td></tr>
+					<tr><td>TOTAL SCORE</td><td><i class=icon-arrow-right></i></td><td></td></tr>
+					<tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td><td></td></tr>
+					<tr><td>TOTAL SCORE</td><td><i class=icon-arrow-right></i></td><td></td></tr>
+					<tr><td></td><td></td><td></td></tr>
+					<tr><td>LOWER SECTION</td><td></td><td></td></tr>
+					<tr><td>3 of a kind</td><td>Count and Add Only Aces</td><td></td></tr>
+					<tr><td>4 of a kind</td><td>Count and Add Only Twos</td><td></td></tr>
+					<tr><td>Full House</td><td>Count and Add Only Threes</td><td></td></tr>
+					<tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Count and Add Only Fours</td><td></td></tr>
+					<tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Count and Add Only Fives</td><td></td></tr>
+					<tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Count and Add Only Sixes</td><td></td></tr>
+					<tr><td>Change</td><td><i class=icon-arrow-right></i></td><td></td></tr>
+					<tr><td>YAHTZEE <br>BONUS </td><td></td><td></td></tr>
+					<tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td><td></td></tr>
+					<tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td><i class=icon-arrow-right></i></td><td></td></tr>
+					<tr><td>GRAND TOTAL </td><td><i class=icon-arrow-right></i></td><td></td></tr>
+				</table>
+			</div>
 
-        </div>
+		</div>
 
-        <div id=dice-section class=span3>
-            <p  ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.value}}</p>
-        </div>
+		<div id=dice-section class=span3>
+			<p  ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.value}}</p>
+		</div>
 
-        <div id=right-gutter class=span2>
-            <button id=btnRoll class="section-btn btn btn-block btn-success " ng-click="rollSelected()">ROLL!</button>
-            <button id=btnSelectAll class="section-btn btn btn-block btn-info" ng-click="selectAll()">Select All</button>
-            <button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="selectNone()">Select None</button>
-        </div>
+		<div id=right-gutter class=span2>
+			<button id=btnRoll class="section-btn btn btn-block btn-success " ng-click="rollSelected()">ROLL!</button>
+			<button id=btnSelectAll class="section-btn btn btn-block btn-info" ng-click="selectAll()">Select All</button>
+			<button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="selectNone()">Select None</button>
+		</div>
 
-    </div> 
+	</div> 
 
 </div>
 

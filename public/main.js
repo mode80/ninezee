@@ -26,7 +26,8 @@ function bodyController ($scope) {
   SimpleScoreBox.prototype.calcVal = function (dieArray) {
     var sum = 0;
     for (var i= 0, len=dieArray.length; i < len; i++) {
-      if (this.n === dieArray[i].value) sum = sum + dieArray[i].value;
+      if (this.n === dieArray[i].value) 
+        sum = sum + dieArray[i].value;
     }
     return sum;
   }
