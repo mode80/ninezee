@@ -83,12 +83,10 @@ body {
 .val {
     font-weight: bold;
     font-size: 18;
-    color: black;
 }
 
-.maybe-val {
-    font-weight: bold;
-    font-size: 18;
+.temporary {
     color: grey;
 }
+
 

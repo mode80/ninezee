@@ -36,12 +36,11 @@
 					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td><td>{{p1.name}} </td></tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
 						<td 
-						ng-mouseenter="p1.aces.maybeVal=p1.aces.calcVal(dice)" 
-						ng-mouseleave="p1.aces.maybeVal = null"
-						ng-click="p1.aces.val = p1.aces.calcVal(dice)"
+						ng-mouseenter="p1.aces.proposeVal(dice)" 
+						ng-mouseleave="p1.aces.unproposeVal(dice)"
+						ng-click="p1.aces.lockVal(dice)"
 						>
-							<div class="maybe-val" ng-hide="p1.aces.maybeVal==null">{{p1.aces.maybeVal}}</div>
-							<div class="val" ng-show="p1.aces.maybeVal==null">{{p1.aces.val}}</div>
+							<div class="val" ng-class="{temporary: p1.aces.temporary}">{{p1.aces.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td><td>{{player1.twos.val}}</td></tr>
