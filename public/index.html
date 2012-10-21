@@ -98,7 +98,7 @@
 		</div>
 
 		<div id=dice-section class=span3>
-			<p  ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.value}}</p>
+			<p  ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.val}}</p>
 		</div>
 
 		<div id=right-gutter class=span2>
@@ -113,7 +113,6 @@
 
 <!-- ================================================== -->
 
-<script src="../assets/js/jquery.js"></script>
 <script src="../assets/js/underscore.js"></script>
 <script src="../assets/js/angular.js"></script>
 <script src="main.js"></script>
