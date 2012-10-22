@@ -13,9 +13,10 @@ function bodyController ($scope) {
 
   // ScoreBox 
   // ***********************************************************************************************
-    function ScoreBox() {
+    function ScoreBox(player) {
+      this.player = player
       this.val = null
-      this.temporary = false
+      this.isTemp = false
       }
     ScoreBox.prototype.calcVal = function (dieArray) {
       // override this
@@ -23,24 +24,24 @@ function bodyController ($scope) {
     ScoreBox.prototype.proposeVal = function(dieArray) {
       if (this.val == null) {
         this.val=this.calcVal(dieArray)
-        this.temporary = true
+        this.isTemp = true
       }
     }
     ScoreBox.prototype.unproposeVal = function(dieArray) {
-      if (this.temporary) this.val=null
-      this.temporary = false
+      if (this.isTemp) this.val=null
+      this.isTemp = false
     }
     ScoreBox.prototype.lockVal = function(dieArray) {
-      if (this.val !== null && this.temporary === true) {
+      if (this.val !== null && this.isTemp === true) {
         this.val = this.calcVal(dieArray)
-        this.temporary = false
+        this.isTemp = false
       }
     }
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
-    function SimpleScoreBox(n) {
+    function SimpleScoreBox(player, n) {
       this.n = n
       }
     SimpleScoreBox.prototype = new ScoreBox()
@@ -54,16 +55,41 @@ function bodyController ($scope) {
     }
   // ***********************************************************************************************
 
+  // SimpleTotalBox
+  // ***********************************************************************************************
+    function SimpleTotalBox() {}
+    
+    SimpleTotalBox.prototype = new ScoreBox()
+    
+    SimpleTotalBox.prototype.calcVal = function(aces, twos, threes, fours, fives, sixes) {
+      
+      if (null === aces.val || twos.val || threes.val || fours.val || fives.val || sixes.val) 
+        this.val = null 
+      else 
+        this.val = aces.val + twos.val + threes.val + fours.val + fives.val + sixes.val
+
+      this.isTemp = 
+        aces.isTemp || twos.isTemp || threes.isTemp || fours.isTemp || fives.isTemp || sixes.isTemp
+      
+    }
+  // ***********************************************************************************************
+
+
   // Player 
   // ***********************************************************************************************
     function Player(name) {
+
       this.name = name || "Player"
-      this.aces    = new SimpleScoreBox(1)
-      this.twos    = new SimpleScoreBox(2)
-      this.threes  = new SimpleScoreBox(3)
-      this.fours   = new SimpleScoreBox(4)
-      this.fives   = new SimpleScoreBox(5)
-      this.sixes   = new SimpleScoreBox(6)
+      
+      this.aces    = new SimpleScoreBox(this, 1)
+      this.twos    = new SimpleScoreBox(this, 2)
+      this.threes  = new SimpleScoreBox(this, 3)
+      this.fours   = new SimpleScoreBox(this, 4)
+      this.fives   = new SimpleScoreBox(this, 5)
+      this.sixes   = new SimpleScoreBox(this, 6)
+
+      this.simpleTotal = new SimpleTotalBox(this)
+
     }
   // ***********************************************************************************************
 
