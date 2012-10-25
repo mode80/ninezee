@@ -17,35 +17,37 @@ function bodyController ($scope) {
       this.player = player
       this.val = null
       this.isTemp = false
-      this.constructor.prototype.calcVal = function (dieArray) {
+    }
+      ScoreBox.prototype.calcVal = function (dieArray) {
         // override this
       }
-      this.constructor.prototype.proposeVal = function(dieArray) {
+      ScoreBox.prototype.proposeVal = function(dieArray) {
         if (this.val == null) {
           this.val=this.calcVal(dieArray)
           this.isTemp = true
         }
       }
-      this.constructor.prototype.unproposeVal = function(dieArray) {
+      ScoreBox.prototype.unproposeVal = function(dieArray) {
         if (this.isTemp) this.val=null
         this.isTemp = false
       }
-      this.constructor.prototype.lockVal = function(dieArray) {
+      ScoreBox.prototype.lockVal = function(dieArray) {
         if (this.val !== null && this.isTemp === true) {
           this.val = this.calcVal(dieArray)
           this.isTemp = false
         }
       }
-    }
+
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
     function SimpleScoreBox(player, n) {
-      parent = this.constructor.prototype = new ScoreBox() // set parent object 
-      parent.constructor.call(this,player) // call our parent's constructor
+      ScoreBox.call(this,player) // call our parent's constructor
       this.n = n
-      parent.calcVal = function (dieArray) {
+    }
+      SimpleScoreBox.prototype = new ScoreBox() // set parent object
+      SimpleScoreBox.prototype.calcVal = function (dieArray) {
         var sum = 0
         for (var i= 0, len=dieArray.length; i < len; i++) {
           if (this.n === dieArray[i].val) 
@@ -53,8 +55,7 @@ function bodyController ($scope) {
         }
         return sum
       }
-    }
-  // ***********************************************************************************************
+    // ***********************************************************************************************
 
   // SimpleTotalBox
   // ***********************************************************************************************
