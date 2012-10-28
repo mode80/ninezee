@@ -81,7 +81,11 @@
 							<div class="val" ng-class="{temporary: p1.simpleTotal.isTemp}">{{ p1.simpleTotal.val }}</div>
 						</td>
 					</tr>
-					<tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td><td></td></tr>
+					<tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td>
+						<td>
+							<div class="val" ng-class="{temporary: p1.upperBonus.isTemp}">{{p1.upperBonus.val}}</div>
+						</td>
+					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of upper section</td><td><i class=icon-arrow-right></i></td><td></td></tr>
 					<tr><td></td><td></td><td></td></tr>
 					<tr><td>LOWER SECTION</td><td></td><td></td></tr>

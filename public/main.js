@@ -23,68 +23,93 @@ function bodyController ($scope) {
       this.val = null
       this.isTemp = true
     }
-    ScoreBox.prototype = {
-      constructor: ScoreBox,
-      parent: Object,
-      calcVal: function (dieArray) {
-        // override this
-      },
-      proposeVal: function(dieArray) {
-        if (this.val == null) this.val=this.calcVal(dieArray)
-      },
-      unproposeVal: function(dieArray) {
-        if (this.isTemp) this.val=null
-      },
-      lockVal: function(dieArray) {
-        if (this.val !== null && this.isTemp === true) {
-          this.val = this.calcVal(dieArray)
-          this.isTemp = false
+    ScoreBox.prototype = function(){
+      return {
+        constructor: ScoreBox,
+        parent: Object,
+        calcVal: function (dieArray) {
+          // override this
+        },
+        proposeVal: function(dieArray) {
+          if (this.val === null) this.val=this.calcVal(dieArray)
+        },
+        unproposeVal: function(dieArray) {
+          if (this.isTemp) this.val=null
+        },
+        lockVal: function(dieArray) {
+          if (this.val !== null && this.isTemp === true) {
+            this.isTemp = false
+            this.val = this.calcVal(dieArray)
+          }
         }
-      }
-    } 
+      } 
+    }()
 
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
     function SimpleScoreBox(player, n) {
-      this.parent.call(this, player) // call our parent's constructor
+      this.parent.call(this, player) 
       this.n = n
     }
-
-      SimpleScoreBox.prototype = new ScoreBox() // set parent object
-      SimpleScoreBox.prototype.constructor = SimpleScoreBox
-      SimpleScoreBox.prototype.parent = ScoreBox
-      SimpleScoreBox.prototype.calcVal = function (dieArray) {
-        var sum = 0
-        for (var i= 0, len=dieArray.length; i < len; i++) {
-          if (this.n === dieArray[i].val) 
-            sum = sum + dieArray[i].val
-        }
-        this.player.simpleTotal.calcVal()
-        return sum
-      }
-    // ***********************************************************************************************
+      SimpleScoreBox.prototype = function(){
+        var proto = new ScoreBox() 
+        proto.parent = ScoreBox
+        proto.constructor = SimpleScoreBox
+        proto.calcVal = function (dieArray) {
+            var sum = 0
+            for (var i= 0, len=dieArray.length; i < len; i++) {
+              if (this.n === dieArray[i].val) 
+                sum = sum + dieArray[i].val
+            }
+            this.player.simpleTotal.calcVal()
+            return sum
+          }
+        return proto
+      }()
+  // ***********************************************************************************************
 
   // SimpleTotalBox
   // ***********************************************************************************************
     function SimpleTotalBox(player) {
-      this.parent.call(this,player) // call parent's constructor
+      this.parent.call(this,player) 
     }
-    SimpleTotalBox.prototype = new ScoreBox() // set parent object
-    SimpleTotalBox.prototype.constructor = SimpleTotalBox
-    SimpleTotalBox.prototype.parent = ScoreBox
-    SimpleTotalBox.prototype.calcVal = function() {
-      
-      var p = this.player
-      this.val = p.aces.val + p.twos.val + p.threes.val + p.fours.val + p.fives.val + p.sixes.val
+    SimpleTotalBox.prototype = function() {
+      var proto = new ScoreBox() 
+      proto.parent = ScoreBox
+      proto.constructor = SimpleTotalBox
+      proto.calcVal = function() {
+        
+        var p = this.player
 
-      this.isTemp = 
-        aces.isTemp || twos.isTemp || threes.isTemp || fours.isTemp || fives.isTemp || sixes.isTemp
-      
-    }
+        this.val = p.aces.val + p.twos.val + p.threes.val + p.fours.val +
+                   p.fives.val + p.sixes.val || null
+
+        this.isTemp = p.aces.isTemp || p.twos.isTemp || p.threes.isTemp || 
+                      p.fours.isTemp || p.fives.isTemp || p.sixes.isTemp
+
+        this.player.upperBonus.calcVal()
+      }
+      return proto
+    }()
   // ***********************************************************************************************
 
+  // UpperBonusBox
+  // ***********************************************************************************************
+    function UpperBonusBox(player) {
+      this.parent.call(this,player) 
+    }  
+    UpperBonusBox.prototype = function() {
+      var proto = new ScoreBox()
+      proto.parent = ScoreBox
+      proto.constructor = UpperBonusBox
+      proto.calcVal = function() {
+        this.isTemp = this.player.simpleTotal.isTemp
+        if (this.player.simpleTotal.val >= 63) this.val = 35
+      }
+      return proto
+    }()
 
   // Player 
   // ***********************************************************************************************
@@ -100,6 +125,7 @@ function bodyController ($scope) {
       this.sixes   = new SimpleScoreBox(this, 6)
 
       this.simpleTotal = new SimpleTotalBox(this)
+      this.upperBonus = new UpperBonusBox(this)
 
     }
   // ***********************************************************************************************
