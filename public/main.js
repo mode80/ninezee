@@ -90,6 +90,7 @@ function bodyController ($scope) {
                       p.fours.isTemp || p.fives.isTemp || p.sixes.isTemp
 
         this.player.upperBonus.calcVal()
+        this.player.upperTotal.calcVal()
       }
       return proto
     }()
@@ -107,9 +108,24 @@ function bodyController ($scope) {
       proto.calcVal = function() {
         this.isTemp = this.player.simpleTotal.isTemp
         if (this.player.simpleTotal.val >= 63) this.val = 35
+        if (!this.isTemp && this.val === null) this.val = 0
       }
       return proto
     }()
+  // ***********************************************************************************************
+
+  // UpperTotalBox
+  // ***********************************************************************************************
+    function UpperTotalBox(player) {
+      this.parent.call(this,player) 
+    }
+    var proto = UpperTotalBox.prototype = new ScoreBox()
+    proto.parent = ScoreBox
+    proto.constructor = UpperTotalBox
+    proto.calcVal = function() {
+      this.isTemp = this.player.simpleTotal.isTemp
+      this.val = this.player.simpleTotal.val + this.player.upperBonus.val
+    }
 
   // Player 
   // ***********************************************************************************************
@@ -126,6 +142,7 @@ function bodyController ($scope) {
 
       this.simpleTotal = new SimpleTotalBox(this)
       this.upperBonus = new UpperBonusBox(this)
+      this.upperTotal = new UpperTotalBox(this)
 
     }
   // ***********************************************************************************************
