@@ -5,10 +5,15 @@ function bodyController ($scope) {
     function Die(val) {
       this.val = val || 1
       this.selected = false
-      this.constructor.prototype.roll = function roll(){
+    }
+    Die.prototype = {
+      constructor: Die,
+      parent: Object,
+      roll: function() {
         this.val = Math.ceil(Math.random() * 6)
       }
     }
+
   // ***********************************************************************************************
 
   // ScoreBox 
@@ -18,39 +23,45 @@ function bodyController ($scope) {
       this.val = null
       this.isTemp = true
     }
-      ScoreBox.prototype.calcVal = function (dieArray) {
+    ScoreBox.prototype = {
+      constructor: ScoreBox,
+      parent: Object,
+      calcVal: function (dieArray) {
         // override this
-      }
-      ScoreBox.prototype.proposeVal = function(dieArray) {
-        if (this.val == null) {
-          this.val=this.calcVal(dieArray)
-        }
-      }
-      ScoreBox.prototype.unproposeVal = function(dieArray) {
+      },
+      proposeVal: function(dieArray) {
+        if (this.val == null) this.val=this.calcVal(dieArray)
+      },
+      unproposeVal: function(dieArray) {
         if (this.isTemp) this.val=null
-      }
-      ScoreBox.prototype.lockVal = function(dieArray) {
+      },
+      lockVal: function(dieArray) {
         if (this.val !== null && this.isTemp === true) {
           this.val = this.calcVal(dieArray)
           this.isTemp = false
         }
       }
+    } 
 
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
     function SimpleScoreBox(player, n) {
-      ScoreBox.call(player) // call our parent's constructor
+      this.parent.call(this, player) // call our parent's constructor
       this.n = n
     }
+
       SimpleScoreBox.prototype = new ScoreBox() // set parent object
+      SimpleScoreBox.prototype.constructor = SimpleScoreBox
+      SimpleScoreBox.prototype.parent = ScoreBox
       SimpleScoreBox.prototype.calcVal = function (dieArray) {
         var sum = 0
         for (var i= 0, len=dieArray.length; i < len; i++) {
           if (this.n === dieArray[i].val) 
             sum = sum + dieArray[i].val
         }
+        this.player.simpleTotal.calcVal()
         return sum
       }
     // ***********************************************************************************************
@@ -58,10 +69,11 @@ function bodyController ($scope) {
   // SimpleTotalBox
   // ***********************************************************************************************
     function SimpleTotalBox(player) {
-      ScoreBox.call(this,player) // call parent's constructor
+      this.parent.call(this,player) // call parent's constructor
     }
     SimpleTotalBox.prototype = new ScoreBox() // set parent object
-    
+    SimpleTotalBox.prototype.constructor = SimpleTotalBox
+    SimpleTotalBox.prototype.parent = ScoreBox
     SimpleTotalBox.prototype.calcVal = function() {
       
       var p = this.player
