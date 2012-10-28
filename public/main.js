@@ -16,7 +16,7 @@ function bodyController ($scope) {
     function ScoreBox(player) {
       this.player = player
       this.val = null
-      this.isTemp = false
+      this.isTemp = true
     }
       ScoreBox.prototype.calcVal = function (dieArray) {
         // override this
@@ -24,12 +24,10 @@ function bodyController ($scope) {
       ScoreBox.prototype.proposeVal = function(dieArray) {
         if (this.val == null) {
           this.val=this.calcVal(dieArray)
-          this.isTemp = true
         }
       }
       ScoreBox.prototype.unproposeVal = function(dieArray) {
         if (this.isTemp) this.val=null
-        this.isTemp = false
       }
       ScoreBox.prototype.lockVal = function(dieArray) {
         if (this.val !== null && this.isTemp === true) {
@@ -43,7 +41,7 @@ function bodyController ($scope) {
   // SimpleScoreBox 
   // ***********************************************************************************************
     function SimpleScoreBox(player, n) {
-      ScoreBox.call(this,player) // call our parent's constructor
+      ScoreBox.call(player) // call our parent's constructor
       this.n = n
     }
       SimpleScoreBox.prototype = new ScoreBox() // set parent object
@@ -60,17 +58,14 @@ function bodyController ($scope) {
   // SimpleTotalBox
   // ***********************************************************************************************
     function SimpleTotalBox(player) {
-      parent = this.constructor.prototype = new ScoreBox() // set parent object
-      parent.constructor.call(this,player) // call parent's constructor
+      ScoreBox.call(this,player) // call parent's constructor
     }
-    SimpleTotalBox.prototype = new ScoreBox()
+    SimpleTotalBox.prototype = new ScoreBox() // set parent object
     
-    SimpleTotalBox.prototype.calcVal = function(aces, twos, threes, fours, fives, sixes) {
+    SimpleTotalBox.prototype.calcVal = function() {
       
-      if (null === aces.val || twos.val || threes.val || fours.val || fives.val || sixes.val) 
-        this.val = null 
-      else 
-        this.val = aces.val + twos.val + threes.val + fours.val + fives.val + sixes.val
+      var p = this.player
+      this.val = p.aces.val + p.twos.val + p.threes.val + p.fours.val + p.fives.val + p.sixes.val
 
       this.isTemp = 
         aces.isTemp || twos.isTemp || threes.isTemp || fours.isTemp || fives.isTemp || sixes.isTemp
