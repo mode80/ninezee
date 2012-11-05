@@ -2,15 +2,18 @@ function bodyController ($scope) {
 
   // Die 
   // ***********************************************************************************************
-    function Die(val) {
-      this.val = val || 1
-      this.selected = false
-    }
-    Die.prototype = {
-      constructor: Die,
-      parent: Object,
-      roll: function() {
-        this.val = Math.ceil(Math.random() * 6)
+    var Die = function(val) {
+      Die.prototype = {
+        roll: function() {
+          this.val = Math.ceil(Math.random() * 6)
+        }
+      }
+      return function() {
+        return {
+          __proto__: Die.prototype,
+          val: val || 1,
+          selected: false
+        }
       }
     }
 
@@ -19,14 +22,9 @@ function bodyController ($scope) {
   // ScoreBox 
   // ***********************************************************************************************
     function ScoreBox(player) {
-      this.player = player
-      this.val = null
-      this.isTemp = true
-    }
-    ScoreBox.prototype = function(){
-      return {
+
+      var static_stuff = {
         constructor: ScoreBox,
-        parent: Object,
         calcVal: function (dieArray) {
           // override this
         },
@@ -42,15 +40,26 @@ function bodyController ($scope) {
             this.val = this.calcVal(dieArray)
           }
         }
-      } 
-    }()
+      }
+
+      return function(player) {
+        return {
+          __proto__: static_stuff,
+          constructor: ScoreBox,
+          player: player,
+          val: null,
+          isTemp: true
+        }
+      }
+     
+    } 
 
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
     function SimpleScoreBox(player, n) {
-      this.parent.call(this, player) 
+      ScoreBox.call(this, player) 
       this.n = n
     }
       SimpleScoreBox.prototype = function(){
