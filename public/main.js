@@ -1,136 +1,102 @@
+/*globals _, angular*/
+
 function bodyController ($scope) {
 
   // Die 
   // ***********************************************************************************************
     var Die = function(val) {
-      Die.prototype = {
-        roll: function() {
-          this.val = Math.ceil(Math.random() * 6)
-        }
-      }
-      return function() {
-        return {
-          __proto__: Die.prototype,
-          val: val || 1,
-          selected: false
-        }
-      }
+        this.val = val || 1
+        this.selected = false
     }
-
+    Die.prototype.roll = function() {
+      this.val = Math.ceil(Math.random() * 6)
+    }
   // ***********************************************************************************************
 
   // ScoreBox 
   // ***********************************************************************************************
-    function ScoreBox(player) {
-
-      var static_stuff = {
-        constructor: ScoreBox,
-        calcVal: function (dieArray) {
-          // override this
-        },
-        proposeVal: function(dieArray) {
-          if (this.val === null) this.val=this.calcVal(dieArray)
-        },
-        unproposeVal: function(dieArray) {
-          if (this.isTemp) this.val=null
-        },
-        lockVal: function(dieArray) {
-          if (this.val !== null && this.isTemp === true) {
-            this.isTemp = false
-            this.val = this.calcVal(dieArray)
-          }
+    var ScoreBox = function(player) {
+        this.player = player,
+        this.val = null,
+        this.isTemp = true
+    }
+    ScoreBox.prototype = {
+      calcVal: function (dieArray) {
+        // override this
+      },
+      proposeVal: function(dieArray) {
+        if (this.val === null) this.val=this.calcVal(dieArray)
+      },
+      unproposeVal: function(dieArray) {
+        if (this.isTemp) this.val=null
+      },
+      lockVal: function(dieArray) {
+        if (this.val !== null && this.isTemp === true) {
+          this.isTemp = false
+          this.val = this.calcVal(dieArray)
         }
       }
-
-      return function(player) {
-        return {
-          __proto__: static_stuff,
-          constructor: ScoreBox,
-          player: player,
-          val: null,
-          isTemp: true
-        }
-      }
-     
-    } 
-
+    }
   // ***********************************************************************************************
 
   // SimpleScoreBox 
   // ***********************************************************************************************
-    function SimpleScoreBox(player, n) {
+    var SimpleScoreBox = function(player, n) {
       ScoreBox.call(this, player) 
       this.n = n
     }
-      SimpleScoreBox.prototype = function(){
-        var proto = new ScoreBox() 
-        proto.parent = ScoreBox
-        proto.constructor = SimpleScoreBox
-        proto.calcVal = function (dieArray) {
-            var sum = 0
-            for (var i= 0, len=dieArray.length; i < len; i++) {
-              if (this.n === dieArray[i].val) 
-                sum = sum + dieArray[i].val
-            }
-            this.player.simpleTotal.calcVal()
-            return sum
-          }
-        return proto
-      }()
+    var proto = SimpleScoreBox.prototype = new ScoreBox()
+    proto.calcVal = function (dieArray) {
+      var sum = 0
+      for (var i= 0, len=dieArray.length; i < len; i++) {
+        if (this.n === dieArray[i].val) 
+          sum = sum + dieArray[i].val
+      }
+      this.player.simpleTotal.calcVal()
+      return sum
+    }
   // ***********************************************************************************************
 
   // SimpleTotalBox
   // ***********************************************************************************************
     function SimpleTotalBox(player) {
-      this.parent.call(this,player) 
+      ScoreBox.call(this,player) 
     }
-    SimpleTotalBox.prototype = function() {
-      var proto = new ScoreBox() 
-      proto.parent = ScoreBox
-      proto.constructor = SimpleTotalBox
-      proto.calcVal = function() {
-        
-        var p = this.player
+    proto = SimpleTotalBox.prototype = new ScoreBox()
+    proto.calcVal = function() {
+      
+      var p = this.player
 
-        this.val = p.aces.val + p.twos.val + p.threes.val + p.fours.val +
-                   p.fives.val + p.sixes.val || null
+      this.val = p.aces.val + p.twos.val + p.threes.val + p.fours.val +
+                 p.fives.val + p.sixes.val || null
 
-        this.isTemp = p.aces.isTemp || p.twos.isTemp || p.threes.isTemp || 
-                      p.fours.isTemp || p.fives.isTemp || p.sixes.isTemp
+      this.isTemp = p.aces.isTemp || p.twos.isTemp || p.threes.isTemp || 
+                    p.fours.isTemp || p.fives.isTemp || p.sixes.isTemp
 
-        this.player.upperBonus.calcVal()
-        this.player.upperTotal.calcVal()
-      }
-      return proto
-    }()
+      this.player.upperBonus.calcVal()
+      this.player.upperTotal.calcVal()
+    }
   // ***********************************************************************************************
 
   // UpperBonusBox
   // ***********************************************************************************************
     function UpperBonusBox(player) {
-      this.parent.call(this,player) 
+      ScoreBox.call(this,player) 
     }  
-    UpperBonusBox.prototype = function() {
-      var proto = new ScoreBox()
-      proto.parent = ScoreBox
-      proto.constructor = UpperBonusBox
-      proto.calcVal = function() {
-        this.isTemp = this.player.simpleTotal.isTemp
-        if (this.player.simpleTotal.val >= 63) this.val = 35
-        if (!this.isTemp && this.val === null) this.val = 0
-      }
-      return proto
-    }()
+    proto = UpperBonusBox.prototype = new ScoreBox()
+    proto.calcVal = function() {
+      this.isTemp = this.player.simpleTotal.isTemp
+      if (this.player.simpleTotal.val >= 63) this.val = 35
+      if (!this.isTemp && this.val === null) this.val = 0
+    }
   // ***********************************************************************************************
 
   // UpperTotalBox
   // ***********************************************************************************************
     function UpperTotalBox(player) {
-      this.parent.call(this,player) 
+      ScoreBox.call(this,player) 
     }
-    var proto = UpperTotalBox.prototype = new ScoreBox()
-    proto.parent = ScoreBox
-    proto.constructor = UpperTotalBox
+    proto = UpperTotalBox.prototype = new ScoreBox()
     proto.calcVal = function() {
       this.isTemp = this.player.simpleTotal.isTemp
       this.val = this.player.simpleTotal.val + this.player.upperBonus.val
