@@ -1,4 +1,5 @@
 /*globals _, angular*/
+/*jshint asi: true, es5: true, proto: true*/
 
 function bodyController ($scope) {
 
@@ -21,19 +22,19 @@ function bodyController ($scope) {
         this.isTemp = true
     }
     ScoreBox.prototype = {
-      calcVal: function (dieArray) {
+      calcVal: function (die_array) {
         // override this
       },
-      proposeVal: function(dieArray) {
-        if (this.val === null) this.val=this.calcVal(dieArray)
+      proposeVal: function(die_array) {
+        if (this.val === null) this.val=this.calcVal(die_array)
       },
-      unproposeVal: function(dieArray) {
+      unproposeVal: function(die_array) {
         if (this.isTemp) this.val=null
       },
-      lockVal: function(dieArray) {
+      lockVal: function(die_array) {
         if (this.val !== null && this.isTemp === true) {
           this.isTemp = false
-          this.val = this.calcVal(dieArray)
+          this.val = this.calcVal(die_array)
         }
       }
     }
@@ -46,11 +47,11 @@ function bodyController ($scope) {
       this.n = n
     }
     var proto = SimpleScoreBox.prototype = new ScoreBox()
-    proto.calcVal = function (dieArray) {
+    proto.calcVal = function (die_array) {
       var sum = 0
-      for (var i= 0, len=dieArray.length; i < len; i++) {
-        if (this.n === dieArray[i].val) 
-          sum = sum + dieArray[i].val
+      for (var i= 0, len=die_array.length; i < len; i++) {
+        if (this.n === die_array[i].val) 
+          sum = sum + die_array[i].val
       }
       this.player.simpleTotal.calcVal()
       return sum
@@ -63,7 +64,7 @@ function bodyController ($scope) {
       ScoreBox.call(this,player) 
     }
     proto = SimpleTotalBox.prototype = new ScoreBox()
-    proto.calcVal = function() {
+    proto.calcVal = function(die_array) {
       
       var p = this.player
 
@@ -73,8 +74,8 @@ function bodyController ($scope) {
       this.isTemp = p.aces.isTemp || p.twos.isTemp || p.threes.isTemp || 
                     p.fours.isTemp || p.fives.isTemp || p.sixes.isTemp
 
-      this.player.upperBonus.calcVal()
-      this.player.upperTotal.calcVal()
+      this.player.upperBonus.calcVal(die_array)
+      this.player.upperTotal.calcVal(die_array)
     }
   // ***********************************************************************************************
 
@@ -84,7 +85,7 @@ function bodyController ($scope) {
       ScoreBox.call(this,player) 
     }  
     proto = UpperBonusBox.prototype = new ScoreBox()
-    proto.calcVal = function() {
+    proto.calcVal = function(die_array) {
       this.isTemp = this.player.simpleTotal.isTemp
       if (this.player.simpleTotal.val >= 63) this.val = 35
       if (!this.isTemp && this.val === null) this.val = 0
@@ -97,9 +98,30 @@ function bodyController ($scope) {
       ScoreBox.call(this,player) 
     }
     proto = UpperTotalBox.prototype = new ScoreBox()
-    proto.calcVal = function() {
+    proto.calcVal = function(die_array) {
       this.isTemp = this.player.simpleTotal.isTemp
       this.val = this.player.simpleTotal.val + this.player.upperBonus.val
+    }
+
+  // NOfAKindBox
+  // ***********************************************************************************************
+    function NOfAKindBox(player, n) {
+      ScoreBox.call(this,player) 
+    }
+    proto = NOfAKindBox.prototype = new ScoreBox()
+    proto.calcVal = function(die_array) {
+      var sortedDice = die_array.sort()
+      var last_val = null
+      var same_count = 0
+      for (var i= 0, len=die_array.length; i < len; i++) {
+        if (last_val === die_array[i].val) same_count++
+      }
+      if (same_count >= n) {
+        if (n === 5) // Yahtzee!
+          this.val = 50
+        else
+          this.val = die_array.sumOfDice()
+      }
     }
 
   // Player 
@@ -128,7 +150,7 @@ function bodyController ($scope) {
     for (var i=1; i<=5; i++) dice.push(new Die(i))
 
     dice.rollSelected = function() {
-      var selectedDice = _.filter(dice, function(die) { return die.selected; })
+      var selectedDice = _.filter(this, function(die) { return die.selected; })
       _.each(selectedDice, function(die) { die.roll() } )
     }
 
@@ -138,6 +160,10 @@ function bodyController ($scope) {
 
     dice.selectNone = function() {
       _.each(dice, function(die) {die.selected=false})
+    }
+
+    dice.sumOfDice = function() {
+      return _.reduce(this, function(sum, die) {sum = sum + die.val} )
     }
 // *************************************************************************************************
 
