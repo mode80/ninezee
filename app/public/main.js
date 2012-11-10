@@ -1,4 +1,3 @@
-/*globals _, angular*/
 /*jshint asi: true, es5: true, proto: true*/
 
 function bodyController ($scope) {
@@ -23,7 +22,7 @@ function bodyController ($scope) {
     }
     ScoreBox.prototype = {
       calcVal: function (die_array) {
-        // override this
+        // Should return, the scorebox value of the given die_array. Override this.
       },
       proposeVal: function(die_array) {
         if (this.val === null) this.val=this.calcVal(die_array)
@@ -99,8 +98,9 @@ function bodyController ($scope) {
     }
     proto = UpperTotalBox.prototype = new ScoreBox()
     proto.calcVal = function(die_array) {
-      this.is_temp = this.player.simple_total.is_temp
-      this.val = this.player.simple_total.val + this.player.upper_bonus.val
+      var p = this.player
+      this.is_temp = p.simple_total.is_temp
+      this.val = (p.simple_total.val === null)? null : p.simple_total.val && p.upper_bonus.val
     }
 
   // NOfAKindBox
@@ -111,12 +111,14 @@ function bodyController ($scope) {
     }
     proto = NOfAKindBox.prototype = new ScoreBox()
     proto.calcVal = function(die_array) {
-      var sortedDice = die_array.sort()
+      var sorted_dice = dice.sortedCopy()
       var last_val = null
-      var same_count = 0
+      var same_count = 1
       var retval = 0
-      for (var i= 0, len=die_array.length; i < len; i++) {
-        if (last_val === die_array[i].val) same_count++
+      var i = sorted_dice.length
+      while (i--) { 
+        if (last_val === sorted_dice[i].val) same_count++
+        last_val = sorted_dice[i].val 
       }
       if (same_count >= this.n) {
         if (this.n === 5) // Yahtzee!
@@ -158,20 +160,24 @@ function bodyController ($scope) {
     for (var i=1; i<=5; i++) dice.push(new Die(i))
 
     dice.rollSelected = function() {
-      var selectedDice = _.filter(this, function(die) { return die.selected; })
-      _.each(selectedDice, function(die) { die.roll() } )
+      var selectedDice = this.filter(function(die) { return die.selected; })
+      selectedDice.each( function(die) { die.roll() } )
     }
 
     dice.selectAll = function() {
-      _.each(dice, function(die) {die.selected=true})
+      dice.each( function(die) {die.selected=true})
     }
 
     dice.selectNone = function() {
-      _.each(dice, function(die) {die.selected=false})
+      dice.each( function(die) {die.selected=false})
     }
 
     dice.sumOfDice = function() {
-      return _.reduce(this, function(sum, die) {sum = sum + die.val} )
+      return this.reduce( function(sum, die) {return sum + die.val }, 0 )
+    }
+
+    dice.sortedCopy = function() {
+      return this.slice().sort(function(a,b) {return (a.val > b.val) } )
     }
 // *************************************************************************************************
 

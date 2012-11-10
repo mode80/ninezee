@@ -97,57 +97,57 @@
 						<td ng-mouseenter="p1.three_of_a_kind.proposeVal(dice)" 
 							ng-mouseleave="p1.three_of_a_kind.unproposeVal(dice)" 
 							ng-click="p1.three_of_a_kind.lockVal(dice)" >
-							<div class="val" ng-class="{temporary: p1.three_of_a_kind.is_temp}"{{p1.three_of_a_kind.val}}</div>
+							<div class="val" ng-class="{temporary: p1.three_of_a_kind.is_temp}">{{p1.three_of_a_kind.val}}</div>
 						</td>
 					</tr>
 					<tr><td>4 of a kind</td><td>Add Total Of All Dice</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.four_of_a_kind.is_temp}"{{p1.four_of_a_kind.val}}</div>
+							<div class="val" ng-class="{temporary: p1.four_of_a_kind.is_temp}">{{p1.four_of_a_kind.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Full House</td><td>Score 25</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.full_house.is_temp}"{{p1.full_house.val}}</div>
+							<div class="val" ng-class="{temporary: p1.full_house.is_temp}">{{p1.full_house.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Score 30</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.small_straight.is_temp}"{{p1.small_straight.val}}</div>
+							<div class="val" ng-class="{temporary: p1.small_straight.is_temp}">{{p1.small_straight.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Score 40</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.large_straight.is_temp}"{{p1.large_straight.val}}</div>
+							<div class="val" ng-class="{temporary: p1.large_straight.is_temp}">{{p1.large_straight.val}}</div>
 						</td>
 					</tr>
 					<tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Score 50</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.yahtzee.is_temp}"{{p1.yahtzee.val}}</div>
+							<div class="val" ng-class="{temporary: p1.yahtzee.is_temp}">{{p1.yahtzee.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Chance</td><td>Score Total of All 5 Dice</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.chance.is_temp}"{{p1.chance.val}}</div>
+							<div class="val" ng-class="{temporary: p1.chance.is_temp}">{{p1.chance.val}}</div>
 						</td>
 					</tr>
 					<tr><td>YAHTZEE <br>BONUS </td><td>SCORE 100 PER</td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.yahtzee_bonus.is_temp}"{{p1.yahtzee_bonus.val}}</div>
+							<div class="val" ng-class="{temporary: p1.yahtzee_bonus.is_temp}">{{p1.yahtzee_bonus.val}}</div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.lower_total.is_temp}"{{p1.lower_total.val}}</div>
+							<div class="val" ng-class="{temporary: p1.lower_total.is_temp}">{{p1.lower_total.val}}</div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td><i class=icon-arrow-right></i></td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.upper_total.is_temp}"{{p1.upper_total.val}}</div>
+							<div class="val" ng-class="{temporary: p1.upper_total.is_temp}">{{p1.upper_total.val}}</div>
 						</td>
 					</tr>
 					<tr><td>GRAND TOTAL </td><td><i class=icon-arrow-right></i></td>
 						<td>
-							<div class="val" ng-class="{temporary: p1.grand_total.is_temp}"{{p1.grand_total.val}}</div>
+							<div class="val" ng-class="{temporary: p1.grand_total.is_temp}">{{p1.grand_total.val}}</div>
 						</td>
 					</tr>
 				</table>
@@ -171,7 +171,7 @@
 
 <!-- ================================================== -->
 
-<script src="../assets/js/underscore.js"></script>
+<script src="../assets/js/sugar-1.3.6-full.development.js"></script>
 <script src="../assets/js/angular.js"></script>
 <script src="main.js"></script>
 
