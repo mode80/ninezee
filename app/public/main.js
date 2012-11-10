@@ -129,6 +129,16 @@ function bodyController ($scope) {
       return retval
     }
 
+  // ChanceBox
+  // ***********************************************************************************************
+    function ChanceBox(player) {
+      ScoreBox.call(this,player)
+    }
+    proto = ChanceBox.prototype = new ScoreBox()
+    proto.calcVal = function(die_array) {
+      return die_array.sumOfDice()
+    }
+
   // Player 
   // ***********************************************************************************************
     function Player(name) {
@@ -149,7 +159,9 @@ function bodyController ($scope) {
       this.three_of_a_kind = new NOfAKindBox(this,3)
       this.four_of_a_kind = new NOfAKindBox(this,4)
 
+      this.chance = new ChanceBox(this)
       this.yahtzee = new NOfAKindBox(this,5)
+
 
     }
   // ***********************************************************************************************

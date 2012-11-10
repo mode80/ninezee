@@ -126,13 +126,17 @@
 						<td ng-mouseenter="p1.yahtzee.proposeVal(dice)" 
 								ng-mouseleave="p1.yahtzee.unproposeVal(dice)" 
 								ng-click="p1.yahtzee.lockVal(dice)" 
-								ng-class="{temporary: p1.yahtzee_bonus.is_temp}"
-								class="val" >
+								ng-class="{temporary: p1.yahtzee.is_temp}"
+								class="val">
 							<div class="val" ng-class="{temporary: p1.yahtzee.is_temp}">{{p1.yahtzee.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Chance</td><td>Score Total of All 5 Dice</td>
-						<td>
+						<td ng-mouseenter="p1.chance.proposeVal(dice)" 
+								ng-mouseleave="p1.chance.unproposeVal(dice)" 
+								ng-click="p1.chance.lockVal(dice)" 
+								ng-class="{temporary: p1.chance.is_temp}"
+								class="val">
 							<div class="val" ng-class="{temporary: p1.chance.is_temp}">{{p1.chance.val}}</div>
 						</td>
 					</tr>
