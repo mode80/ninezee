@@ -117,12 +117,20 @@
 						</td>
 					</tr>
 					<tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Score 30</td>
-						<td>
+						<td ng-mouseenter="p1.small_straight.proposeVal(dice)" 
+								ng-mouseleave="p1.small_straight.unproposeVal(dice)" 
+								ng-click="p1.small_straight.lockVal(dice)" 
+								ng-class="{temporary: p1.small_straight.is_temp}"
+								class="val">
 							<div class="val" ng-class="{temporary: p1.small_straight.is_temp}">{{p1.small_straight.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Score 40</td>
-						<td>
+						<td ng-mouseenter="p1.large_straight.proposeVal(dice)" 
+								ng-mouseleave="p1.large_straight.unproposeVal(dice)" 
+								ng-click="p1.large_straight.lockVal(dice)" 
+								ng-class="{temporary: p1.large_straight.is_temp}"
+								class="val">
 							<div class="val" ng-class="{temporary: p1.large_straight.is_temp}">{{p1.large_straight.val}}</div>
 						</td>
 					</tr>
