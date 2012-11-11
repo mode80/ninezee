@@ -139,6 +139,29 @@ function bodyController ($scope) {
       return die_array.sumOfDice()
     }
 
+  // FullHouse
+  // ***********************************************************************************************
+    function FullHouse(player) {
+      ScoreBox.call(this,player)
+    }
+    proto = FullHouse.prototype = new ScoreBox()
+    proto.calcVal = function(die_array) {
+      var sorted_dice = die_array.clone().sort(function(a,b) {return a.val > b.val} )
+      var i = sorted_dice.length
+      var count_type = 0
+      var count = []
+      var last_val = null
+      while (i--) {
+        if (sorted_dice[i].val === last_val) 
+          count[count_type] = count[count_type] + 1 || 2
+        else
+          count_type++
+        last_val = sorted_dice[i].val
+      }
+      if (count[1] + count[2] === 5) return 25; else return 0
+    }
+
+
   // Player 
   // ***********************************************************************************************
     function Player(name) {
@@ -159,6 +182,7 @@ function bodyController ($scope) {
       this.three_of_a_kind = new NOfAKindBox(this,3)
       this.four_of_a_kind = new NOfAKindBox(this,4)
 
+      this.full_house = new FullHouse(this)
       this.chance = new ChanceBox(this)
       this.yahtzee = new NOfAKindBox(this,5)
 

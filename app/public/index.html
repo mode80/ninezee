@@ -108,7 +108,11 @@
 						</td>
 					</tr>
 					<tr><td>Full House</td><td>Score 25</td>
-						<td>
+						<td ng-mouseenter="p1.full_house.proposeVal(dice)" 
+								ng-mouseleave="p1.full_house.unproposeVal(dice)" 
+								ng-click="p1.full_house.lockVal(dice)" 
+								ng-class="{temporary: p1.full_house.is_temp}"
+								class="val">
 							<div class="val" ng-class="{temporary: p1.full_house.is_temp}">{{p1.full_house.val}}</div>
 						</td>
 					</tr>
