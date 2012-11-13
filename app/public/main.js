@@ -199,14 +199,14 @@ function bodyController ($scope) {
       return true
     }
     proto.sumOfVals = function() {
-      var i = this.length, sum
+      var i = this.length, sum = 0
       while (i--) {
-        sum = sum + this[i]
+        sum = sum + this[i].val
       } 
       return sum
       //return this.sum( function(box){ return box.val} )
     }
-    proto.applyPush() = function(array_of_stuff_to_push) {
+    proto.applyPush = function(array_of_stuff_to_push) {
       Array.prototype.push.apply(this, array_of_stuff_to_push)
       return this
     }
@@ -227,9 +227,6 @@ function bodyController ($scope) {
 
       this.upper_bonus  = new UpperBonusBox(this)
 
-      this.upper_scores = new ScoreBoxGroup()
-      this.upper_scores.applyPush(simple_scores).push(this.upper_bonus)
-
       this.three_of_a_kind  = new NOfAKindBox(this,3)
       this.four_of_a_kind   = new NOfAKindBox(this,4)
       this.full_house       = new FullHouseBox(this)
@@ -240,16 +237,18 @@ function bodyController ($scope) {
       this.yahtzee_bonus    = new YahtzeeBonusBox(this)
 
       this.simple_scores = new ScoreBoxGroup()
+      this.upper_scores = new ScoreBoxGroup()
       this.lower_scores = new ScoreBoxGroup()
       this.all_scores  = new ScoreBoxGroup()
       with (this) { 
-        simple_scores.push  (aces,twos,threes,fours,fives,sixes)
-        lower_scores.push   (three_of_a_kind, four_of_a_kind, full_house, small_straight, 
+        simple_scores.push(aces,twos,threes,fours,fives,sixes)
+        upper_scores.applyPush(simple_scores).push(upper_bonus)
+        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, small_straight, 
                              large_straight, chance, yahtzee, yahtzee_bonus)
         all_scores.applyPush(upper_scores).applyPush(lower_scores)
       }
 
-      this.simple_total = new TotalBox(this, this.simple_scores)
+      this.simple_total = new TotalBox(this, this.simple_scores) 
       this.upper_total  = new TotalBox(this, this.upper_scores)
       this.lower_total = new TotalBox(this, this.lower_scores)
       this.grand_total = new TotalBox(this, this.all_scores)
