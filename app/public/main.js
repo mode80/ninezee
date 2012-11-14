@@ -13,8 +13,6 @@ function bodyController ($scope) {
     Die.prototype.roll = function() {
       this.val = Math.ceil(Math.random() * 6)
     }
-  // ***********************************************************************************************
-
 
   // Box
   // ***********************************************************************************************
@@ -30,26 +28,32 @@ function bodyController ($scope) {
     var ScoreBox = function(player) {
       Box.apply(this, arguments)
     }
-    proto = ScoreBox.prototype = new Box()
+    proto = ScoreBox.prototype = Object.create(Box.prototype)
     proto.calcVal = function (die_array) {
       // override this
     }
     proto.proposeVal = function(die_array) {
-      if (this.val === null) this.val=this.calcVal(die_array)
-      this.player.refreshTotals()
+      if (this.val === null) {
+        this.val=this.calcVal(die_array)
+        if (this !== this.player.yahtzee) this.player.yahtzee_bonus.proposeVal(die_array)
+        this.player.refreshTotals() 
+      }
     }
     proto.unproposeVal = function(die_array) {
-      if (this.is_temp) this.val=null
-      this.player.refreshTotals()
+      if (this.is_temp) {
+        this.val=null
+        if (this !== this.player.yahtzee) this.player.yahtzee_bonus.unproposeVal(die_array)
+        this.player.refreshTotals()
+      }
     }
     proto.lockVal = function(die_array) {
       if (this.val !== null && this.is_temp === true) {
         this.is_temp = false
         this.val = this.calcVal(die_array)
+        if (this !== this.player.yahtzee) this.player.yahtzee_bonus.lockVal(die_array)
         this.player.refreshTotals()
       }
     }
-  // ***********************************************************************************************
 
   // SimpleBox 
   // ***********************************************************************************************
@@ -57,7 +61,7 @@ function bodyController ($scope) {
       ScoreBox.apply(this,arguments) 
       this.n = n
     }
-    proto = SimpleBox.prototype = new ScoreBox()
+    proto = SimpleBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function (die_array) {
       var sum = 0
       for (var i= 0, len=die_array.length; i < len; i++) {
@@ -66,7 +70,6 @@ function bodyController ($scope) {
       }
       return sum
     }
-  // ***********************************************************************************************
 
   // NOfAKindBox
   // ***********************************************************************************************
@@ -74,7 +77,7 @@ function bodyController ($scope) {
       ScoreBox.apply(this,arguments)
       this.n = n
     }
-    proto = NOfAKindBox.prototype = new ScoreBox()
+    proto = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
       var sorted_dice = dice.sortedCopy()
       var last_val = null
@@ -94,27 +97,12 @@ function bodyController ($scope) {
       return retval
     }
 
-  // Yahtzee Bonus
-  // ***********************************************************************************************
-    function YahtzeeBonusBox(player) {
-      ScoreBox.apply(this,arguments)
-    }
-    proto = YahtzeeBonusBox.prototype = new ScoreBox()
-    proto.calcVal = function(die_array) {
-      var added_bonus
-      if ( NOfAKindBox.prototype.calcVal.call(this, die_array, 5) > 0 && 
-           this.player.yahtzee.val > 0) {
-        added_bonus = 100
-      }
-      this.val =+ added_bonus
-    }
-
   // ChanceBox
   // ***********************************************************************************************
     function ChanceBox(player) {
       ScoreBox.apply(this,arguments)
     }
-    proto = ChanceBox.prototype = new ScoreBox()
+    proto = ChanceBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
       return die_array.sumOfDice()
     }
@@ -124,7 +112,7 @@ function bodyController ($scope) {
     function FullHouseBox(player) {
       ScoreBox.apply(this,arguments)
     }
-    proto = FullHouseBox.prototype = new ScoreBox()
+    proto = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
       var sorted_dice = die_array.sortedCopy()
       var i = sorted_dice.length
@@ -138,7 +126,7 @@ function bodyController ($scope) {
           count_type++
         last_val = sorted_dice[i].val
       }
-      if (count[1] + count[2] === 5) return 25; else return 0
+      if (count[1] + count[2] === 5 || count[1] === 5) return 25; else return 0
     }
 
   // SequenceOfNBox
@@ -147,7 +135,7 @@ function bodyController ($scope) {
       ScoreBox.apply(this,arguments)
       this.n = n
     }
-    proto = SequenceOfNBox.prototype = new ScoreBox()
+    proto = SequenceOfNBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
       var sorted_dice = die_array.sortedCopy()
       var in_a_row = 1
@@ -167,10 +155,36 @@ function bodyController ($scope) {
       Box.apply(this,arguments)
       this.score_box_group = score_box_group
     }
-    proto = TotalBox.prototype = new Box()
+    proto = TotalBox.prototype = Object.create(Box.prototype)
     proto.refresh = function() {
       this.is_temp = ! this.score_box_group.isDone()
       this.val = this.score_box_group.sumOfVals()
+    }
+
+  // Yahtzee Bonus
+  // ***********************************************************************************************
+    function YahtzeeBonusBox(player, score_box_group) {
+      Box.apply(this,arguments)
+      this.is_temp = true
+      this.score_box_group = score_box_group
+    }
+    proto = YahtzeeBonusBox.prototype = Object.create(Box.prototype)
+    proto.calcVal = function(die_array) {
+      die_val_fn = function(die){return die.val}
+      if (die_array.max(die_val_fn) === die_array.min(die_val_fn)
+           && this.player.yahtzee.val > 0 )
+        return 100
+      else
+        return 0
+    }
+    proto.proposeVal = function(die_array) {
+      this.val += this.calcVal(die_array)
+    }
+    proto.unproposeVal = function(die_array) {
+      this.val -= this.calcVal(die_array)
+    }
+    proto.lockVal = function(die_array) {
+      if ( this.score_box_group.isDone() ) this.is_temp = false
     }
 
   // UpperBonusBox
@@ -178,39 +192,45 @@ function bodyController ($scope) {
     function UpperBonusBox(player) {
       Box.apply(this,arguments) 
     }  
-    proto = UpperBonusBox.prototype = new Box()
+    proto = UpperBonusBox.prototype = Object.create(Box.prototype)
     proto.refresh = function() {
       this.is_temp = this.player.simple_total.is_temp
       if (this.player.simple_total.val >= 63) this.val = 35
       if (!this.is_temp && this.val === null) this.val = 0
     }
-  // ***********************************************************************************************
 
   // ScoreBoxGroup
   // ***********************************************************************************************
-    function ScoreBoxGroup () {}
-    proto = ScoreBoxGroup.prototype = []
-    proto.isDone = function() {
-      var i = this.length, box
-      while (i--) {
-        box = this[i]
-        if (box.is_temp || box.val === null) return false
-      }
-      return true
-    }
-    proto.sumOfVals = function() {
-      var i = this.length, sum = 0
-      while (i--) {
-        sum = sum + this[i].val
-      } 
-      return sum
-      //return this.sum( function(box){ return box.val} )
-    }
-    proto.applyPush = function(array_of_stuff_to_push) {
-      Array.prototype.push.apply(this, array_of_stuff_to_push)
-      return this
-    }
+    function ScoreBoxGroup () {
 
+      var _array = []
+
+      _array.isDone = function() {
+        var i = this.length, box
+        while (i--) {
+          box = this[i]
+          if (box.is_temp ) return false
+        }
+        return true
+      }
+
+      _array.sumOfVals = function() {
+        var i = this.length, sum = 0
+        while (i--) {
+          sum = sum + this[i].val
+        } 
+        return sum
+        //return this.sum( function(box){ return box.val} )
+      }
+
+      _array.applyPush = function(array_of_stuff_to_push) {
+        Array.prototype.push.apply(this, array_of_stuff_to_push)
+        return this
+      }
+
+      return _array
+
+    }
 
   // Player 
   // ***********************************************************************************************
@@ -230,28 +250,30 @@ function bodyController ($scope) {
       this.three_of_a_kind  = new NOfAKindBox(this,3)
       this.four_of_a_kind   = new NOfAKindBox(this,4)
       this.full_house       = new FullHouseBox(this)
-      this.small_straight   = new SequenceOfNBox(this,4)
-      this.large_straight   = new SequenceOfNBox(this,5)
+      this.sm_straight      = new SequenceOfNBox(this,4)
+      this.lg_straight      = new SequenceOfNBox(this,5)
       this.chance           = new ChanceBox(this)
       this.yahtzee          = new NOfAKindBox(this,5)
-      this.yahtzee_bonus    = new YahtzeeBonusBox(this)
 
-      this.simple_scores = new ScoreBoxGroup()
-      this.upper_scores = new ScoreBoxGroup()
-      this.lower_scores = new ScoreBoxGroup()
-      this.all_scores  = new ScoreBoxGroup()
+      this.simple_scores    = new ScoreBoxGroup()
+      this.upper_scores     = new ScoreBoxGroup()
+      this.lower_scores     = new ScoreBoxGroup()
+      this.bonus_triggers   = new ScoreBoxGroup()
+      this.all_scores       = new ScoreBoxGroup()
       with (this) { 
         simple_scores.push(aces,twos,threes,fours,fives,sixes)
         upper_scores.applyPush(simple_scores).push(upper_bonus)
-        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, small_straight, 
-                             large_straight, chance, yahtzee, yahtzee_bonus)
+        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, sm_straight, lg_straight)
+        bonus_triggers.applyPush(simple_scores).applyPush(lower_scores)
+        this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
+        lower_scores.push(yahtzee, yahtzee_bonus)
         all_scores.applyPush(upper_scores).applyPush(lower_scores)
       }
 
       this.simple_total = new TotalBox(this, this.simple_scores) 
       this.upper_total  = new TotalBox(this, this.upper_scores)
-      this.lower_total = new TotalBox(this, this.lower_scores)
-      this.grand_total = new TotalBox(this, this.all_scores)
+      this.lower_total  = new TotalBox(this, this.lower_scores)
+      this.grand_total  = new TotalBox(this, this.all_scores)
 
     }
 

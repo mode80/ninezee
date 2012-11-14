@@ -117,21 +117,21 @@
 						</td>
 					</tr>
 					<tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Score 30</td>
-						<td ng-mouseenter="p1.small_straight.proposeVal(dice)" 
-								ng-mouseleave="p1.small_straight.unproposeVal(dice)" 
-								ng-click="p1.small_straight.lockVal(dice)" 
-								ng-class="{temp: p1.small_straight.is_temp}"
+						<td ng-mouseenter="p1.sm_straight.proposeVal(dice)" 
+								ng-mouseleave="p1.sm_straight.unproposeVal(dice)" 
+								ng-click="p1.sm_straight.lockVal(dice)" 
+								ng-class="{temp: p1.sm_straight.is_temp}"
 								class="val">
-							<div class="val" ng-class="{temp: p1.small_straight.is_temp}">{{p1.small_straight.val}}</div>
+							<div class="val" ng-class="{temp: p1.sm_straight.is_temp}">{{p1.sm_straight.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Score 40</td>
-						<td ng-mouseenter="p1.large_straight.proposeVal(dice)" 
-								ng-mouseleave="p1.large_straight.unproposeVal(dice)" 
-								ng-click="p1.large_straight.lockVal(dice)" 
-								ng-class="{temp: p1.large_straight.is_temp}"
+						<td ng-mouseenter="p1.lg_straight.proposeVal(dice)" 
+								ng-mouseleave="p1.lg_straight.unproposeVal(dice)" 
+								ng-click="p1.lg_straight.lockVal(dice)" 
+								ng-class="{temp: p1.lg_straight.is_temp}"
 								class="val">
-							<div class="val" ng-class="{temp: p1.large_straight.is_temp}">{{p1.large_straight.val}}</div>
+							<div class="val" ng-class="{temp: p1.lg_straight.is_temp}">{{p1.lg_straight.val}}</div>
 						</td>
 					</tr>
 					<tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Score 50</td>
@@ -154,7 +154,7 @@
 					</tr>
 					<tr><td>YAHTZEE <br>BONUS </td><td>SCORE 100 PER</td>
 						<td >
-							<div> {{p1.yahtzee_bonus.val}} </div>
+							<div class="val" ng-class="{temp: p1.yahtzee_bonus.is_temp}"> {{p1.yahtzee_bonus.val}} </div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td>
