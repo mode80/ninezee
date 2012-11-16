@@ -10,6 +10,7 @@ function bodyController ($scope) {
         this.val = val || 1
         this.selected = false
     }
+    Die.prototype = Object.extended({}) // because we like sugar
     Die.prototype.roll = function() {
       this.val = Math.ceil(Math.random() * 6)
     }
@@ -21,7 +22,7 @@ function bodyController ($scope) {
       this.val = null,
       this.is_temp = true
     }
-
+    Box.prototype = Object.extended({})
 
   // ScoreBox 
   // ***********************************************************************************************
@@ -141,12 +142,15 @@ function bodyController ($scope) {
       var in_a_row = 1
       var last_val
       var point_val = 0
+      var yahtzee_wildcard = false
       sorted_dice.each(function(die) {
         if (die.val === last_val + 1) in_a_row++
         last_val = die.val
       })
       if (this.n === 4) point_val=30; else if (this.n === 5) point_val=40
-      if (in_a_row >= this.n) return point_val; else return 0
+      yahtzee_wildcard = (die_array.allSame() 
+                          && this.player.simple_scores[die_array[0].val-1].val !== null  )
+      if (in_a_row >= this.n || yahtzee_wildcard) return point_val; else return 0
     }
 
   // TotalBox
@@ -170,12 +174,7 @@ function bodyController ($scope) {
     }
     proto = YahtzeeBonusBox.prototype = Object.create(Box.prototype)
     proto.calcVal = function(die_array) {
-      die_val_fn = function(die){return die.val}
-      if (die_array.max(die_val_fn) === die_array.min(die_val_fn)
-           && this.player.yahtzee.val > 0 )
-        return 100
-      else
-        return 0
+      if (die_array.allSame() && this.player.yahtzee.val > 0 ) return 100; else return 0
     }
     proto.proposeVal = function(die_array) {
       this.val += this.calcVal(die_array)
@@ -310,6 +309,11 @@ function bodyController ($scope) {
 
     dice.sortedCopy = function() {
       return this.slice().sort(function(a,b) {return (a.val > b.val) } )
+    }
+
+    dice.allSame = function() {
+      die_val_fn = function(die){return die.val}
+      return (this.max(die_val_fn) === this.min(die_val_fn) )
     }
 // *************************************************************************************************
 
