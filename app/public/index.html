@@ -33,7 +33,9 @@
 
 			<div class=left-side>
 				<table id=scorecard class="table table-bordered table-condensed">
-					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td><td>{{p1.name}} </td></tr>
+					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td>
+						<td ng-repeat="p in g.players">{{p.name}} </td>
+					</tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
 						<td ng-mouseenter="p1.aces.proposeVal(dice)" 
 								ng-mouseleave="p1.aces.unproposeVal(dice)" 
@@ -185,6 +187,9 @@
 			<button id=btnRoll class="section-btn btn btn-block btn-success " ng-click="dice.rollSelected()">ROLL!</button>
 			<button id=btnSelectAll class="section-btn btn btn-block btn-info" ng-click="dice.selectAll()">Select All</button>
 			<button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="dice.selectNone()">Select None</button>
+			<hr>
+			<button id=btnNewGame class="section-btn btn btn-block btn-info" ng-click="newGame()">New Game</button>
+			<button id=btnNewPlayer class="section-btn btn btn-block btn-info" ng-click="g.newPlayer()">New Player</button>
 		</div>
 
 	</div> 

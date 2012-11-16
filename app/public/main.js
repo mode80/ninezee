@@ -317,9 +317,23 @@ function bodyController ($scope) {
     }
 // *************************************************************************************************
 
+// Game
+// ***********************************************************************************************
+  var Game = function() {
+    this.dice = dice
+    this.players = []
+    this.current_player = this.newPlayer()
+    this.round = 0
+  }
+  proto = Game.prototype = Object.extended({})
+  proto.newPlayer = function() {
+    this.players.push(new Player("Player " + (this.players.length+1) ) )
+    return this.players[this.players.length-1]
+  }
 
-// Init model objects
-  $scope.dice = dice
-  $scope.p1 = new Player("Player #1")
-
+// Expose model objects
+// ***********************************************************************************************
+  $scope.g = new Game()
+  $scope.__defineGetter__("p1", function() {return $scope.g.players[0]} )
+  $scope.newGame = function() {$scope.g = new Game()}
 }
