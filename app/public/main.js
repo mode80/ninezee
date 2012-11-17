@@ -331,9 +331,18 @@ function bodyController ($scope) {
     return this.players[this.players.length-1]
   }
 
-// Expose model objects
+// set up and kick off
 // ***********************************************************************************************
-  $scope.g = new Game()
-  $scope.__defineGetter__("p1", function() {return $scope.g.players[0]} )
-  $scope.newGame = function() {$scope.g = new Game()}
+  $scope.newGame = function() {
+    var g = new Game()
+    $scope.dice = g.dice
+    $scope.players = g.players
+    $scope.player = g.current_player
+    $scope.round = g.round
+    $scope.newPlayer = g.newPlayer
+  }
+  
+  $scope.newGame()
+
+  
 }

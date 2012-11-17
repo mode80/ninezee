@@ -34,13 +34,15 @@
 			<div class=left-side>
 				<table id=scorecard class="table table-bordered table-condensed">
 					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td>
-						<td ng-repeat="p in g.players">{{p.name}} </td>
+						<td ng-repeat="p in players">{{p.name}} </td>
 					</tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
-						<td ng-mouseenter="p1.aces.proposeVal(dice)" 
-								ng-mouseleave="p1.aces.unproposeVal(dice)" 
-								ng-click="p1.aces.lockVal(dice)" >
-							<div class="val" ng-class="{temp : p1.aces.is_temp}">{{p1.aces.val}}</div>
+						<td 
+ 								ng-repeat="p in players"
+ 								ng-mouseenter="p.aces.proposeVal(dice)"
+								ng-mouseleave="p.aces.unproposeVal(dice)" 
+								ng-click="p.aces.lockVal(dice)" >
+							<div class="val" ng-class="{temp : p.aces.is_temp}">{{p.aces.val}}</div>
 						</td>
 					</tr>
 					<tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td>
@@ -189,7 +191,7 @@
 			<button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="dice.selectNone()">Select None</button>
 			<hr>
 			<button id=btnNewGame class="section-btn btn btn-block btn-info" ng-click="newGame()">New Game</button>
-			<button id=btnNewPlayer class="section-btn btn btn-block btn-info" ng-click="g.newPlayer()">New Player</button>
+			<button id=btnNewPlayer class="section-btn btn btn-block btn-info" ng-click="newPlayer()">New Player</button>
 		</div>
 
 	</div> 
