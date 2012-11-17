@@ -29,12 +29,12 @@
 	<h1><em>Yahtzee </em></h1>
 
 	<div id=layout class=row>
-		<div id=scorecard-section class=span7>
+		<div id=scorecard-section class=span8>
 
 			<div class=left-side>
 				<table id=scorecard class="table table-bordered table-condensed">
-					<tr><td>UPPER SECTION</td><td>HOW TO SCORE</td>
-						<td ng-repeat="p in players">{{p.name}} </td>
+					<tr><td width=100>UPPER SECTION</td><td width=100>HOW TO SCORE</td>
+						<td width=100 ng-repeat="p in players">{{p.name}} </td>
 					</tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
 						<td 	ng-repeat="p in players"
@@ -85,22 +85,22 @@
 						</td>
 					</tr>
 					<tr><td>TOTAL SCORE</small></td><td><i class=icon-arrow-right></i></td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.simple_total.is_temp}">{{ p.simple_total.val }}</div>
 						</td>
 					</tr>
 					<tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.upper_bonus.is_temp}">{{p.upper_bonus.val}}</div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of upper section</td><td><i class=icon-arrow-right></i></td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.upper_total.is_temp}">{{p.upper_total.val}}</div>
 						</td>
 					</tr>
-					<tr><td></td><td></td><td></td></tr>
-					<tr><td>LOWER SECTION</td><td></td><td></td></tr>
+					<tr><td></td><td></td><td 	ng-repeat="p in players"></td></tr>
+					<tr><td>LOWER SECTION</td><td></td><td 	ng-repeat="p in players"></td></tr>
 					<tr><td>3 of a kind</td><td>Add Total Of All Dice</td>
 						<td 	ng-repeat="p in players"
 								ng-mouseenter="p.three_of_a_kind.proposeVal(dice)" 
@@ -167,23 +167,23 @@
 							<div class="val" ng-class="{temp: p.chance.is_temp}">{{p.chance.val}}</div>
 						</td>
 					</tr>
-					<tr><td>YAHTZEE <br>BONUS </td><td>SCORE 100 PER</td>
-						<td >
+					<tr><td>YAHTZEE BONUS </td><td>SCORE 100 PER</td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.yahtzee_bonus.is_temp}"> {{p.yahtzee_bonus.val}} </div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.lower_total.is_temp}">{{p.lower_total.val}}</div>
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td><i class=icon-arrow-right></i></td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.upper_total.is_temp}">{{p.upper_total.val}}</div>
 						</td>
 					</tr>
 					<tr><td>GRAND TOTAL </td><td><i class=icon-arrow-right></i></td>
-						<td>
+						<td 	ng-repeat="p in players">
 							<div class="val" ng-class="{temp: p.grand_total.is_temp}">{{p.grand_total.val}}</div>
 						</td>
 					</tr>
@@ -192,7 +192,7 @@
 
 		</div>
 
-		<div id=dice-section class=span3>
+		<div id=dice-section class=span2>
 			<p ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.val}}</p>
 		</div>
 

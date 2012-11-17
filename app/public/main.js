@@ -80,7 +80,7 @@ function bodyController ($scope) {
     }
     proto = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
-      var sorted_dice = dice.sortedCopy()
+      var sorted_dice = die_array.sortedCopy()
       var last_val = null
       var same_count = 1
       var retval = 0
@@ -148,8 +148,8 @@ function bodyController ($scope) {
         last_val = die.val
       })
       if (this.n === 4) point_val=30; else if (this.n === 5) point_val=40
-      yahtzee_wildcard = (die_array.allSame() 
-                          && this.player.simple_scores[die_array[0].val-1].val !== null  )
+      yahtzee_wildcard = (die_array.allSame() && 
+                          this.player.simple_scores[die_array[0].val-1].val !== null  )
       if (in_a_row >= this.n || yahtzee_wildcard) return point_val; else return 0
     }
 
@@ -316,7 +316,7 @@ function bodyController ($scope) {
       }
 
       dice.allSame = function() {
-        die_val_fn = function(die){return die.val}
+        var die_val_fn = function(die){return die.val}
         return (this.max(die_val_fn) === this.min(die_val_fn) )
       }
 

@@ -17,19 +17,22 @@ body {
 /* scorecard column 1 */
 #scorecard tr td:first-child {
     width: 100px;
+    text-align: left;
 }
 
 /* scorecard column 2 */
 #scorecard tr td:nth-child(2) {
     width: 100px;
+    text-align: left;
+}
+
+/* scorecard column others */
+#scorecard tr td {
+    width: 50px;
     text-align: center;
 }
 
-/* scorecard column 3 */
-#scorecard tr td:last-child {
-    width: 10px;
-    text-align: center;
-}
+
 
 .scorebox-note {
     font-size: 85%;
