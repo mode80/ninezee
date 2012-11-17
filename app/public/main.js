@@ -287,40 +287,47 @@ function bodyController ($scope) {
 
   // Dice
   // ***********************************************************************************************
-    var dice = []
-    for (var i=1; i<=5; i++) dice.push(new Die(i))
+    var Dice = function() {
 
-    dice.rollSelected = function() {
-      var selectedDice = this.filter(function(die) { return die.selected; })
-      selectedDice.each( function(die) { die.roll() } )
-    }
+      if (dice) return dice // singleton
+      var dice = []
 
-    dice.selectAll = function() {
-      dice.each( function(die) {die.selected=true})
-    }
+      for (var i=1; i<=5; i++) dice.push(new Die(i))
 
-    dice.selectNone = function() {
-      dice.each( function(die) {die.selected=false})
-    }
+      dice.rollSelected = function() {
+        var selectedDice = this.filter(function(die) { return die.selected; })
+        selectedDice.each( function(die) { die.roll() } )
+      }
 
-    dice.sumOfDice = function() {
-      return this.reduce( function(sum, die) {return sum + die.val }, 0 )
-    }
+      dice.selectAll = function() {
+        dice.each( function(die) {die.selected=true})
+      }
 
-    dice.sortedCopy = function() {
-      return this.slice().sort(function(a,b) {return (a.val > b.val) } )
-    }
+      dice.selectNone = function() {
+        dice.each( function(die) {die.selected=false})
+      }
 
-    dice.allSame = function() {
-      die_val_fn = function(die){return die.val}
-      return (this.max(die_val_fn) === this.min(die_val_fn) )
+      dice.sumOfDice = function() {
+        return this.reduce( function(sum, die) {return sum + die.val }, 0 )
+      }
+
+      dice.sortedCopy = function() {
+        return this.slice().sort(function(a,b) {return (a.val > b.val) } )
+      }
+
+      dice.allSame = function() {
+        die_val_fn = function(die){return die.val}
+        return (this.max(die_val_fn) === this.min(die_val_fn) )
+      }
+
+      return dice
     }
 // *************************************************************************************************
 
 // Game
 // ***********************************************************************************************
   var Game = function() {
-    this.dice = dice
+    this.dice = new Dice()
     this.players = []
     this.current_player = this.newPlayer()
     this.round = 0
