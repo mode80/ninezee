@@ -34,7 +34,12 @@
 			<div class=left-side>
 				<table id=scorecard class="table table-bordered table-condensed">
 					<tr><td width=100>UPPER SECTION</td><td width=100>HOW TO SCORE</td>
-						<td width=100 ng-repeat="p in players">{{p.name}} </td>
+						<td 	width=100 
+								ng-repeat="p in players" 
+								ng-class="{strong: (p == player)}"
+						>
+						{{p.name}}
+						</td>
 					</tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
 						<td 	ng-repeat="p in players"

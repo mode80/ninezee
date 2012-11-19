@@ -1,3 +1,4 @@
+/*globals angular*/
 /*jshint asi: true, es5: true, proto: true*/
 
 function bodyController ($scope) {
@@ -34,6 +35,7 @@ function bodyController ($scope) {
       // override this
     }
     proto.proposeVal = function(die_array) {
+      if (this.player.game.current_player !== this.player) return
       if (this.val === null) {
         this.val=this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.proposeVal(die_array)
@@ -41,6 +43,7 @@ function bodyController ($scope) {
       }
     }
     proto.unproposeVal = function(die_array) {
+      if (this.player.game.current_player !== this.player) return
       if (this.is_temp) {
         this.val=null
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.unproposeVal(die_array)
@@ -48,11 +51,13 @@ function bodyController ($scope) {
       }
     }
     proto.lockVal = function(die_array) {
+      if (this.player.game.current_player !== this.player) return
       if (this.val !== null && this.is_temp === true) {
         this.is_temp = false
         this.val = this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.lockVal(die_array)
         this.player.refreshTotals()
+        this.player.game.nextTurn()
       }
     }
 
@@ -233,9 +238,11 @@ function bodyController ($scope) {
 
   // Player 
   // ***********************************************************************************************
-    function Player(name) {
+    function Player(name, game) {
 
       this.name = name || "Player"
+      this.game = game
+      this.winner = null
       
       this.aces    =  new SimpleBox(this, 1)
       this.twos    =  new SimpleBox(this, 2)
@@ -330,26 +337,35 @@ function bodyController ($scope) {
     this.dice = new Dice()
     this.players = []
     this.current_player = this.newPlayer()
-    this.round = 0
+    this.current_player_index = 0
+    this.round = 1
+    this.roll_count = 0
   }
   proto = Game.prototype = Object.extended({})
   proto.newPlayer = function() {
-    this.players.push(new Player("Player " + (this.players.length+1) ) )
-    return this.players[this.players.length-1]
+    var p = new Player("Player "+(this.players.length+1), this)
+    this.players.push(p)
+    return p
+  }
+  proto.nextTurn = function() {
+    this.current_player_index++
+    this.current_player_index %= this.players.length 
+    if (this.current_player_index === 0) this.nextRound()
+    this.current_player = this.players[this.current_player_index]
+  }
+  proto.nextRound = function() {
+    this.round++
+    if (this.round > 13) // determine winner(s)
+      this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
   }
 
 // set up and kick off
 // ***********************************************************************************************
-  $scope.newGame = function() {
-    var g = new Game()
-    $scope.dice = g.dice
-    $scope.players = g.players
-    $scope.player = g.current_player
-    $scope.round = g.round
-    $scope.newPlayer = g.newPlayer
-  }
+  var g = new Game()
+  $scope.dice = g.dice
+  $scope.players = g.players
+  $scope.__defineGetter__("player", function() {return g.current_player})
+  $scope.newPlayer = function() {return g.newPlayer()}
   
-  $scope.newGame()
-
   
 }
