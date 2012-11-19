@@ -314,6 +314,10 @@ function bodyController ($scope) {
         dice.each( function(die) {die.selected=false})
       }
 
+      dice.selectInverse = function() {
+        dice.each( function(die){die.selected = ! die.selected})
+      }
+
       dice.sumOfDice = function() {
         return this.reduce( function(sum, die) {return sum + die.val }, 0 )
       }

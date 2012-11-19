@@ -83,9 +83,13 @@ body {
     margin: 0 auto;
 }
 
-.val {
+.box {
     font-weight: bold;
     font-size: 18;
+}
+
+.interactive:hover {
+    background-color: #333333;
 }
 
 .temp {
