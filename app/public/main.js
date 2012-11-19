@@ -91,7 +91,7 @@ function bodyController ($scope) {
       var retval = 0
       var i = sorted_dice.length
       while (i--) { 
-        if (last_val === sorted_dice[i].val) same_count++
+        if (last_val === sorted_dice[i].val) same_count++; else same_count=1
         last_val = sorted_dice[i].val 
       }
       if (same_count >= this.n) {
@@ -365,11 +365,14 @@ function bodyController ($scope) {
 
 // set up and kick off
 // ***********************************************************************************************
-  var g = new Game()
-  $scope.dice = g.dice
-  $scope.players = g.players
-  $scope.__defineGetter__("player", function() {return g.current_player})
-  $scope.newPlayer = function() {return g.newPlayer()}
-  
+  $scope.newGame = function() {
+    var g = new Game()
+    $scope.dice = g.dice
+    $scope.players = g.players
+    $scope.__defineGetter__("player", function() {return g.current_player})
+    $scope.newPlayer = function() {return g.newPlayer()}
+  }
+
+  $scope.newGame()
   
 }
