@@ -35,161 +35,191 @@
 				<table id=scorecard class="table table-bordered table-condensed">
 					<tr><td width=100>UPPER SECTION</td><td width=100>HOW TO SCORE</td>
 						<td 	width=100 
+								class="box"
 								ng-repeat="p in players" 
-								ng-class="{strong: (p == player)}"
-						>
-						{{p.name}}
+								ng-class="{strong: (p == player)}"> 
+								{{p.name}} 
 						</td>
 					</tr>
 					<tr><td>Aces <small class=scorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
  								ng-mouseenter="p.aces.proposeVal(dice)"
 								ng-mouseleave="p.aces.unproposeVal(dice)" 
-								ng-click="p.aces.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp : p.aces.is_temp}">{{p.aces.val}}</div>
+								ng-click="p.aces.lockVal(dice)" 
+								ng-class="{temp : p.aces.is_temp, interactive : p.aces.is_temp}"> 
+								{{p.aces.val}} 
 						</td>
 					</tr>
 					<tr><td>Twos <small class=scorebox-note>= 2</small></td><td>Count and Add Only Twos</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.twos.proposeVal(dice)" 
 								ng-mouseleave="p.twos.unproposeVal(dice)" 
-								ng-click="p.twos.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.twos.is_temp}">{{p.twos.val}}</div>
+								ng-click="p.twos.lockVal(dice)" 
+								ng-class="{temp: p.twos.is_temp, interactive : p.twos.is_temp}"> 
+								{{p.twos.val}} 
 						</td>
 					</tr>
 					<tr><td>Threes <small class=scorebox-note>= 3</small></td><td>Count and Add Only Threes</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								<td	ng-repeat="p in players"
 								ng-mouseenter="p.threes.proposeVal(dice)" 
 								ng-mouseleave="p.threes.unproposeVal(dice)" 
-								ng-click="p.threes.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.threes.is_temp}">{{p.threes.val}}</div>
+								ng-click="p.threes.lockVal(dice)" 
+								ng-class="{temp: p.threes.is_temp, interactive : p.threes.is_temp}">
+								{{p.threes.val}}
 						</td>
 					</tr>
 					<tr><td>Fours <small class=scorebox-note>= 4</small></td><td>Count and Add Only Fours</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.fours.proposeVal(dice)" 
 								ng-mouseleave="p.fours.unproposeVal(dice)" 
-								ng-click="p.fours.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.fours.is_temp}">{{p.fours.val}}</div>
+								ng-click="p.fours.lockVal(dice)" 
+								ng-class="{temp: p.fours.is_temp, interactive : p.fours.is_temp}">
+								{{p.fours.val}}
 						</td>
 					</tr>
 					<tr><td>Fives <small class=scorebox-note>= 5</small></td><td>Count and Add Only Fives</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.fives.proposeVal(dice)" 
 								ng-mouseleave="p.fives.unproposeVal(dice)" 
-								ng-click="p.fives.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.fives.is_temp}">{{p.fives.val}}</div>
+								ng-click="p.fives.lockVal(dice)" 
+								ng-class="{temp: p.fives.is_temp, interactive : p.fives.is_temp}">
+								{{p.fives.val}}
 						</td>
 					</tr>
 					<tr><td>Sixes <small class=scorebox-note>= 6</small></td><td>Count and Add Only Sixes</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.sixes.proposeVal(dice)" 
 								ng-mouseleave="p.sixes.unproposeVal(dice)" 
-								ng-click="p.sixes.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.sixes.is_temp}">{{p.sixes.val}}</div>
+								ng-click="p.sixes.lockVal(dice)" 
+								ng-class="{temp: p.sixes.is_temp, interactive : p.sixes.is_temp}">
+								{{p.sixes.val}}
 						</td>
 					</tr>
 					<tr><td>TOTAL SCORE</small></td><td><i class=icon-arrow-right></i></td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.simple_total.is_temp}">{{ p.simple_total.val }}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.simple_total.is_temp}">
+								{{ p.simple_total.val }}
 						</td>
 					</tr>
 					<tr><td>BONUS <small class=scorebox-note>If total score is 63 or over</small></td><td>SCORE 35</td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.upper_bonus.is_temp}">{{p.upper_bonus.val}}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.upper_bonus.is_temp}">
+								{{p.upper_bonus.val}}
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of upper section</td><td><i class=icon-arrow-right></i></td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.upper_total.is_temp}">{{p.upper_total.val}}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.upper_total.is_temp}">
+								{{p.upper_total.val}}
 						</td>
 					</tr>
 					<tr><td></td><td></td><td 	ng-repeat="p in players"></td></tr>
 					<tr><td>LOWER SECTION</td><td></td><td 	ng-repeat="p in players"></td></tr>
 					<tr><td>3 of a kind</td><td>Add Total Of All Dice</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.three_of_a_kind.proposeVal(dice)" 
 								ng-mouseleave="p.three_of_a_kind.unproposeVal(dice)" 
-								ng-click="p.three_of_a_kind.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.three_of_a_kind.is_temp}">{{p.three_of_a_kind.val}}</div>
+								ng-click="p.three_of_a_kind.lockVal(dice)" 
+								ng-class="{temp: p.three_of_a_kind.is_temp, interactive : p.three_of_a_kind.is_temp}">
+								{{p.three_of_a_kind.val}}
 						</td>
 					</tr>
 					<tr><td>4 of a kind</td><td>Add Total Of All Dice</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.four_of_a_kind.proposeVal(dice)" 
 								ng-mouseleave="p.four_of_a_kind.unproposeVal(dice)" 
-								ng-click="p.four_of_a_kind.lockVal(dice)" >
-							<div class="interactive box" ng-class="{temp: p.four_of_a_kind.is_temp}">{{p.four_of_a_kind.val}}</div>
+								ng-click="p.four_of_a_kind.lockVal(dice)" 
+								ng-class="{temp: p.four_of_a_kind.is_temp, interactive : p.four_of_a_kind.is_temp}">
+								{{p.four_of_a_kind.val}}
 						</td>
 					</tr>
 					<tr><td>Full House</td><td>Score 25</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.full_house.proposeVal(dice)" 
 								ng-mouseleave="p.full_house.unproposeVal(dice)" 
 								ng-click="p.full_house.lockVal(dice)" 
-								ng-class="{temp: p.full_house.is_temp}"
-						>
-							<div class="interactive box" ng-class="{temp: p.full_house.is_temp}">{{p.full_house.val}}</div>
+								ng-class="{temp: p.full_house.is_temp, interactive : p.full_house.is_temp}">
+								{{p.full_house.val}}
 						</td>
 					</tr>
 					<tr><td>Sm. Straight <small class=scorebox-note>Sequence of 4</small></td><td>Score 30</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.sm_straight.proposeVal(dice)" 
 								ng-mouseleave="p.sm_straight.unproposeVal(dice)" 
 								ng-click="p.sm_straight.lockVal(dice)" 
-								ng-class="{temp: p.sm_straight.is_temp}"
-						>
-							<div class="interactive box" ng-class="{temp: p.sm_straight.is_temp}">{{p.sm_straight.val}}</div>
+								ng-class="{temp: p.sm_straight.is_temp, interactive : p.sm_straight.is_temp}">
+								{{p.sm_straight.val}}
 						</td>
 					</tr>
 					<tr><td>Lg. Straight <small class=scorebox-note>Sequence of 5</small></td><td>Score 40</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.lg_straight.proposeVal(dice)" 
 								ng-mouseleave="p.lg_straight.unproposeVal(dice)" 
 								ng-click="p.lg_straight.lockVal(dice)" 
-								ng-class="{temp: p.lg_straight.is_temp}"
-						>
-							<div class="interactive box" ng-class="{temp: p.lg_straight.is_temp}">{{p.lg_straight.val}}</div>
+								ng-class="{temp: p.lg_straight.is_temp, interactive : p.lg_straight.is_temp}">
+								{{p.lg_straight.val}}
 						</td>
 					</tr>
 					<tr><td>YAHTZEE <small class=scorebox-note>5 of a kind</small></td><td>Score 50</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.yahtzee.proposeVal(dice)" 
 								ng-mouseleave="p.yahtzee.unproposeVal(dice)" 
 								ng-click="p.yahtzee.lockVal(dice)" 
-								ng-class="{temp: p.yahtzee.is_temp}"
-						>
-							<div class="interactive box" ng-class="{temp: p.yahtzee.is_temp}">{{p.yahtzee.val}}</div>
+								ng-class="{temp: p.yahtzee.is_temp, interactive : p.yahtzee.is_temp}">
+								{{p.yahtzee.val}}
 						</td>
 					</tr>
 					<tr><td>Chance</td><td>Score Total of All 5 Dice</td>
-						<td 	ng-repeat="p in players"
+						<td 	class="box"
+								ng-repeat="p in players"
 								ng-mouseenter="p.chance.proposeVal(dice)" 
 								ng-mouseleave="p.chance.unproposeVal(dice)" 
 								ng-click="p.chance.lockVal(dice)" 
-								ng-class="{temp: p.chance.is_temp}"
-						>
-							<div class="interactive box" ng-class="{temp: p.chance.is_temp}">{{p.chance.val}}</div>
+								ng-class="{temp: p.chance.is_temp, interactive : p.chance.is_temp}">
+								{{p.chance.val}}
 						</td>
 					</tr>
 					<tr><td>YAHTZEE BONUS </td><td>SCORE 100 PER</td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.yahtzee_bonus.is_temp}"> {{p.yahtzee_bonus.val}} </div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.yahtzee_bonus.is_temp}"> 
+								{{p.yahtzee_bonus.val}}
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Lower Section</small></td><td><i class=icon-arrow-right></i></td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.lower_total.is_temp}">{{p.lower_total.val}}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.lower_total.is_temp}">
+								{{p.lower_total.val}}
 						</td>
 					</tr>
 					<tr><td>TOTAL <small class=scorebox-note>Of Upper Section</small></td><td><i class=icon-arrow-right></i></td>
-						<td 	ng-repeat="p in players">
-							<div class="box" ng-class="{temp: p.upper_total.is_temp}">{{p.upper_total.val}}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.upper_total.is_temp}">
+								{{p.upper_total.val}}
 						</td>
 					</tr>
 					<tr><td>GRAND TOTAL </td><td><i class=icon-arrow-right></i></td>
-						<td 	ng-repeat="p in players">
-							<div class="interactive box" ng-class="{temp: p.grand_total.is_temp}">{{p.grand_total.val}}</div>
+						<td 	class="box"
+								ng-repeat="p in players"
+								ng-class="{temp: p.grand_total.is_temp}">
+								{{p.grand_total.val}}
 						</td>
 					</tr>
 				</table>
@@ -198,7 +228,12 @@
 		</div>
 
 		<div id=dice-section class=span2>
-			<p ng-repeat="die in dice" class=die id=die{{$index+1}} ng-class="{selected : die.selected}" ng-click="die.selected = !die.selected">{{die.val}}</p>
+			<p 	ng-repeat="die in dice" 
+				ng-class="{selected : die.selected}" 
+				class=die id=die{{$index+1}} n
+				ng-click="die.selected = !die.selected">
+				{{die.val}}
+			</p>
 		</div>
 
 		<div id=right-gutter class=span2>
