@@ -269,7 +269,7 @@ function bodyController ($scope) {
       with (this) { 
         simple_scores.push(aces,twos,threes,fours,fives,sixes)
         upper_scores.applyPush(simple_scores).push(upper_bonus)
-        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, sm_straight, lg_straight)
+        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, sm_straight, lg_straight, chance)
         bonus_triggers.applyPush(simple_scores).applyPush(lower_scores)
         this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
         lower_scores.push(yahtzee, yahtzee_bonus)
