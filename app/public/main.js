@@ -1,7 +1,7 @@
 /*globals angular*/
 /*jshint asi: true, es5: true, proto: true*/
 
-function bodyController ($scope) {
+function Jahtzee() { 
 
   var proto
 
@@ -266,15 +266,16 @@ function bodyController ($scope) {
       this.lower_scores     = new ScoreBoxGroup()
       this.bonus_triggers   = new ScoreBoxGroup()
       this.all_scores       = new ScoreBoxGroup()
-      with (this) { 
-        simple_scores.push(aces,twos,threes,fours,fives,sixes)
-        upper_scores.applyPush(simple_scores).push(upper_bonus)
-        lower_scores.push(three_of_a_kind, four_of_a_kind, full_house, sm_straight, lg_straight, chance)
-        bonus_triggers.applyPush(simple_scores).applyPush(lower_scores)
-        this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
-        lower_scores.push(yahtzee, yahtzee_bonus)
-        all_scores.applyPush(upper_scores).applyPush(lower_scores)
-      }
+
+      this.simple_scores.push(
+        this.aces,this.twos,this.threes,this.fours,this.fives,this.sixes)
+      this.upper_scores.applyPush(this.simple_scores).push(this.upper_bonus)
+      this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind, this.full_house, 
+        this.sm_straight, this.lg_straight, this.chance)
+      this.bonus_triggers.applyPush(this.simple_scores).applyPush(this.lower_scores)
+      this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
+      this.lower_scores.push(this.yahtzee, this.yahtzee_bonus)
+      this.all_scores.applyPush(this.upper_scores).applyPush(this.lower_scores)
 
       this.simple_total = new TotalBox(this, this.simple_scores) 
       this.upper_total  = new TotalBox(this, this.upper_scores)
@@ -333,46 +334,57 @@ function bodyController ($scope) {
 
       return dice
     }
-// *************************************************************************************************
+  // *************************************************************************************************
 
-// Game
-// ***********************************************************************************************
-  var Game = function() {
-    this.dice = new Dice()
-    this.players = []
-    this.current_player = this.newPlayer()
-    this.current_player_index = 0
-    this.round = 1
-    this.roll_count = 0
-  }
-  proto = Game.prototype = Object.extended({})
-  proto.newPlayer = function() {
-    var p = new Player("Player "+(this.players.length+1), this)
-    this.players.push(p)
-    return p
-  }
-  proto.nextTurn = function() {
-    this.current_player_index++
-    this.current_player_index %= this.players.length 
-    if (this.current_player_index === 0) this.nextRound()
-    this.current_player = this.players[this.current_player_index]
-  }
-  proto.nextRound = function() {
-    this.round++
-    if (this.round > 13) // determine winner(s)
-      this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
-  }
+  // Game
+  // ***********************************************************************************************
+    this.Game = function() {
+      this.dice = new Dice()
+      this.players = []
+      this.current_player = this.newPlayer()
+      this.current_player_index = 0
+      this.round = 1
+      this.roll_count = 0
+    }
+    proto = this.Game.prototype = Object.extended({})
+    proto.newPlayer = function() {
+      var p = new Player("Player "+(this.players.length+1), this)
+      this.players.push(p)
+      return p
+    }
+    proto.nextTurn = function() {
+      this.current_player_index++
+      this.current_player_index %= this.players.length 
+      if (this.current_player_index === 0) this.nextRound()
+      this.current_player = this.players[this.current_player_index]
+    }
+    proto.nextRound = function() {
+      this.round++
+      if (this.round > 13) // determine winner(s)
+        this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
+    }
 
-// set up and kick off
-// ***********************************************************************************************
-  $scope.newGame = function() {
-    var g = new Game()
-    $scope.dice = g.dice
-    $scope.players = g.players
-    $scope.__defineGetter__("player", function() {return g.current_player})
-    $scope.newPlayer = function() {return g.newPlayer()}
-  }
-
-  $scope.newGame()
-  
 }
+
+var app = angular.module("jahtzee_app", []).
+  service("jahtzee_service", Jahtzee)
+
+
+app.controller('bodyController', ["$scope", "jahtzee_service",
+
+  function ($scope, jahtzee_service) {
+
+    // set up and kick off
+    $scope.newGame = function() {
+      var g = new jahtzee_service.Game()
+      $scope.dice = g.dice
+      $scope.players = g.players
+      $scope.__defineGetter__("player", function() {return g.current_player})
+      $scope.newPlayer = function() {return g.newPlayer()}
+    }
+
+    $scope.newGame()   
+  }
+  
+])
+
