@@ -85,22 +85,12 @@ function Jahtzee() {
     }
     proto = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
     proto.calcVal = function(die_array) {
-      var sorted_dice = die_array.sortedCopy()
-      var last_val = null
-      var same_count = 1
-      var retval = 0
-      var i = sorted_dice.length
-      while (i--) { 
-        if (last_val === sorted_dice[i].val && last_val !== null) same_count++; else same_count=1
-        last_val = sorted_dice[i].val 
-      }
-      if (same_count >= this.n) {
-        if (this.n === 5) // Yahtzee!
-          retval = 50
-        else
-          retval = die_array.sumOfDice()
-      }
-      return retval
+      var most_val = die_array.most("val").val      
+      var most_count = die_array.filter(function(d){return d.val===most_val}).count()
+      if (most_count >= this.n) 
+        if (this.n === 5) return 50 /*Yahtzee!*/; else return die_array.sumOfDice()
+      else 
+        return 0
     }
 
   // ChanceBox

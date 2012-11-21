@@ -74,7 +74,7 @@ body {
 }
 
 .selected {
-    background-color: black;
+    background-color: gray;
     color: white;
     border-color: white;
 }
