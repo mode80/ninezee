@@ -36,7 +36,7 @@
 					<tr><td width=100>UPPER SECTION</td><td width=100>HOW TO SCORE</td>
 						<td 	width=100 
 								ng-repeat="p in players" 
-								ng-class="{strong : (p == player)}"> 
+								ng-class="{'strong' : (p == player), 'text-success' : (p.winner == true)}"> 
 								{{p.name}} 
 						</td>
 					</tr>
@@ -236,7 +236,13 @@
 		</div>
 
 		<div id=right-gutter class=span2>
-			<button id=btnRoll class="section-btn btn btn-block btn-success " ng-click="dice.rollSelected()">ROLL !</button>
+			<button 
+				id=btnRoll 
+				class="section-btn btn btn-block btn-success"
+				ng-disabled="{{noMoreRolls()}}" 
+				ng-click="nextRoll()">
+				ROLL ({{roll_count}})
+			</button>
 			<hr>
 			<button id=btnSelectAll class="section-btn btn btn-block btn-info" ng-click="dice.selectAll()">Select All</button>
 			<button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="dice.selectNone()">Select None</button>

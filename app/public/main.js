@@ -8,7 +8,7 @@ function Jahtzee() {
   // Die 
   // ***********************************************************************************************
     var Die = function(val) {
-        this.val = val || 1
+        this.val = val || null
         this.selected = false
     }
     Die.prototype = Object.extended({}) // because we like sugar
@@ -91,7 +91,7 @@ function Jahtzee() {
       var retval = 0
       var i = sorted_dice.length
       while (i--) { 
-        if (last_val === sorted_dice[i].val) same_count++; else same_count=1
+        if (last_val === sorted_dice[i].val && last_val !== null) same_count++; else same_count=1
         last_val = sorted_dice[i].val 
       }
       if (same_count >= this.n) {
@@ -300,7 +300,7 @@ function Jahtzee() {
       if (dice) return dice // singleton
       var dice = []
 
-      for (var i=1; i<=5; i++) dice.push(new Die(i))
+      for (var i=5; i--;) dice.push( new Die() )
 
       dice.rollSelected = function() {
         var selectedDice = this.filter(function(die) { return die.selected; })
@@ -329,9 +329,15 @@ function Jahtzee() {
 
       dice.allSame = function() {
         var die_val_fn = function(die){return die.val}
+        if (this[0].val === null) return false
         return (this.max(die_val_fn) === this.min(die_val_fn) )
       }
 
+      dice.reset = function() {
+        this.each(function(die){die.val = null})
+      }
+
+      dice.selectAll()
       return dice
     }
   // *************************************************************************************************
@@ -354,14 +360,24 @@ function Jahtzee() {
     }
     proto.nextTurn = function() {
       this.current_player_index++
+      this.roll_count = 0
+      this.dice.selectAll()
       this.current_player_index %= this.players.length 
       if (this.current_player_index === 0) this.nextRound()
       this.current_player = this.players[this.current_player_index]
+      this.dice.reset()
     }
     proto.nextRound = function() {
       this.round++
       if (this.round > 13) // determine winner(s)
         this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
+    }
+    proto.nextRoll = function() {
+      this.dice.rollSelected()
+      if (this.roll_count < 3) this.roll_count++
+    }
+    proto.noMoreRolls = function() {
+      return false // TODO make work
     }
 
 }
@@ -380,7 +396,10 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
       $scope.dice = g.dice
       $scope.players = g.players
       $scope.__defineGetter__("player", function() {return g.current_player})
+      $scope.__defineGetter__("roll_count", function() {return g.roll_count})      
       $scope.newPlayer = function() {return g.newPlayer()}
+      $scope.nextRoll = function() {return g.nextRoll()}
+      $scope.noMoreRolls = function() {return g.noMoreRolls()}
     }
 
     $scope.newGame()   
