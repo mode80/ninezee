@@ -58,23 +58,8 @@ body {
     border-style: dashed;
 }
 
-#die1 {
-}
-
-#die2 {
-}
-
-#die3 {
-}
-
-#die4 {
-}
-
-#die5 {
-}
-
 .selected {
-    background-color: gray;
+    background-color: #999999;
     color: white;
     border-color: white;
 }
