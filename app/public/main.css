@@ -1,38 +1,31 @@
-body {
-     /* padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-}
-
-
 .left-side {
-    border: 1px solid lightgray;
+    border: 1px solid #dddddd;
     padding: 4px;
     border-radius: 4px;
 }
 
-#scorecard {
-    margin-bottom: 0px;
+.scorecard {
+    margin-bottom: 0;
 }
 
 
 /* scorecard column 1 */
-#scorecard tr td:first-child {
+.scorecard tr td:first-child {
     width: 100px;
     text-align: left;
 }
 
 /* scorecard column 2 */
-#scorecard tr td:nth-child(2) {
+.scorecard tr td:nth-child(2) {
     width: 100px;
     text-align: left;
 }
 
 /* scorecard column others */
-#scorecard tr td {
+.scorecard tr td {
     width: 50px;
     text-align: center;
 }
-
-
 
 .scorebox-note {
     font-size: 85%;
@@ -40,7 +33,7 @@ body {
     color: gray;
 }
 
-#dice-section {
+.dice-section {
     text-align: center;
 }
 
@@ -64,7 +57,7 @@ body {
     border-color: white;
 }
 
-#section-button {
+.section-btn {
     margin: 0 auto;
 }
 
@@ -85,4 +78,6 @@ body {
         font-weight: bold;
 }
 
-
+.hidden {
+    visibility: hidden;
+}

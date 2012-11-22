@@ -57,6 +57,7 @@ function Jahtzee() {
         this.val = this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.lockVal(die_array)
         this.player.refreshTotals()
+        this.player.game.started = true
         this.player.game.nextTurn()
       }
     }
@@ -341,9 +342,11 @@ function Jahtzee() {
       this.current_player_index = 0
       this.round = 1
       this.roll_count = 0
+      this.started = false
     }
     proto = this.Game.prototype = Object.extended({})
     proto.newPlayer = function() {
+      if (this.started) return
       var p = new Player("Player "+(this.players.length+1), this)
       this.players.push(p)
       return p
@@ -363,11 +366,12 @@ function Jahtzee() {
         this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
     }
     proto.nextRoll = function() {
+      if (this.noMoreRolls()) return
       this.dice.rollSelected()
       if (this.roll_count < 3) this.roll_count++
     }
     proto.noMoreRolls = function() {
-      return false // TODO make work
+      return (this.roll_count >= 3)
     }
 
 }
@@ -382,14 +386,7 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
     // set up and kick off
     $scope.newGame = function() {
-      var g = new jahtzee_service.Game()
-      $scope.dice = g.dice
-      $scope.players = g.players
-      $scope.__defineGetter__("player", function() {return g.current_player})
-      $scope.__defineGetter__("roll_count", function() {return g.roll_count})      
-      $scope.newPlayer = function() {return g.newPlayer()}
-      $scope.nextRoll = function() {return g.nextRoll()}
-      $scope.noMoreRolls = function() {return g.noMoreRolls()}
+      $scope.g = new jahtzee_service.Game()
     }
 
     $scope.newGame()   
