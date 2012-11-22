@@ -314,7 +314,7 @@ function Jahtzee() {
       }
 
       dice.sortedCopy = function() {
-        return this.slice().sort(function(a,b) {return (a.val > b.val) } )
+        return this.slice().sort(function(a,b) {return (a.val - b.val) } )
       }
 
       dice.allSame = function() {
