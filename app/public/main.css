@@ -2,6 +2,10 @@ h1 {
     text-align: center;
 }
 
+audio {
+    display: none;
+}​
+
 .left-side {
     border: 1px solid #dddddd;
     padding: 4px;

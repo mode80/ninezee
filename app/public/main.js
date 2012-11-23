@@ -290,8 +290,14 @@ function Jahtzee() {
 
       if (dice) return dice // singleton
       var dice = []
+      dice.sound_on = false
 
       for (var i=5; i--;) dice.push( new Die() )
+
+      dice.blankSelected = function() {
+        var selectedDice = this.filter(function(die) { return die.selected; })
+        selectedDice.each(function(die) { die.val = null})        
+      }
 
       dice.rollSelected = function() {
         var selectedDice = this.filter(function(die) { return die.selected; })
@@ -376,20 +382,38 @@ function Jahtzee() {
 
 }
 
+// the main app module
 var app = angular.module("jahtzee_app", []).
   service("jahtzee_service", Jahtzee)
 
-
+// the main controller
 app.controller('bodyController', ["$scope", "jahtzee_service",
 
   function ($scope, jahtzee_service) {
 
     // set up and kick off
-    $scope.newGame = function() {
-      $scope.g = new jahtzee_service.Game()
-    }
+      $scope.newGame = function() {
+        $scope.g = new jahtzee_service.Game()
+      }
 
-    $scope.newGame()   
+      $scope.newGame()   
+
+    // wrap rolls with delay and sound effect
+      var origRollSelected = $scope.g.dice.rollSelected
+      $scope.g.dice.rollSelected = function () {
+        $scope.g.dice.blankSelected()
+        var shakes = 17
+        ;(function repeatedRollSelected() {
+              shakes--
+              if (!shakes) return
+              origRollSelected.call($scope.g.dice);$scope.$apply()
+              window.setTimeout(repeatedRollSelected, 100)
+        })()
+        var s = document.getElementById("sound")
+        s.currentTime = 0
+        s.play()
+      }
+
   }
   
 ])
