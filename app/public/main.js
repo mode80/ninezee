@@ -294,11 +294,6 @@ function Jahtzee() {
 
       for (var i=5; i--;) dice.push( new Die() )
 
-      dice.blankSelected = function() {
-        var selectedDice = this.filter(function(die) { return die.selected; })
-        selectedDice.each(function(die) { die.val = null})        
-      }
-
       dice.rollSelected = function() {
         var selectedDice = this.filter(function(die) { return die.selected; })
         selectedDice.each( function(die) { die.roll() } )
@@ -391,28 +386,27 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
   function ($scope, jahtzee_service) {
 
-    // set up and kick off
-      $scope.newGame = function() {
-        $scope.g = new jahtzee_service.Game()
-      }
+    // kick off a jahtzee game object
+      $scope.newGame = function() { $scope.g = new jahtzee_service.Game() }
+      $scope.newGame() 
 
-      $scope.newGame()   
-
-    // wrap rolls with delay and sound effect
+    // modify the standard roll function with implemntation-specific animation and soundeffect
       var origRollSelected = $scope.g.dice.rollSelected
       $scope.g.dice.rollSelected = function () {
-        $scope.g.dice.blankSelected()
         var shakes = 17
-        ;(function repeatedRollSelected() {
-              shakes--
-              if (!shakes) return
-              origRollSelected.call($scope.g.dice);$scope.$apply()
-              window.setTimeout(repeatedRollSelected, 100)
-        })()
+        function repeatedRollSelected() {
+          if (shakes--) {
+            origRollSelected.call($scope.g.dice)
+            $scope.$apply()
+            window.setTimeout(repeatedRollSelected, 100)
+          }
+        }
+        repeatedRollSelected()
         var s = document.getElementById("sound")
         s.currentTime = 0
         s.play()
       }
+  
 
   }
   
