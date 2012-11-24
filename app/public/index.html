@@ -241,7 +241,9 @@
 				id=btnRoll 
 				class="section-btn btn btn-block btn-success"
 				ng-class="{disabled : g.noMoreRolls()}"
-				ng-click="g.nextRoll()" >
+				ng-click="g.nextRoll()" 
+				onclick="document.getElementById('sound').play()" 
+				> <!-- iOS makes us play sounds from onclick -->
 				ROLL [{{g.roll_count}}]
 			</button>
 			<hr>
@@ -254,7 +256,7 @@
 				id=btnNewPlayer 
 				class="section-btn btn btn-block btn-info" 
 				ng-hide="g.started"
-				ng-click="g.newPlayer()">
+				ng-click="g.newPlayer()"> 
 				New Player
 			</button>
 		</div>
@@ -263,7 +265,7 @@
 
 </div>
 
-<audio id="sound" src="../assets/wav/roll.wav"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
+<audio id="sound" src="../assets/wav/roll.m4a"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
 
 <!-- ================================================== -->
 
