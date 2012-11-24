@@ -31,7 +31,7 @@
 		<div id="left-side" class="span8">
 
 			<div class="scorecard-section">
-				<table id=scorecard class="scorecard table table-bordered ">
+				<table id="the-scorecard" class="scorecard table table-bordered ">
 					<tr><td width=100><strong>UPPER SECTION</strong></td><td width=100>HOW TO SCORE</td>
 						<td 	width=100 
 								ng-repeat="p in g.players" 
@@ -99,6 +99,7 @@
 								{{p.sixes.val}}
 						</td>
 					</tr>
+					<!--
 					<tr><td>TOTAL SCORE</small></td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
@@ -106,7 +107,8 @@
 								{{ p.simple_total.val }}
 						</td>
 					</tr>
-					<tr><td>BONUS <small class="scorebox-note">If above is 63 or more</small></td><td>SCORE 35</td>
+					-->
+					<tr><td>BONUS <small class="scorebox-note">If total is 63+ above</small></td><td>SCORE 35</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: p.upper_bonus.is_temp}">
@@ -240,7 +242,7 @@
 		</div>
 
 		<div id="right-gutter" class="span2" >
-			<h1>Jahtzee <i class="icon-th"></i></h1>
+			<h1>Jahtzee<i class="icon-th"></i></h1>
 			<hr>
 			<button 
 				id=btnRoll 

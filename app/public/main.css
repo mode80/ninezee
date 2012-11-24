@@ -6,10 +6,6 @@ audio {
     display: none;
 }​
 
-#scorecard {
-    border-collapse: collapse;
-}
-
 #btnRoll {
     height: 60px;
 }
@@ -21,7 +17,6 @@ audio {
 }
 
 .scorecard {
-    border: 1px solid #ddd;
     margin-bottom: 0;
 }
 
