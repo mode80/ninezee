@@ -36,7 +36,7 @@
 						<td 	width=100 
 								ng-repeat="p in g.players" 
 								ng-class="{strong : (p == g.player), 'text-success' : (p.winner == true)}"> 
-								{{p.name}} 
+								 <input type="text" ng-model="p.name" style="text-align:center;border:0;box-shadow:none;-webkit-box-shadow:none;margin:0;padding:0;width:{{p.name.length*11}}px" />
 						</td>
 					</tr>
 					<tr><td>Aces <small class="scorebox-note">= 1</small></td><td>Count and Add Only Aces</td>

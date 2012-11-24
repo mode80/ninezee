@@ -98,3 +98,8 @@ audio {
 .hidden {
     visibility: hidden;
 }
+
+.name-input {
+    margin: 0;
+    padding: 0;
+}
