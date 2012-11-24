@@ -393,18 +393,18 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
     // modify the standard roll function with implemntation-specific animation and soundeffect
       var origRollSelected = $scope.g.dice.rollSelected
       $scope.g.dice.rollSelected = function () {
-        var shakes = 17
+        var shakes = 25
         function repeatedRollSelected() {
           if (shakes--) {
             origRollSelected.call($scope.g.dice)
-            $scope.$apply()
-            window.setTimeout(repeatedRollSelected, 100)
+            //$scope.$apply()
+            window.setTimeout(repeatedRollSelected, 60)
           }
         }
         repeatedRollSelected()
-        var s = document.getElementById("sound")
-        s.currentTime = 0
-        s.play()
+        //var s = document.getElementById("sound")
+        //s.currentTime = 0
+        //s.play()
       }
   
 
