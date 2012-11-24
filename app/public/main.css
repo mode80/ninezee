@@ -6,13 +6,22 @@ audio {
     display: none;
 }​
 
+#scorecard {
+    border-collapse: collapse;
+}
+
+#btnRoll {
+    height: 60px;
+}
+
 .left-side {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
     padding: 4px;
     border-radius: 4px;
 }
 
 .scorecard {
+    border: 1px solid #ddd;
     margin-bottom: 0;
 }
 
@@ -41,6 +50,11 @@ audio {
     color: gray;
 }
 
+.scorecard-section {
+    border: solid 1px #ddd;
+    padding: 2px;
+}
+
 .dice-section {
     text-align: center;
 }
@@ -60,7 +74,7 @@ audio {
 }
 
 .selected {
-    background-color: #999999;
+    background-color: #aaa;
     color: white;
     border-color: white;
 }
@@ -79,7 +93,7 @@ audio {
 }
 
 .temp {
-    color: #dddddd;
+    color: #ddd;
 }
 
 .strong {

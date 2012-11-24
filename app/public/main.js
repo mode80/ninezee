@@ -35,7 +35,7 @@ function Jahtzee() {
       // override this
     }
     proto.proposeVal = function(die_array) {
-      if (this.player.game.current_player !== this.player) return
+      if (this.player.game.player !== this.player) return
       if (this.val === null) {
         this.val=this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.proposeVal(die_array)
@@ -43,7 +43,7 @@ function Jahtzee() {
       }
     }
     proto.unproposeVal = function(die_array) {
-      if (this.player.game.current_player !== this.player) return
+      if (this.player.game.player !== this.player) return
       if (this.is_temp) {
         this.val=null
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.unproposeVal(die_array)
@@ -51,7 +51,7 @@ function Jahtzee() {
       }
     }
     proto.lockVal = function(die_array) {
-      if (this.player.game.current_player !== this.player) return
+      if (this.player.game.player !== this.player) return
       if (this.val !== null && this.is_temp === true) {
         this.is_temp = false
         this.val = this.calcVal(die_array)
@@ -339,8 +339,8 @@ function Jahtzee() {
     this.Game = function() {
       this.dice = new Dice()
       this.players = []
-      this.current_player = this.newPlayer()
-      this.current_player_index = 0
+      this.player = this.newPlayer() // current player
+      this.player_index = 0
       this.round = 1
       this.roll_count = 0
       this.started = false
@@ -353,12 +353,12 @@ function Jahtzee() {
       return p
     }
     proto.nextTurn = function() {
-      this.current_player_index++
+      this.player_index++
       this.roll_count = 0
       this.dice.selectAll()
-      this.current_player_index %= this.players.length 
-      if (this.current_player_index === 0) this.nextRound()
-      this.current_player = this.players[this.current_player_index]
+      this.player_index %= this.players.length 
+      if (this.player_index === 0) this.nextRound()
+      this.player = this.players[this.player_index]
       this.dice.reset()
     }
     proto.nextRound = function() {
@@ -387,23 +387,29 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
   function ($scope, jahtzee_service) {
 
     // kick off a jahtzee game object
-      $scope.newGame = function() { $scope.g = new jahtzee_service.Game() }
+      $scope.newGame = function() {
+
+        $scope.g = new jahtzee_service.Game() 
+
+        // modify the standard roll function with implemntation-specific animation and soundeffect
+        var origRollSelected = $scope.g.dice.rollSelected
+        $scope.g.dice.rollSelected = function () {
+          var shakes = 5
+          function repeatedRollSelected() {
+            if (shakes--) {
+              origRollSelected.call($scope.g.dice)
+              var phase = $scope.$root.$$phase
+              if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
+              window.setTimeout(repeatedRollSelected, 80)
+            }
+          }
+          repeatedRollSelected()
+        }
+
+      }
+
       $scope.newGame() 
 
-    // modify the standard roll function with implemntation-specific animation and soundeffect
-      var origRollSelected = $scope.g.dice.rollSelected
-      $scope.g.dice.rollSelected = function () {
-        var shakes = 10
-        function repeatedRollSelected() {
-          if (shakes--) {
-            origRollSelected.call($scope.g.dice)
-            var phase = $scope.$root.$$phase
-            if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
-            window.setTimeout(repeatedRollSelected, 40)
-          }
-        }
-        repeatedRollSelected()
-      }
 
   }
   

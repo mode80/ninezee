@@ -28,18 +28,18 @@
 <div class="container">
 
 	<div id=layout class="row">
-		<div id=scorecard-section class="span8">
+		<div id="left-side" class="span8">
 
-			<div class="left-side">
-				<table id=scorecard class="scorecard table table-bordered table-condensed">
-					<tr><td width=100>UPPER SECTION</td><td width=100>HOW TO SCORE</td>
+			<div class="scorecard-section">
+				<table id=scorecard class="scorecard table table-bordered ">
+					<tr><td width=100><strong>UPPER SECTION</strong></td><td width=100>HOW TO SCORE</td>
 						<td 	width=100 
 								ng-repeat="p in g.players" 
 								ng-class="{strong : (p == g.player), 'text-success' : (p.winner == true)}"> 
 								{{p.name}} 
 						</td>
 					</tr>
-					<tr><td>Aces <small g.dicecorebox-note>= 1</small></td><td>Count and Add Only Aces</td>
+					<tr><td>Aces <small class="scorebox-note">= 1</small></td><td>Count and Add Only Aces</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
  								ng-mouseenter="p.aces.proposeVal(g.dice)"
@@ -106,7 +106,7 @@
 								{{ p.simple_total.val }}
 						</td>
 					</tr>
-					<tr><td>BONUS <small class="scorebox-note">If total score is 63 or over</small></td><td>SCORE 35</td>
+					<tr><td>BONUS <small class="scorebox-note">If above is 63 or more</small></td><td>SCORE 35</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: p.upper_bonus.is_temp}">
@@ -120,8 +120,7 @@
 								{{p.upper_total.val}}
 						</td>
 					</tr>
-					<tr><td></td><td></td><td 	ng-repeat="p in g.players"></td></tr>
-					<tr><td>LOWER SECTION</td><td></td><td 	ng-repeat="p in g.players"></td></tr>
+					<tr><td><strong>LOWER SECTION</strong></td><td></td><td 	ng-repeat="p in g.players"></td></tr>
 					<tr><td>3 of a kind</td><td>Add Total Of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
@@ -206,6 +205,7 @@
 								{{p.lower_total.val}}
 						</td>
 					</tr>
+					<!--
 					<tr><td>TOTAL <small class="scorebox-note">Of Upper Section</small></td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
@@ -213,6 +213,7 @@
 								{{p.upper_total.val}}
 						</td>
 					</tr>
+					-->
 					<tr><td>GRAND TOTAL </td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
@@ -234,12 +235,12 @@
 			</p>
 		</div>
 
-		<div id=right-gutter class="span2" >
-			<h1>Jahtzee</h1>
+		<div id="right-gutter" class="span2" >
+			<h1>Jahtzee <i class="icon-th"></i></h1>
 			<hr>
 			<button 
 				id=btnRoll 
-				class="section-btn btn btn-block btn-success"
+				class="section-btn btn-large btn-block btn-success"
 				ng-class="{disabled : g.noMoreRolls()}"
 				ng-click="g.nextRoll()" 
 				onclick="document.getElementById('sound').play()" 
@@ -247,17 +248,17 @@
 				ROLL [{{g.roll_count}}]
 			</button>
 			<hr>
-			<button id=btnSelectAll class="section-btn btn btn-block btn-info" ng-click="g.dice.selectAll()">Select All</button>
-			<button id=btnSelectNone class="section-btn btn btn-block btn-info" ng-click="g.dice.selectNone()">Select None</button>
-			<button id=btnSelectInverse class="section-btn btn btn-block btn-info" ng-click="g.dice.selectInverse()">Select Inverse</button>
+			<button id=btnSelectAll class="section-btn btn-large btn-block btn-info" ng-click="g.dice.selectAll()">Select <i class="icon-plus icon-white"></i> </button>
+			<button id=btnSelectNone class="section-btn btn-large btn-block btn-info" ng-click="g.dice.selectNone()"> Select <i class="icon-minus icon-white"></i></button>
+			<button id=btnSelectInverse class="section-btn btn-large btn-block btn-info" ng-click="g.dice.selectInverse()"> Select <i class="icon-resize-small icon-white" ></i></button>
 			<hr>
-			<button id=btnNewGame class="section-btn btn btn-block btn-info" ng-click="newGame()">New Game</button>
+			<button id=btnNewGame class="section-btn btn-large btn-block btn-info" ng-click="newGame()">New Game <i class="icon-star-empty icon-white"></i></button>
 			<button 
 				id=btnNewPlayer 
-				class="section-btn btn btn-block btn-info" 
+				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
 				ng-click="g.newPlayer()"> 
-				New Player
+				New Player <i class="icon-user icon-white"></i>
 			</button>
 		</div>
 
