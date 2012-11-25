@@ -2,12 +2,23 @@ h1 {
     text-align: center;
 }
 
-audio {
-    display: none;
-}​
+audio { 
+    display:none;
+}
 
-.btnRoll {
-    height: 60px;
+#player-name {
+    text-align:center;
+    border:0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin:0;
+    padding:0;
+    width:auto;
+}
+
+.btn-roll {
+    height: 50px;
 }
 
 .left-side {
