@@ -3,7 +3,7 @@
 
 function Jahtzee() { 
 
-  var proto
+  var proto // convenience shortener when working with prototypes
 
   // Die 
   // ***********************************************************************************************
@@ -11,7 +11,7 @@ function Jahtzee() {
         this.val = val || null
         this.selected = false
     }
-    Die.prototype = Object.extended({}) // because we like sugar
+    Die.prototype = Object.extended() // because we like sugar
     Die.prototype.roll = function() {
       this.val = Math.ceil(Math.random() * 6)
     }
@@ -23,7 +23,7 @@ function Jahtzee() {
       this.val = null,
       this.is_temp = true
     }
-    Box.prototype = Object.extended({})
+    Box.prototype = Object.extended()
 
   // ScoreBox 
   // ***********************************************************************************************
@@ -52,7 +52,7 @@ function Jahtzee() {
     }
     proto.lockVal = function(die_array) {
       if (this.player.game.player !== this.player) return
-      if (this.val !== null && this.is_temp === true) {
+      if (/**this.val !== null && */ this.is_temp === true) {
         this.is_temp = false
         this.val = this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.lockVal(die_array)
@@ -223,6 +223,13 @@ function Jahtzee() {
         return this
       }
 
+      _array.firstEmpty = function() {
+        var len = _array.length, i = 0
+        while (i < len) {
+          if (_array[i].val === null) return _array[i]
+        }
+      }
+
       return _array
 
     }
@@ -255,7 +262,7 @@ function Jahtzee() {
       this.simple_scores    = new ScoreBoxGroup()
       this.upper_scores     = new ScoreBoxGroup()
       this.lower_scores     = new ScoreBoxGroup()
-      this.bonus_triggers   = new ScoreBoxGroup()
+      this.choosables       = new ScoreBoxGroup()
       this.all_scores       = new ScoreBoxGroup()
 
       this.simple_scores.push(
@@ -263,8 +270,8 @@ function Jahtzee() {
       this.upper_scores.applyPush(this.simple_scores).push(this.upper_bonus)
       this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind, this.full_house, 
         this.sm_straight, this.lg_straight, this.chance)
-      this.bonus_triggers.applyPush(this.simple_scores).applyPush(this.lower_scores)
-      this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
+      this.choosables.applyPush(this.simple_scores).applyPush(this.lower_scores)
+      this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.choosables)
       this.lower_scores.push(this.yahtzee, this.yahtzee_bonus)
       this.all_scores.applyPush(this.upper_scores).applyPush(this.lower_scores)
 
@@ -275,14 +282,49 @@ function Jahtzee() {
 
     }
 
-    Player.prototype.refreshTotals = function() {
+    proto = Player.prototype = Object.extended()
+    
+    proto.refreshTotals = function() {
       this.simple_total.refresh()
       this.upper_bonus.refresh()
       this.upper_total.refresh()          
       this.lower_total.refresh()          
       this.grand_total.refresh()          
     }
+
+    proto.playTurn = function() {
+      // override me for AI players
+    }
+
   // ***********************************************************************************************
+
+
+  // AIPlayer
+  // ***********************************************************************************************
+
+    var AIPlayer = function(name, game) {
+      Player.apply(this, arguments) // call super-constructor
+    }
+
+    proto = AIPlayer.prototype = Object.create(Player.prototype)
+
+    proto.playTurn = function() {
+      var i = 3
+      while (i--) {
+        this.game.dice.roll()
+        this.chooseDice()
+      }
+      this.chooseBox()
+    } 
+
+    proto.chooseDice = function() {
+      this.game.dice.selectAll()
+    }
+
+    proto.chooseBox = function() {
+      this.firstEmpty.lockVal()
+    }
+
 
   // Dice
   // ***********************************************************************************************
@@ -345,21 +387,26 @@ function Jahtzee() {
       this.roll_count = 0
       this.started = false
     }
-    proto = this.Game.prototype = Object.extended({})
-    proto.newPlayer = function() {
+    proto = this.Game.prototype = Object.extended()
+    proto.newPlayer = function(playerTypeString) {
       if (this.started) return
-      var p = new Player("Player "+(this.players.length+1), this)
+      var PlayerConstructor = window[playerTypeString] || Player
+      var player_name = playerTypeString ? 
+        playerTypeString + (Math.floor(Math.random() * 900)+100) : 
+        "Player "+(this.players.length+1)
+      var p = new PlayerConstructor(player_name, this)
       this.players.push(p)
       return p
     }
     proto.nextTurn = function() {
       this.player_index++
       this.roll_count = 0
-      this.dice.selectAll()
       this.player_index %= this.players.length 
       if (this.player_index === 0) this.nextRound()
       this.player = this.players[this.player_index]
+      this.dice.selectAll()
       this.dice.reset()
+      this.player.playTurn()
     }
     proto.nextRound = function() {
       this.round++
@@ -367,12 +414,10 @@ function Jahtzee() {
         this.players.max(function(p){return p.grand_total.val},true).each(function(p){p.winner=true})
     }
     proto.nextRoll = function() {
-      if (this.noMoreRolls()) return
+      if (this.roll_count >=3) return false
       this.dice.rollSelected()
-      if (this.roll_count < 3) this.roll_count++
-    }
-    proto.noMoreRolls = function() {
-      return (this.roll_count >= 3)
+      this.roll_count++
+      return true
     }
 
 }
@@ -391,7 +436,7 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
         $scope.g = new jahtzee_service.Game() 
 
-        // modify the standard roll function with implemntation-specific animation and soundeffect
+        // modify the standard roll function with implemntation-specific animation 
         var origRollSelected = $scope.g.dice.rollSelected
         $scope.g.dice.rollSelected = function () {
           var shakes = 5
@@ -399,12 +444,21 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
             if (shakes--) {
               origRollSelected.call($scope.g.dice)
               var phase = $scope.$root.$$phase
-              if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
+              if(phase !== '$apply' && phase !== '$digest') //avoid angular re-entrant $apply issue
+                $scope.$apply()
               window.setTimeout(repeatedRollSelected, 80)
             }
           }
           repeatedRollSelected()
         }
+
+        // add sound to the standard nextRoll function
+        var origNextRoll = $scope.g.nextRoll
+        $scope.g.nextRoll = function(){
+            if ($scope.g.roll_count < 3) document.getElementById('sound').play()
+            origNextRoll.call($scope.g); 
+        }
+
 
       }
 

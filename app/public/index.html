@@ -220,7 +220,7 @@
 						</td>
 					</tr>
 					-->
-					<tr><td>GRAND TOTAL </td><td><i class="icon-arrow-right"></i></td>
+					<tr><td>GRAND TOTAL</td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: p.grand_total.is_temp}">
@@ -245,11 +245,9 @@
 			<h1>Jahtzee</h1>
 			<br>
 			<button 
-				class="btn-roll section-btn btn-large btn-block btn-success"
-				ng-class="{disabled : g.noMoreRolls()}"
-				ng-click="g.nextRoll()" 
-				onclick="document.getElementById('sound').play()" 
-				> <!-- iOS makes us play sounds from onclick -->
+				class="btn-roll section-btn btn btn-block btn-success"
+				ng-class="{disabled : g.roll_count >= 3 }"
+				ng-click="g.nextRoll()" > 
 				ROLL [{{g.roll_count}}]
 			</button>
 			<br><br>
@@ -262,8 +260,16 @@
 				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
 				ng-click="g.newPlayer()"> 
-				New Player <i class="icon-user icon-white"></i>
+				Add Player <i class="icon-user icon-white"></i>
 			</button>
+			<!--
+			<button
+				class="section-btn btn-large btn-block btn-info" 
+				ng-hide="g.started"
+				ng-click="g.newPlayer('AIPlayer')"> 
+				Add Robot <i class="icon-cog icon-white"></i>				
+			</button>
+			-->
 		</div>
 
 	</div> 
