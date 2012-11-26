@@ -52,7 +52,7 @@ function Jahtzee() {
     }
     proto.lockVal = function(die_array) {
       if (this.player.game.player !== this.player) return
-      if (/**this.val !== null && */ this.is_temp === true) {
+      if (this.is_temp) {
         this.is_temp = false
         this.val = this.calcVal(die_array)
         if (this !== this.player.yahtzee) this.player.yahtzee_bonus.lockVal(die_array)
@@ -458,7 +458,6 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
             if ($scope.g.roll_count < 3) document.getElementById('sound').play()
             origNextRoll.call($scope.g); 
         }
-
 
       }
 

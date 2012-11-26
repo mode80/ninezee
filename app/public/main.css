@@ -8,6 +8,10 @@ audio {
     display:none;
 }
 
+body {
+    background-color: #e8e8ef;
+}
+
 #player-name {
     text-align:center;
     border:0;
@@ -17,6 +21,12 @@ audio {
     margin:0;
     padding:0;
     width:auto;
+}
+
+.container {
+    background-color: #e8e8ef;
+    border-radius: 5px;
+    margin: 0 auto;
 }
 
 .btn-roll {
@@ -63,6 +73,10 @@ audio {
 
 .scorecard tr:nth-child(even) {
     background-color: #fcfcff;
+}
+
+.scorecard tr:nth-child(odd) {
+    background-color: white;
 }
 
 .scorebox-note {
