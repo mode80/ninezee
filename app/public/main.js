@@ -1,3 +1,9 @@
+/*  TODO
+-   Fix 0 score possibility before 1st roll
+-   implement AI player stub
+-   implement <die> directive with dot die faces
+*/
+
 /*globals angular*/
 /*jshint asi: true, es5: true, proto: true*/
 
@@ -225,7 +231,7 @@ function Jahtzee() {
 
       _array.firstEmpty = function() {
         var len = _array.length, i = 0
-        while (i < len) {
+        while (i++ < len) {
           if (_array[i].val === null) return _array[i]
         }
       }
@@ -311,7 +317,7 @@ function Jahtzee() {
     proto.playTurn = function() {
       var i = 3
       while (i--) {
-        this.game.dice.roll()
+        this.game.dice.rollSelected()
         this.chooseDice()
       }
       this.chooseBox()
@@ -322,7 +328,7 @@ function Jahtzee() {
     }
 
     proto.chooseBox = function() {
-      this.firstEmpty.lockVal()
+      this.choosables.firstEmpty().lockVal(this.game.dice)
     }
 
 
@@ -390,7 +396,7 @@ function Jahtzee() {
     proto = this.Game.prototype = Object.extended()
     proto.newPlayer = function(playerTypeString) {
       if (this.started) return
-      var PlayerConstructor = window[playerTypeString] || Player
+      var PlayerConstructor = eval(playerTypeString) || Player // TODO remove use of eval
       var player_name = playerTypeString ? 
         playerTypeString + (Math.floor(Math.random() * 900)+100) : 
         "Player "+(this.players.length+1)
