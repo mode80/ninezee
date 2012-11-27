@@ -231,9 +231,9 @@ function Jahtzee() {
 
       _array.firstEmpty = function() {
         var len = _array.length, i = 0
-        while (i++ < len) {
+        do 
           if (_array[i].val === null) return _array[i]
-        }
+        while (i++ < len)
       }
 
       return _array
@@ -268,6 +268,7 @@ function Jahtzee() {
       this.simple_scores    = new ScoreBoxGroup()
       this.upper_scores     = new ScoreBoxGroup()
       this.lower_scores     = new ScoreBoxGroup()
+      this.bonus_triggers   = new ScoreBoxGroup()
       this.choosables       = new ScoreBoxGroup()
       this.all_scores       = new ScoreBoxGroup()
 
@@ -276,8 +277,9 @@ function Jahtzee() {
       this.upper_scores.applyPush(this.simple_scores).push(this.upper_bonus)
       this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind, this.full_house, 
         this.sm_straight, this.lg_straight, this.chance)
-      this.choosables.applyPush(this.simple_scores).applyPush(this.lower_scores)
-      this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.choosables)
+      this.bonus_triggers.applyPush(this.simple_scores).applyPush(this.lower_scores)
+      this.yahtzee_bonus  = new YahtzeeBonusBox(this, this.bonus_triggers)
+      this.choosables.applyPush(this.bonus_triggers).push(this.yahtzee)
       this.lower_scores.push(this.yahtzee, this.yahtzee_bonus)
       this.all_scores.applyPush(this.upper_scores).applyPush(this.lower_scores)
 
@@ -338,7 +340,6 @@ function Jahtzee() {
 
       if (dice) return dice // singleton
       var dice = []
-      dice.sound_on = false
 
       for (var i=5; i--;) dice.push( new Die() )
 
@@ -374,7 +375,7 @@ function Jahtzee() {
       }
 
       dice.reset = function() {
-        this.each(function(die){die.val = null})
+        dice.each(function(die){die.val = null})
       }
 
       dice.selectAll()
@@ -410,9 +411,9 @@ function Jahtzee() {
       this.player_index %= this.players.length 
       if (this.player_index === 0) this.nextRound()
       this.player = this.players[this.player_index]
+      this.player.playTurn()
       this.dice.selectAll()
       this.dice.reset()
-      this.player.playTurn()
     }
     proto.nextRound = function() {
       this.round++
@@ -423,7 +424,6 @@ function Jahtzee() {
       if (this.roll_count >=3) return false
       this.dice.rollSelected()
       this.roll_count++
-      return true
     }
 
 }
@@ -442,7 +442,7 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
         $scope.g = new jahtzee_service.Game() 
 
-        // modify the standard roll function with implemntation-specific animation 
+        /**
         var origRollSelected = $scope.g.dice.rollSelected
         $scope.g.dice.rollSelected = function () {
           var shakes = 5
@@ -457,12 +457,27 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
           }
           repeatedRollSelected()
         }
+        **/
 
-        // add sound to the standard nextRoll function
-        var origNextRoll = $scope.g.nextRoll
-        $scope.g.nextRoll = function(){
+        // modify the standard roll function with implemntation-specific animation 
+        var origRollSelected = $scope.g.dice.rollSelected
+        $scope.g.dice.rollSelected = function () {
+          sleep = function(delay) {
+            var start = new Date().getTime();
+            while (new Date().getTime() < start + delay);
+          }
+          var shakes = 5
+          while (shakes--) {           
+            origRollSelected.call($scope.g.dice)
+            sleep(800)
+          }
+
+        }
+
+        // wrap sound around the standard nextRoll function
+        $scope.g.rollClick = function(){
             if ($scope.g.roll_count < 3) document.getElementById('sound').play()
-            origNextRoll.call($scope.g); 
+            $scope.g.nextRoll(); 
         }
 
       }
