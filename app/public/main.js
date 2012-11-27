@@ -439,12 +439,12 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
   function ($scope, jahtzee_service) {
 
-    // kick off a jahtzee game object
+    // expose ability to create a new game
       $scope.newGame = function() {
 
         $scope.g = new jahtzee_service.Game() 
 
-        /**
+        // modify the standard roll function with implemntation-specific animation 
         var origRollSelected = $scope.g.dice.rollSelected
         $scope.g.dice.rollSelected = function () {
           var shakes = 5
@@ -459,24 +459,8 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
           }
           repeatedRollSelected()
         }
-        **/
 
-        // modify the standard roll function with implemntation-specific animation 
-        var origRollSelected = $scope.g.dice.rollSelected
-        $scope.g.dice.rollSelected = function () {
-          sleep = function(delay) {
-            var start = new Date().getTime();
-            while (new Date().getTime() < start + delay);
-          }
-          var shakes = 5
-          while (shakes--) {           
-            origRollSelected.call($scope.g.dice)
-            sleep(800)
-          }
-
-        }
-
-        // wrap sound around the standard nextRoll function
+        // add sound to the standard nextRoll function
         $scope.g.rollClick = function(){
             if ($scope.g.roll_count < 3) document.getElementById('sound').play()
             $scope.g.nextRoll(); 
@@ -484,6 +468,7 @@ app.controller('bodyController', ["$scope", "jahtzee_service",
 
       }
 
+    // kick a off a new game upon start
       $scope.newGame() 
 
 
