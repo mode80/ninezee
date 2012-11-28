@@ -13,7 +13,7 @@ function Jahtzee() {
   var proto // convenience shortener when working with prototypes
 
   // Die 
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     var Die = function(val) {
         this.val = val || null
@@ -25,7 +25,7 @@ function Jahtzee() {
     }
 
   // Box
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     var Box = function Box(player) {
         this.player = player, this.val = null, this.is_temp = true
@@ -33,7 +33,7 @@ function Jahtzee() {
     Box.prototype = Object.extended()
 
   // ScoreBox 
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     var ScoreBox = function(player) {
         Box.apply(this, arguments)
@@ -70,7 +70,7 @@ function Jahtzee() {
     }
 
   // SimpleBox 
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     var SimpleBox = function(player, n) {
         ScoreBox.apply(this, arguments)
@@ -86,7 +86,7 @@ function Jahtzee() {
     }
 
   // NOfAKindBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function NOfAKindBox(player, n) {
       ScoreBox.apply(this, arguments)
@@ -105,7 +105,7 @@ function Jahtzee() {
     }
 
   // ChanceBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function ChanceBox(player) {
       ScoreBox.apply(this, arguments)
@@ -116,7 +116,7 @@ function Jahtzee() {
     }
 
   // FullHouseBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function FullHouseBox(player) {
       ScoreBox.apply(this, arguments)
@@ -138,7 +138,7 @@ function Jahtzee() {
     }
 
   // SequenceOfNBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function SequenceOfNBox(player, n) {
       ScoreBox.apply(this, arguments)
@@ -158,13 +158,15 @@ function Jahtzee() {
       })
       if(this.n === 4) point_val = 30;
       else if(this.n === 5) point_val = 40
-      yahtzee_wildcard = (die_array.allSame() && this.player.simple_scores[die_array[0].val - 1].val !== null)
+      yahtzee_wildcard = 
+        (die_array.allSame() && 
+          this.player.simple_scores[die_array[0].val - 1].val !== null)
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
     }
 
   // TotalBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function TotalBox(player, score_box_group) {
       Box.apply(this, arguments)
@@ -177,7 +179,7 @@ function Jahtzee() {
     }
 
   // Yahtzee Bonus
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function YahtzeeBonusBox(player, score_box_group) {
       Box.apply(this, arguments)
@@ -200,7 +202,7 @@ function Jahtzee() {
     }
 
   // UpperBonusBox
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function UpperBonusBox(player) {
       Box.apply(this, arguments)
@@ -213,7 +215,7 @@ function Jahtzee() {
     }
 
   // ScoreBoxGroup
-  // ***********************************************************************************************
+  // ***************************************************************************
 
     function ScoreBoxGroup() {
 
@@ -249,7 +251,7 @@ function Jahtzee() {
     }
 
   // Player 
-  // ***********************************************************************************************
+  // ***************************************************************************
 
   function Player(name, game) {
 
@@ -314,7 +316,7 @@ function Jahtzee() {
   }
 
   // AIPlayer
-  // ***********************************************************************************************
+  // ***************************************************************************
   var AIPlayer = function(name, game) {
     Player.apply(this, arguments) // call super-constructor
   }
@@ -336,7 +338,7 @@ function Jahtzee() {
 
 
   // Dice
-  // ***********************************************************************************************
+  // ***************************************************************************
   var Dice = function() {
 
       if(dice) return dice // singleton
@@ -384,7 +386,7 @@ function Jahtzee() {
     }
 
   // Game
-  // ***********************************************************************************************
+  // ***************************************************************************
     this.Game = function() {
       this.dice = new Dice()
       this.players = []
@@ -431,7 +433,7 @@ function Jahtzee() {
     }
   }
 
-// ***********************************************************************************************
+  // ***************************************************************************
 
 
 // the main app module
@@ -442,11 +444,17 @@ function Jahtzee() {
 
     function($scope, jahtzee_service) {
 
-      // expose ability to create a new game
+
+      // first a utility function to refresh Angular views while avoiding reentrancy
+        function safeApply() { 
+            var phase = $scope.$root.$$phase
+            if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
+        }
+
+      // expose ability to create a new game to the view
         $scope.newGame = function() {
 
           $scope.g = new jahtzee_service.Game()
-
       
           // modify the standard roll function with implementation-specific animation 
           var origRollSelected = $scope.g.dice.rollSelected
@@ -471,22 +479,16 @@ function Jahtzee() {
 
         }
 
-      // kick one off
+      // kick off the initial game
         $scope.newGame()
 
-      // function to refresh Angular while avoiding the re-entrant $apply issue
-        function safeApply() { 
-            var phase = $scope.$root.$$phase
-            if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
-        }
 
-      // try an event loop
-        var cycle = function() {
+      // cycle loop lets us animate the view via model manipulation, which Angular otherwise avoids
+        ;(function cycle() {
             $scope.g.player.nextMove()
             safeApply()
             window.setTimeout(cycle, 1000)
-        }
-        cycle()
+        })()
 
 
     }
