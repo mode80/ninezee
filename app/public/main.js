@@ -455,9 +455,7 @@ function Jahtzee() {
             function repeatedRollSelected() {
               if (shakes--) {
                 origRollSelected.call($scope.g.dice)
-                var phase = $scope.$root.$$phase
-                if(phase !== '$apply' && phase !== '$digest') //avoid angular re-entrant $apply issue
-                  $scope.$apply()
+                safeApply()
                 window.setTimeout(repeatedRollSelected, 80)
               }
             }
@@ -479,8 +477,7 @@ function Jahtzee() {
       // function to refresh Angular while avoiding the re-entrant $apply issue
         function safeApply() { 
             var phase = $scope.$root.$$phase
-            if(phase !== '$apply' && phase !== '$digest') 
-              $scope.$apply()
+            if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
         }
 
       // try an event loop
