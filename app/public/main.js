@@ -322,7 +322,7 @@ function Jahtzee() {
   proto.nextMove = function() {
     if (this.game.roll_count < 3) {
       this.chooseDice()
-      this.game.dice.rollSelected()
+      this.game.nextRoll()
     } else {
       this.chooseBox()
     }
@@ -447,23 +447,23 @@ function Jahtzee() {
 
           $scope.g = new jahtzee_service.Game()
 
-          /*
-              // modify the standard roll function with implementation-specific animation 
-              var origRollSelected = $scope.g.dice.rollSelected
-              $scope.g.dice.rollSelected = function () {
-                var shakes = 5
-                function repeatedRollSelected() {
-                  if (shakes--) {
-                    origRollSelected.call($scope.g.dice)
-                    var phase = $scope.$root.$$phase
-                    if(phase !== '$apply' && phase !== '$digest') //avoid angular re-entrant $apply issue
-                      $scope.$apply()
-                    window.setTimeout(repeatedRollSelected, 80)
-                  }
-                }
-                repeatedRollSelected()
+      
+          // modify the standard roll function with implementation-specific animation 
+          var origRollSelected = $scope.g.dice.rollSelected
+          $scope.g.dice.rollSelected = function () {
+            var shakes = 5
+            function repeatedRollSelected() {
+              if (shakes--) {
+                origRollSelected.call($scope.g.dice)
+                var phase = $scope.$root.$$phase
+                if(phase !== '$apply' && phase !== '$digest') //avoid angular re-entrant $apply issue
+                  $scope.$apply()
+                window.setTimeout(repeatedRollSelected, 80)
               }
-              */
+            }
+            repeatedRollSelected()
+          }
+          
 
           // add sound to the standard nextRoll function
           $scope.g.rollClick = function() {
@@ -476,11 +476,19 @@ function Jahtzee() {
       // kick one off
         $scope.newGame()
 
+      // function to refresh Angular while avoiding the re-entrant $apply issue
+        function safeApply() { 
+            var phase = $scope.$root.$$phase
+            if(phase !== '$apply' && phase !== '$digest') 
+              $scope.$apply()
+        }
+
       // try an event loop
         var cycle = function() {
             $scope.g.player.nextMove()
+            safeApply()
             window.setTimeout(cycle, 1000)
-          }
+        }
         cycle()
 
 
