@@ -1,5 +1,6 @@
 /*  TODO
 -   Fix 0 score possibility before 1st roll
+-   Undo feature
 -   implement AI player stub
 -   implement <die> directive with dot die faces
 */
@@ -147,6 +148,7 @@ function Jahtzee() {
       var yahtzee_wildcard = false
       sorted_dice.each(function(die) {
         if (die.val === last_val + 1) in_a_row++
+        else if (die.val > last_val) in_a_row = 1
         last_val = die.val
       })
       if (this.n === 4) point_val=30; else if (this.n === 5) point_val=40
