@@ -32,11 +32,15 @@
 
 			<div class="scorecard-section">
 				<table class="scorecard table table-bordered ">
-					<tr><td width=100><strong>UPPER SECTION</strong></td><td width=100>HOW TO SCORE</td>
-						<td 	width=100 
-								ng-repeat="p in g.players" 
-								ng-class="{strong : (p == g.player), 'text-success' : (p.winner == true)}"> 
-								 <input id="player-name" size="{{p.name.length || 8}}" type="text" ng-model="p.name" ></input>
+					<tr><td><strong>UPPER SECTION</strong></td><td>HOW TO SCORE</td>
+						<td ng-repeat="p in g.players" >
+								 <input 
+								 		id="player-name" 
+								 		type="text" 
+								 		size="{{p.name.length || 8}}" 
+								 		ng-model="p.name" 
+										ng-class="{strong : (p == g.player), 'text-success' : (p.winner == true)}"> 
+								 </input>
 						</td>
 					</tr>
 					<tr><td>Aces <small class="scorebox-note">= 1</small></td><td>Count and Add Only Aces</td>
