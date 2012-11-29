@@ -339,43 +339,53 @@ function Jahtzee() {
 
   // AIPlayer
   // ***************************************************************************
-  var AIPlayer = function(name, game) {
-    Player.apply(this, arguments) // call super-constructor
-    this.diceToRoll = null
-    this.nextDieIndexToCompare = 0
-  }
-  proto = AIPlayer.prototype = Object.create(Player.prototype)
-  proto.nextMove = function() {
-    if (this.game.roll_count >= 3) { // rolling is over, must choose a box 
-      this.chooseBox()
-      this.game.think_delay = 1000
-    } else { // choose and select dice
-      if(this.nextDieIndexToCompare === 0) this.chooseDiceToRoll()
-      if(this.nextDieIndexToCompare < 5) { // still more to select
-        var i = this.nextDieIndexToCompare
-        this.game.dice[i].selected = this.diceToRoll[i].selected
-        this.nextDieIndexToCompare++
-        this.game.think_delay = 200
-      } else { // done selecting, time to roll
-        this.diceToRoll = null
-        this.nextDieIndexToCompare = 0
-        this.game.nextRoll()
-        this.game.think_delay = 2000
+    var AIPlayer = function(name, game) {
+      Player.apply(this, arguments) // call super-constructor
+      this.diceToRoll = null
+      this.nextDieIndexToCompare = 0
+    }
+    proto = AIPlayer.prototype = Object.create(Player.prototype)
+    proto.nextMove = function() {
+      if (this.game.roll_count >= 3) { // rolling is over, must choose a box 
+        this.chooseBox()
+        this.game.think_delay = 1000
+      } else { // choose and select dice
+        if(this.nextDieIndexToCompare === 0) this.chooseDiceToRoll()
+        if(this.nextDieIndexToCompare < 5) { // still more to select
+          var i = this.nextDieIndexToCompare
+          this.game.dice[i].selected = this.diceToRoll[i].selected
+          this.nextDieIndexToCompare++
+          this.game.think_delay = 200
+        } else { // done selecting, time to roll
+          this.diceToRoll = null
+          this.nextDieIndexToCompare = 0
+          this.game.nextRoll()
+          this.game.think_delay = 2000
+        }
       }
     }
-  }
 
-  proto.chooseDiceToRoll = function() {
-    this.diceToRoll = new Dice()
-    var arb_index = this.game.roll_count
-    this.diceToRoll[arb_index].deselect()
-    this.diceToRoll[arb_index+1].deselect()
-    this.diceToRoll[arb_index+2].deselect()
-  }
-  proto.chooseBox = function() {
-    this.choosables.firstEmpty().lockVal(this.game.dice)
-  }
+    proto.chooseDiceToRoll = function() {
+      this.diceToRoll = new Dice()
+    }
+    proto.chooseBox = function() {
+      this.choosables.firstEmpty().lockVal(this.game.dice)
+    }
 
+  // Robot
+  // ***************************************************************************
+    function Robot(){
+      AIPlayer.apply(this, arguments) // call super-constructor
+
+    }
+    proto = Robot.prototype = Object.create(AIPlayer)
+
+    proto.chooseDiceToRoll = function() {
+      //implement me
+    }
+    proto.chooseDiceToRoll = function() {
+      //implement me
+    }
 
   // Dice
   // ***************************************************************************
