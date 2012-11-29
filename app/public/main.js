@@ -50,38 +50,33 @@ function Jahtzee() {
         Box.apply(this, arguments)
       }
     proto = ScoreBox.prototype = Object.create(Box.prototype)
-    proto.calcVal = function(die_array) {
+    proto.calcVal = function(dice) {
       // override this
     }
-    proto.proposeVal = function(die_array) {
-      if(this.ready() && this.val === null) {
-        this.val = this.calcVal(die_array)
-        this.player.yahtzee_bonus.proposeVal(die_array)
+    proto.proposeVal = function(dice) {
+      if(this.player.ready() && this.val === null) {
+        this.val = this.calcVal(dice)
+        this.player.yahtzee_bonus.proposeVal(dice)
         this.player.refreshTotals()
       }
     }
-    proto.unproposeVal = function(die_array) {
-      if(this.ready() && this.is_temp) {
+    proto.unproposeVal = function(dice) {
+      if(this.player.ready() && this.is_temp) {
         this.val = null
-        this.player.yahtzee_bonus.unproposeVal(die_array)
+        this.player.yahtzee_bonus.unproposeVal(dice)
         this.player.refreshTotals()
       }
     }
-    proto.lockVal = function(die_array) {
-      if(this.ready() && this.is_temp) {
+    proto.lockVal = function(dice) {
+      if(this.player.ready() && this.is_temp) {
         this.is_temp = false
-        this.val = this.calcVal(die_array)
-        this.player.yahtzee_bonus.lockVal(die_array)
+        this.val = this.calcVal(dice)
+        this.player.yahtzee_bonus.lockVal(dice)
         this.player.refreshTotals()
         this.player.game.nextPlayer()
       }
     }
-    proto.ready = function() {
-      return (
-        this.player.game.player === this.player &&
-        this.player.game.roll_count > 0  
-      )
-    }
+
 
   // SimpleBox 
   // ***************************************************************************
@@ -91,12 +86,18 @@ function Jahtzee() {
         this.n = n
       }
     proto = SimpleBox.prototype = Object.create(ScoreBox.prototype)
-    proto.calcVal = function(die_array) {
+    proto.calcVal = function(dice) {
       var sum = 0
-      for(var i = 0, len = die_array.length; i < len; i++) {
-        if(this.n === die_array[i].val) sum = sum + die_array[i].val
+      for(var i = 0, len = dice.length; i < len; i++) {
+        if(this.n === dice[i].val) sum = sum + dice[i].val
       }
       return sum
+    }
+    proto.expectedValue = function(dice) {
+      var currentScore = this.calcVal(dice)
+      var isUnhelpfulFn = function(die) { return (die.val === this.n)}
+      var unhelpfulDice = dice.filter(isUnhelpfulFn)
+      // TODO finish or removen
     }
 
   // NOfAKindBox
@@ -107,14 +108,14 @@ function Jahtzee() {
       this.n = n
     }
     proto = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
-    proto.calcVal = function(die_array) {
-      var most_val = die_array.most("val").val
-      var most_count = die_array.filter(function(d) {
+    proto.calcVal = function(dice) {
+      var most_val = dice.most("val").val
+      var most_count = dice.filter(function(d) {
         return d.val === most_val
       }).count()
       if(most_count >= this.n) if(this.n === 5) return 50 /*Yahtzee!*/
       ;
-      else return die_array.sumOfDice()
+      else return dice.sumOfDice()
       else return 0
     }
 
@@ -125,8 +126,8 @@ function Jahtzee() {
       ScoreBox.apply(this, arguments)
     }
     proto = ChanceBox.prototype = Object.create(ScoreBox.prototype)
-    proto.calcVal = function(die_array) {
-      return die_array.sumOfDice()
+    proto.calcVal = function(dice) {
+      return dice.sumOfDice()
     }
 
   // FullHouseBox
@@ -136,8 +137,8 @@ function Jahtzee() {
       ScoreBox.apply(this, arguments)
     }
     proto = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
-    proto.calcVal = function(die_array) {
-      var sorted_dice = die_array.sortedCopy()
+    proto.calcVal = function(dice) {
+      var sorted_dice = dice.sortedCopy()
       var i = sorted_dice.length
       var count_type = 0
       var count = []
@@ -161,8 +162,8 @@ function Jahtzee() {
       this.n = n
     }
     proto = SequenceOfNBox.prototype = Object.create(ScoreBox.prototype)
-    proto.calcVal = function(die_array) {
-      var sorted_dice = die_array.sortedCopy()
+    proto.calcVal = function(dice) {
+      var sorted_dice = dice.sortedCopy()
       var in_a_row = 1
       var last_val
       var point_val = 0
@@ -175,8 +176,8 @@ function Jahtzee() {
       if(this.n === 4) point_val = 30;
       else if(this.n === 5) point_val = 40
       yahtzee_wildcard = 
-        (die_array.allSame() && 
-          this.player.simple_scores[die_array[0].val - 1].val !== null)
+        (dice.allSame() && 
+          this.player.simple_scores[dice[0].val - 1].val !== null)
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
     }
@@ -203,23 +204,23 @@ function Jahtzee() {
       this.score_box_group = score_box_group
     }
     proto = YahtzeeBonusBox.prototype = Object.create(Box.prototype)
-    proto.calcVal = function(die_array) {
-      if(die_array.allSame() && 
+    proto.calcVal = function(dice) {
+      if(dice.allSame() && 
           this.player.yahtzee.val > 0 &&
           this.player.yahtzee.is_temp === false ) 
         return 100 
       else 
         return 0
     }
-    proto.proposeVal = function(die_array) {
+    proto.proposeVal = function(dice) {
       if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false)
-        this.val += this.calcVal(die_array)
+        this.val += this.calcVal(dice)
     }
-    proto.unproposeVal = function(die_array) {
+    proto.unproposeVal = function(dice) {
       if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false)
-        this.val -= this.calcVal(die_array)
+        this.val -= this.calcVal(dice)
     }
-    proto.lockVal = function(die_array) {
+    proto.lockVal = function(dice) {
       if(this.score_box_group.isDone()) this.is_temp = false
     }
 
@@ -240,36 +241,31 @@ function Jahtzee() {
   // ***************************************************************************
 
     function ScoreBoxGroup() {
-
       var _array = []
-
-      _array.isDone = function() {
-          var i = this.length, box
-          while(i--) { 
-            box = this[i]
-            if(box.is_temp) return false
-          }
-          return true
-        }
-
-      _array.sumOfVals = function() {
-        return this.sum( function(box){ return box.val} )
-      }
-
-      _array.pushAll = function(array_of_stuff_to_push) {
-        Array.prototype.push.apply(this, array_of_stuff_to_push)
-        return this
-      }
-
-      _array.firstEmpty = function() {
-        var len = _array.length, i = 0
-          do {
-            if(_array[i].val === null) return _array[i]
-          } while(i++ < len)
-      }
-
+      _array.__proto__ = Object.create(ScoreBoxGroup.prototype)
       return _array
-
+    }
+    proto = ScoreBoxGroup.prototype = Object.create(Array.prototype)
+    proto.isDone = function() {
+        var i = this.length, box
+        while(i--) { 
+          box = this[i]
+          if(box.is_temp) return false
+        }
+        return true
+      }
+    proto.sumOfVals = function() {
+      return this.sum( function(box){ return box.val} )
+    }
+    proto.pushAll = function(array_of_stuff_to_push) {
+      Array.prototype.push.apply(this, array_of_stuff_to_push)
+      return this
+    }
+    proto.firstEmpty = function() {
+      var len = this.length, i = 0
+        do {
+          if(this[i].val === null) return this[i]
+        } while(i++ < len)
     }
 
   // Player 
@@ -306,7 +302,7 @@ function Jahtzee() {
     this.all_scores = new ScoreBoxGroup()
 
     this.simple_scores.push(
-    this.aces, this.twos, this.threes, this.fours, this.fives, this.sixes)
+      this.aces, this.twos, this.threes, this.fours, this.fives, this.sixes)
     this.upper_scores.pushAll(this.simple_scores).push(this.upper_bonus)
     this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind,
       this.full_house, this.sm_straight, this.lg_straight, this.chance)
@@ -333,6 +329,13 @@ function Jahtzee() {
     this.grand_total.refresh()
   }
 
+  proto.ready = function() {
+    return (
+      this.game.player === this &&
+      this.game.roll_count > 0  
+    )
+  }
+
   proto.nextMove = function() {
     // override me for AI players
   }
@@ -347,7 +350,7 @@ function Jahtzee() {
     proto = AIPlayer.prototype = Object.create(Player.prototype)
     proto.nextMove = function() {
       if (this.game.roll_count >= 3) { // rolling is over, must choose a box 
-        this.chooseBox()
+        this.chooseBox().lockVal(this.game.dice)
         this.game.think_delay = 1000
       } else { // choose and select dice
         if(this.nextDieIndexToCompare === 0) this.chooseDiceToRoll()
@@ -360,7 +363,7 @@ function Jahtzee() {
           this.diceToRoll = null
           this.nextDieIndexToCompare = 0
           this.game.nextRoll()
-          this.game.think_delay = 2000
+          this.game.think_delay = 1000
         }
       }
     }
@@ -369,21 +372,26 @@ function Jahtzee() {
       this.diceToRoll = new Dice()
     }
     proto.chooseBox = function() {
-      this.choosables.firstEmpty().lockVal(this.game.dice)
+      // find the highest scoring box with just the current dice values
+      var thisPlayer = this
+      return this.choosables.max( function(box) {
+        if (!box.is_temp) return -1
+        return box.calcVal(thisPlayer.game.dice)
+      })
     }
 
-  // Robot
+  // SimpleEVRobot //this guy always chooses the box with the best next-roll expected value
   // ***************************************************************************
-    function Robot(){
+    function SimpleEVRobot(){ 
       AIPlayer.apply(this, arguments) // call super-constructor
 
     }
-    proto = Robot.prototype = Object.create(AIPlayer)
+    proto = SimpleEVRobot.prototype = Object.create(AIPlayer)
 
     proto.chooseDiceToRoll = function() {
       //implement me
     }
-    proto.chooseDiceToRoll = function() {
+    proto.chooseBox = function() {
       //implement me
     }
 
