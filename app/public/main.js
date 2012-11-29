@@ -348,34 +348,29 @@ function Jahtzee() {
   proto.nextMove = function() {
     if (this.game.roll_count >= 3) { // rolling is over, must choose a box 
       this.chooseBox()
-    } else { // choose or select dice
-      if(this.diceToRoll === null) { // let's choose some dice
-        this.chooseDiceToRoll()
-      } else { // let's select the next one we want to roll
-        if(this.nextDieIndexToCompare < 5) { // still more to select
-          loop: do {
-            var i = this.nextDieIndexToCompare
-            if (this.game.dice[i].selected !== this.diceToRoll[i].selected) {
-              this.game.dice[i].selected = this.diceToRoll[i].selected
-              break loop
-            }
-            this.nextDieIndexToCompare++
-          } while(this.nextDieIndexToCompare < 5)
-          this.game.think_delay = 200
-        } else { // done selecting, time to roll
-          this.diceToRoll = null
-          this.nextDieIndexToCompare = 0
-          this.game.nextRoll()
-          this.game.think_delay = 1000
-        }
+      this.game.think_delay = 1000
+    } else { // choose and select dice
+      if(this.nextDieIndexToCompare === 0) this.chooseDiceToRoll()
+      if(this.nextDieIndexToCompare < 5) { // still more to select
+        var i = this.nextDieIndexToCompare
+        this.game.dice[i].selected = this.diceToRoll[i].selected
+        this.nextDieIndexToCompare++
+        this.game.think_delay = 200
+      } else { // done selecting, time to roll
+        this.diceToRoll = null
+        this.nextDieIndexToCompare = 0
+        this.game.nextRoll()
+        this.game.think_delay = 2000
       }
     }
   }
 
   proto.chooseDiceToRoll = function() {
     this.diceToRoll = new Dice()
-    this.diceToRoll[1].deselect()
-    this.diceToRoll[3].deselect()
+    var arb_index = this.game.roll_count
+    this.diceToRoll[arb_index].deselect()
+    this.diceToRoll[arb_index+1].deselect()
+    this.diceToRoll[arb_index+2].deselect()
   }
   proto.chooseBox = function() {
     this.choosables.firstEmpty().lockVal(this.game.dice)
