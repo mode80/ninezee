@@ -7,7 +7,7 @@
 -   disable UI while AI is playing
 */
 
-/*globals angular*/
+/*globals angular, Fireworks*/
 /*jshint asi: true, es5: true, proto: true*/
 
 function Jahtzee() {
@@ -490,7 +490,7 @@ function Jahtzee() {
       this.roll_count++
       this.dice.rollSelected()
     }
-  }
+}
 
   // ***************************************************************************
 
@@ -529,8 +529,20 @@ function Jahtzee() {
 
           // add sound around the nextRoll function
           $scope.g.rollClick = function() {
-            if($scope.g.roll_count < 3) document.getElementById('sound').play()
+            if($scope.g.roll_count < 3) document.getElementById('roll-sound').play()
             $scope.g.nextRoll();
+          }
+
+          // add sound + effects to the nextRound function
+          var origNextRound = $scope.g.nextRound
+          $scope.g.nextRound = function() {
+            origNextRound()
+            if($scope.g.round > 13) {
+              //TODO make happen only on human player win
+              document.getElementById('fireworks-sound').play()
+              Fireworks.stop_after_minutes = 0.33
+              Fireworks.start()
+            }
           }
 
         }
