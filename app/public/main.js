@@ -2,7 +2,9 @@
 -   Undo feature
 -   Fix 0 score possibility before 1st roll
 -   implement AI player stub
--   implement <die> directive with dot die faces
+-   implement <die> directive with dot die faces 
+-   lockVal sound effects
+-   disable UI while AI is playing
 */
 
 /*globals angular*/
@@ -135,8 +137,10 @@ function Jahtzee() {
       var count = []
       var last_val = null
       while(i--) {
-        if(sorted_dice[i].val === last_val) count[count_type] = count[count_type] + 1 || 2
-          else count_type++
+        if(sorted_dice[i].val === last_val)
+          count[count_type] = count[count_type] + 1 || 2
+        else
+          count_type++
         last_val = sorted_dice[i].val
       }
       if(count[1] + count[2] === 5 || count[1] === 5) return 25;
@@ -202,11 +206,11 @@ function Jahtzee() {
         return 0
     }
     proto.proposeVal = function(die_array) {
-      if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false )
+      if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false)
         this.val += this.calcVal(die_array)
     }
     proto.unproposeVal = function(die_array) {
-      if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false )
+      if(this.player.yahtzee.val > 0 && this.player.yahtzee.is_temp === false)
         this.val -= this.calcVal(die_array)
     }
     proto.lockVal = function(die_array) {
@@ -246,7 +250,7 @@ function Jahtzee() {
         return this.sum( function(box){ return box.val} )
       }
 
-      _array.applyPush = function(array_of_stuff_to_push) {
+      _array.pushAll = function(array_of_stuff_to_push) {
         Array.prototype.push.apply(this, array_of_stuff_to_push)
         return this
       }
@@ -297,14 +301,14 @@ function Jahtzee() {
 
     this.simple_scores.push(
     this.aces, this.twos, this.threes, this.fours, this.fives, this.sixes)
-    this.upper_scores.applyPush(this.simple_scores).push(this.upper_bonus)
-    this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind, this.full_house, 
-      this.sm_straight, this.lg_straight, this.chance)
-    this.bonus_triggers.applyPush(this.simple_scores).applyPush(this.lower_scores)
+    this.upper_scores.pushAll(this.simple_scores).push(this.upper_bonus)
+    this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind,
+      this.full_house, this.sm_straight, this.lg_straight, this.chance)
+    this.bonus_triggers.pushAll(this.simple_scores).pushAll(this.lower_scores)
     this.yahtzee_bonus = new YahtzeeBonusBox(this, this.bonus_triggers)
-    this.choosables.applyPush(this.bonus_triggers).push(this.yahtzee)
+    this.choosables.pushAll(this.bonus_triggers).push(this.yahtzee)
     this.lower_scores.push(this.yahtzee, this.yahtzee_bonus)
-    this.all_scores.applyPush(this.upper_scores).applyPush(this.lower_scores)
+    this.all_scores.pushAll(this.upper_scores).pushAll(this.lower_scores)
 
     this.simple_total = new TotalBox(this, this.simple_scores)
     this.upper_total = new TotalBox(this, this.upper_scores)
@@ -343,20 +347,20 @@ function Jahtzee() {
         this.chooseDiceToRoll()
       } else { // let's select the next one we want to roll
         if(this.nextDieIndexToCompare < 5) { // still more to select
-          do {
+          loop: do {
             var i = this.nextDieIndexToCompare
             if (this.game.dice[i].selected !== this.diceToRoll[i].selected) {
               this.game.dice[i].selected = this.diceToRoll[i].selected
-              break
+              break loop
             }
             this.nextDieIndexToCompare++
           } while(this.nextDieIndexToCompare < 5)
-          this.game.think_delay = 100
+          this.game.think_delay = 10
         } else { // done selecting, time to roll
           this.diceToRoll = null
           this.nextDieIndexToCompare = 0
           this.game.nextRoll()
-          this.game.think_delay = 1000
+          this.game.think_delay = 600
         }
       }
     }
@@ -382,17 +386,20 @@ function Jahtzee() {
     }
     proto = Dice.prototype = Object.create(Array.prototype)
     proto.rollSelected = function() {
-      var selectedDice = this.filter(function(die) {return die.selected;})
-      selectedDice.each(function(die) {die.roll()})
+      var i = this.length
+      while(i--) if(this[i].selected) this[i].roll() 
     }
     proto.selectAll = function() {
-      this.each(function(die) {die.selected = true})
+      var i = this.length
+      while(i--) this[i].selected = true
     }
     proto.selectNone = function() {
-      this.each(function(die) {die.selected = false})
+      var i = this.length
+      while(i--) this[i].selected = false
     }
     proto.selectInverse = function() {
-      this.each(function(die) {die.selected = !die.selected})
+      var i = this.length
+      while (i--) this[i].selected = !this[i].selected
     }
     proto.sumOfDice = function() {
       return this.reduce(function(sum, die) {return sum + die.val}, 0)
@@ -427,7 +434,7 @@ function Jahtzee() {
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
       this.started = false            // true onece a new game has started
-      this.think_delay = 1000         // how long the AI thinks between moves
+      this.think_delay = 600         // how long the AI thinks between moves
     }
     proto = this.Game.prototype = Object.extended()
     proto.newPlayer = function(playerTypeString) {
@@ -459,9 +466,8 @@ function Jahtzee() {
       })
     }
     proto.nextRoll = function() {
-      //if(this.roll_count >= 3) return false
+      if(this.roll_count >= 3) return false
       this.dice.rollSelected()
-      this.dice.selectNone()
       this.roll_count++
     }
   }
@@ -479,9 +485,9 @@ function Jahtzee() {
 
 
       // first a utility function to refresh Angular views while avoiding reentrancy
-        function safeApply() { 
+        function safeApply(fn) { 
             var phase = $scope.$root.$$phase
-            if(phase !== '$apply' && phase !== '$digest') $scope.$apply()
+            if(phase !== '$apply' && phase !== '$digest') $scope.$apply(fn)
         }
 
       // expose ability to create a new game to the view
@@ -493,18 +499,15 @@ function Jahtzee() {
           var origRollSelected = $scope.g.dice.rollSelected
           $scope.g.dice.rollSelected = function () {
             var shakes = 5
-            function repeatedRollSelected() {
+            ;(function repeatedRollSelected() {
               if (shakes--) {
-                origRollSelected.call($scope.g.dice)
-                safeApply()
+                safeApply(origRollSelected.call($scope.g.dice))
                 window.setTimeout(repeatedRollSelected, 80)
               }
-            }
-            repeatedRollSelected()
+            })()
           }
-          
 
-          // add sound to the standard nextRoll function
+          // add sound around the nextRoll function
           $scope.g.rollClick = function() {
             if($scope.g.roll_count < 3) document.getElementById('sound').play()
             $scope.g.nextRoll();
