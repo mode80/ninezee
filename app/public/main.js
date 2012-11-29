@@ -25,6 +25,12 @@ function Jahtzee() {
     proto.roll = function() {
       this.val = Math.ceil(Math.random() * 6)
     }
+    proto.select = function() {
+      this.selected = true
+    }
+    proto.deselect = function() {
+      this.selected = false
+    }
     proto.equals = function(otherDie){
       return (this.val === otherDie.val && this.selected === otherDie.selected)
     }
@@ -355,12 +361,12 @@ function Jahtzee() {
             }
             this.nextDieIndexToCompare++
           } while(this.nextDieIndexToCompare < 5)
-          this.game.think_delay = 10
+          this.game.think_delay = 200
         } else { // done selecting, time to roll
           this.diceToRoll = null
           this.nextDieIndexToCompare = 0
           this.game.nextRoll()
-          this.game.think_delay = 600
+          this.game.think_delay = 1000
         }
       }
     }
@@ -368,7 +374,8 @@ function Jahtzee() {
 
   proto.chooseDiceToRoll = function() {
     this.diceToRoll = new Dice()
-    this.diceToRoll.selectAll()
+    this.diceToRoll[1].deselect()
+    this.diceToRoll[3].deselect()
   }
   proto.chooseBox = function() {
     this.choosables.firstEmpty().lockVal(this.game.dice)
@@ -434,7 +441,7 @@ function Jahtzee() {
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
       this.started = false            // true onece a new game has started
-      this.think_delay = 600         // how long the AI thinks between moves
+      this.think_delay = 1000         // how long the AI thinks between moves
     }
     proto = this.Game.prototype = Object.extended()
     proto.newPlayer = function(playerTypeString) {
@@ -467,8 +474,8 @@ function Jahtzee() {
     }
     proto.nextRoll = function() {
       if(this.roll_count >= 3) return false
-      this.dice.rollSelected()
       this.roll_count++
+      this.dice.rollSelected()
     }
   }
 
