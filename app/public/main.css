@@ -143,3 +143,8 @@ body {
     margin: 0;
     padding: 0;
 }
+
+#player-name.current-player {
+    font-weight:bold;
+    background: #fdffe2;
+}

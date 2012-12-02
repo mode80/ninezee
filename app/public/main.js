@@ -350,7 +350,7 @@ function Jahtzee() {
     proto = AIPlayer.prototype = Object.create(Player.prototype)
     proto.nextMove = function() {
       if (this.game.roll_count === 0) // need to make first roll 
-        this.game.dice.rollSelected()
+        this.game.nextRoll()
       else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
         this.choosenBox().lockVal(this.game.dice)
         this.game.think_delay = 1000
@@ -424,7 +424,7 @@ function Jahtzee() {
       this.dice_to_roll.selectByArray(selection)
     }
     proto.choosenBox = function() {
-      return AIPlayer.choosenBox()
+      return AIPlayer.prototype.choosenBox.call(this)
     }
 
   // Dice
