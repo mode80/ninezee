@@ -145,6 +145,5 @@ body {
 }
 
 #player-name.current-player {
-    font-weight:bold;
     background: #fdffe2;
 }

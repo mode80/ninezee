@@ -352,17 +352,23 @@ function Jahtzee() {
       if (this.game.roll_count === 0) { // need to make first roll 
         this.game.nextRoll()
         this.die_index_to_compare = 0
+        this.game.next_delay = 500
       } else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
-        this.chosenBox().lockVal(this.game.dice)
+        if (this.chosenBox().val === null)
+          this.chosenBox().proposeVal(this.game.dice)
+        else
+          this.chosenBox().lockVal(this.game.dice)
       } else { // choose and select dice
         if(this.die_index_to_compare === 0) this.chooseDice()
         if(this.die_index_to_compare < 5) { // still more to select
           var i = this.die_index_to_compare
           this.game.dice[i].selected = this.dice_to_roll[i].selected
           this.die_index_to_compare++
+          this.game.next_delay = this.die_index_to_compare * 200
         } else { // done selecting, time to roll
           this.die_index_to_compare = 0
           this.game.nextRoll()
+          this.game.next_delay = 1000
         }
       }
     }
@@ -384,23 +390,25 @@ function Jahtzee() {
       AIPlayer.apply(this, arguments) // call super-constructor
     }
     proto = Robot.prototype = Object.create(AIPlayer.prototype)
-    proto.chooseDice = function() {
+    proto.chooseDice = function(trials) {
       var fake_dice = []
       var a,b,c,d,e
       var avg_scores = []
       var selection = []
-      var decimal_index
-      var avgOfMany = function() {
-        var trials = 1296 // enough rolls to get 1 yahtzees on average
+      var avgOfMany = function(trials) {
         var total = 0
-        var bestBoxFn = function(box) {
-          return box.unfinal? box.calcVal(fake_dice) : -1 
+        var bestBoxFn=function(b){
+          var retval = 0
+          b.proposeVal(fake_dice); 
+          retval += this.grand_total.val
+          b.unproposeVal()
+          return retval
         }
+        //bestBoxFn=function(b){return b.unfinal? b.calcVal(fake_dice) :b.val}
         var i = trials
         while (i--) {
-          var ii = 5
-          while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll()
-          var score_this_trial = this.choosables.map(bestBoxFn).max()
+          var ii=5; while (ii--) if(fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
+          var score_this_trial = this.choosables.map(bestBoxFn,this).average()
           total += score_this_trial 
         }
         return total / trials
@@ -413,13 +421,13 @@ function Jahtzee() {
                 selection = [a,b,c,d,e]
                 fake_dice = this.game.dice.clone()
                 fake_dice.selectByArray(selection)
-                decimal_index = a*16+b*8+c*4+d*2+e*1 // parseInt(selection.join(''),2) 
-                avg_scores[decimal_index] = avgOfMany.call(this)
+                var decimal_index = a*16+b*8+c*4+d*2+e*1 // parseInt(selection.join(''),2) 
+                var trial_count = Math.pow(6,a+b+c+d+e)*1 // enough times to get yahtzee 1x
+                avg_scores[decimal_index] = avgOfMany.call(this,trial_count)
               }
       this.dice_to_roll = this.game.dice.clone()
       var max_index = avg_scores.indexOf(avg_scores.max())
-      for (var i = 0, selection=[]; i < 5; i+=1)  // convert decimal to
-        selection.unshift(max_index >> i & 1)     // bit array
+      for (var i = 0; i < 5; i+=1) selection.unshift(max_index >> i & 1)  // convert decimal to bit array    
       this.dice_to_roll.selectByArray(selection)
     }
     proto.chosenBox = function() {
@@ -455,6 +463,11 @@ function Jahtzee() {
     proto.selectInverse = function() {
       var i = this.length
       while (i--) this[i].selected = !this[i].selected
+    }
+    proto.selectedCount = function() {
+      var i = this.length, retval = 0
+      while (i--) if (this[i].selected) retval++
+      return retval
     }
     proto.sumOfDice = function() {
       return this.reduce(function(sum, die) {return sum + die.val}, 0)
@@ -498,7 +511,7 @@ function Jahtzee() {
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
       this.started = false            // true onece a new game has started
-      this.think_delay = 1000         // how long the AI thinks between moves
+      this.next_delay = 1000         // how long the AI thinks between moves
     }
     proto = this.Game.prototype = Object.extended()
     proto.newPlayer = function(playerTypeString) {
@@ -574,7 +587,8 @@ function Jahtzee() {
           // add sound around the nextRoll function
           var origNextRoll = $scope.g.nextRoll
           $scope.g.nextRoll = function() {
-            if($scope.g.roll_count < 3) document.getElementById('roll-sound').play()
+            if($scope.g.roll_count < 3 && $scope.g.dice.selectedCount() > 0) 
+              document.getElementById('roll-sound').play()
             origNextRoll.apply($scope.g, arguments)
           }
 
@@ -609,7 +623,7 @@ function Jahtzee() {
         ;(function cycle() {
             $scope.g.player.nextMove()
             safeApply()
-            window.setTimeout(cycle, $scope.g.think_delay)
+            window.setTimeout(cycle, $scope.g.next_delay)
         })()
 
 
