@@ -349,23 +349,20 @@ function Jahtzee() {
     }
     proto = AIPlayer.prototype = Object.create(Player.prototype)
     proto.nextMove = function() {
-      if (this.game.roll_count === 0) // need to make first roll 
+      if (this.game.roll_count === 0) { // need to make first roll 
         this.game.nextRoll()
-      else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
-        this.choosenBox().lockVal(this.game.dice)
-        this.game.think_delay = 1000
+        this.die_index_to_compare = 0
+      } else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
+        this.chosenBox().lockVal(this.game.dice)
       } else { // choose and select dice
         if(this.die_index_to_compare === 0) this.chooseDice()
         if(this.die_index_to_compare < 5) { // still more to select
           var i = this.die_index_to_compare
           this.game.dice[i].selected = this.dice_to_roll[i].selected
           this.die_index_to_compare++
-          this.game.think_delay = 200
         } else { // done selecting, time to roll
-          this.dice_to_roll = null
           this.die_index_to_compare = 0
           this.game.nextRoll()
-          this.game.think_delay = 1000
         }
       }
     }
@@ -373,7 +370,7 @@ function Jahtzee() {
     proto.chooseDice = function() {
       this.dice_to_roll = new Dice()
     }
-    proto.choosenBox = function() {
+    proto.chosenBox = function() {
       // find the highest scoring box with just the current dice values
       var game_dice = this.game.dice
       return this.choosables.max( function(box) {
@@ -419,12 +416,14 @@ function Jahtzee() {
                 decimal_index = a*16+b*8+c*4+d*2+e*1 // parseInt(selection.join(''),2) 
                 avg_scores[decimal_index] = avgOfMany.call(this)
               }
-      selection = avg_scores.indexOf(avg_scores.max()).toString(2).split('') 
+      var binary_string = avg_scores.indexOf(avg_scores.max()).toString(2) // decimal to binary
+      binary_string = ("00000" + binary_string).slice(-5) // add leading zeroes
+      selection = binary_string.split('') // now to an array
       this.dice_to_roll = this.game.dice.clone()
       this.dice_to_roll.selectByArray(selection)
     }
-    proto.choosenBox = function() {
-      return AIPlayer.prototype.choosenBox.call(this)
+    proto.chosenBox = function() {
+      return AIPlayer.prototype.chosenBox.call(this)
     }
 
   // Dice
@@ -480,8 +479,12 @@ function Jahtzee() {
       if(!unequal) return true
     }
     proto.clone = function() {
-      var retval = Object.extended().clone.call(this, true)
-      retval.__proto__ = Dice.prototype
+      var retval = new Dice()
+      var i = 5
+      while (i--) {
+        retval[i].val = this[i].val
+        retval[i].selected = this[i].selected
+      }
       return retval
     }
 
@@ -569,10 +572,20 @@ function Jahtzee() {
           }
 
           // add sound around the nextRoll function
-          $scope.g.rollClick = function() {
+          var origNextRoll = $scope.g.nextRoll
+          $scope.g.nextRoll = function() {
             if($scope.g.roll_count < 3) document.getElementById('roll-sound').play()
-            $scope.g.nextRoll();
+            origNextRoll.apply($scope.g, arguments)
           }
+
+
+          // add sound around the lockVal function
+          $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
+          $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
+            document.getElementById('lock-sound').play()
+            $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
+          }
+
 
           // add sound + effects to the nextRound function
           var origNextRound = $scope.g.nextRound

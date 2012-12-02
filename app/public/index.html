@@ -251,7 +251,7 @@
 			<button 
 				class="btn-roll section-btn btn btn-block btn-success"
 				ng-class="{disabled : g.roll_count >= 3 }"
-				ng-click="g.rollClick()" > 
+				ng-click="g.nextRoll()" > 
 				ROLL [{{g.roll_count}}]
 			</button>
 			<br><br>
@@ -281,7 +281,10 @@
 </div>
 
 <audio id="roll-sound" src="../assets/wav/roll.wav"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
-<audio id="fireworks-sound" src="../assets/wav/roll.wav"></audio> 
+<audio id="lock-sound" src="../assets/wav/switch3.wav"></audio> 
+<audio id="click-sound" src="../assets/wav/mouseclick2.wav"></audio> 
+<audio id="bloop-sound" src="../assets/wav/bloop2.wav"></audio> 
+<audio id="fireworks-sound" src="../assets/wav/fireworks.wav"></audio> 
 
 <!-- ================================================== -->
 
