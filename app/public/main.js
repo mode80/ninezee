@@ -388,7 +388,7 @@ function Jahtzee() {
       var fake_dice = []
       var a,b,c,d,e
       var avg_scores = []
-      var selection
+      var selection = []
       var decimal_index
       var avgOfMany = function() {
         var trials = 1296 // enough rolls to get 1 yahtzees on average
@@ -416,10 +416,10 @@ function Jahtzee() {
                 decimal_index = a*16+b*8+c*4+d*2+e*1 // parseInt(selection.join(''),2) 
                 avg_scores[decimal_index] = avgOfMany.call(this)
               }
-      var binary_string = avg_scores.indexOf(avg_scores.max()).toString(2) // decimal to binary
-      binary_string = ("00000" + binary_string).slice(-5) // add leading zeroes
-      selection = binary_string.split('') // now to an array
       this.dice_to_roll = this.game.dice.clone()
+      var max_index = avg_scores.indexOf(avg_scores.max())
+      for (var i = 0, selection=[]; i < 5; i+=1)  // convert decimal to
+        selection.unshift(max_index >> i & 1)     // bit array
       this.dice_to_roll.selectByArray(selection)
     }
     proto.chosenBox = function() {
