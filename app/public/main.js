@@ -424,7 +424,7 @@ function Jahtzee() {
                 fake_dice = this.game.dice.clone()
                 fake_dice.selectByArray(selection)
                 var decimal_index = a*16+b*8+c*4+d*2+e // parseInt(selection.join(''),2) 
-                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0))*2 // enough times to get yahtzee 2x
+                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0))*1 // enough times to get yahtzee 1x
                 combo_scores[decimal_index] = avgOfMany.call(this,trial_count)
               }
 
