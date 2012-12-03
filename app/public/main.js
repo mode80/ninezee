@@ -1,14 +1,13 @@
 /*  TODO
--   Undo feature
--   Fix 0 score possibility before 1st roll
--   implement AI player stub
--   implement <die> directive with dot die faces 
--   lockVal sound effects
 -   disable UI while AI is playing
+-   Undo feature
+-   Improve AI
+-   implement <die> directive with dot die faces 
+-   other sound effects
 */
 
 /*globals angular, Fireworks*/
-/*jshint asi: true, es5: true, proto: true*/
+/*jshint asi: true, es5: true, proto: true, bitwise:false*/
 
 function Jahtzee() {
 
@@ -92,12 +91,6 @@ function Jahtzee() {
         if(this.n === dice[i].val) sum = sum + dice[i].val
       }
       return sum
-    }
-    proto.expectedValue = function(dice) {
-      var currentScore = this.calcVal(dice)
-      var isUnhelpfulFn = function(die) { return (die.val === this.n)}
-      var unhelpfulDice = dice.filter(isUnhelpfulFn)
-      // TODO finish or removen
     }
 
   // NOfAKindBox
@@ -349,11 +342,13 @@ function Jahtzee() {
     }
     proto = AIPlayer.prototype = Object.create(Player.prototype)
     proto.nextMove = function() {
+      if (this.game.round >= 13) return
       if (this.game.roll_count === 0) { // need to make first roll 
         this.game.nextRoll()
         this.die_index_to_compare = 0
         this.game.next_delay = 500
       } else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
+        this.game.next_delay = 2000
         if (this.chosenBox().val === null)
           this.chosenBox().proposeVal(this.game.dice)
         else
@@ -364,11 +359,11 @@ function Jahtzee() {
           var i = this.die_index_to_compare
           this.game.dice[i].selected = this.dice_to_roll[i].selected
           this.die_index_to_compare++
-          this.game.next_delay = this.die_index_to_compare * 200
+          this.game.next_delay = this.die_index_to_compare * 100
         } else { // done selecting, time to roll
           this.die_index_to_compare = 0
           this.game.nextRoll()
-          this.game.next_delay = 1000
+          this.game.next_delay = 500
         }
       }
     }
@@ -390,20 +385,25 @@ function Jahtzee() {
       AIPlayer.apply(this, arguments) // call super-constructor
     }
     proto = Robot.prototype = Object.create(AIPlayer.prototype)
+    
     proto.chooseDice = function(trials) {
+
       var fake_dice = []
       var a,b,c,d,e
-      var avg_scores = []
+      var combo_scores = []
       var selection = []
+
       var avgOfMany = function(trials) {
         var total = 0
+
         var bestBoxFn=function(b){
           var retval = 0
           b.proposeVal(fake_dice); 
           retval += this.grand_total.val
-          b.unproposeVal()
+          b.unproposeVal(fake_dice)
           return retval
         }
+
         //bestBoxFn=function(b){return b.unfinal? b.calcVal(fake_dice) :b.val}
         var i = trials
         while (i--) {
@@ -413,25 +413,25 @@ function Jahtzee() {
         }
         return total / trials
       }
+
       for (a=0; a<2; a++)
         for (b=0; b<2; b++)
           for (c=0; c<2; c++)
             for (d=0; d<2; d++)
               for (e=0; e<2; e++) {
+                // an iteration for each die seletion combo
                 selection = [a,b,c,d,e]
                 fake_dice = this.game.dice.clone()
                 fake_dice.selectByArray(selection)
-                var decimal_index = a*16+b*8+c*4+d*2+e*1 // parseInt(selection.join(''),2) 
-                var trial_count = Math.pow(6,a+b+c+d+e)*1 // enough times to get yahtzee 1x
-                avg_scores[decimal_index] = avgOfMany.call(this,trial_count)
+                var decimal_index = a*16+b*8+c*4+d*2+e // parseInt(selection.join(''),2) 
+                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0))*2 // enough times to get yahtzee 2x
+                combo_scores[decimal_index] = avgOfMany.call(this,trial_count)
               }
+
       this.dice_to_roll = this.game.dice.clone()
-      var max_index = avg_scores.indexOf(avg_scores.max())
+      var max_index = combo_scores.indexOf(combo_scores.max())
       for (var i = 0; i < 5; i+=1) selection.unshift(max_index >> i & 1)  // convert decimal to bit array    
       this.dice_to_roll.selectByArray(selection)
-    }
-    proto.chosenBox = function() {
-      return AIPlayer.prototype.chosenBox.call(this)
     }
 
   // Dice
@@ -506,20 +506,19 @@ function Jahtzee() {
     this.Game = function() {
       this.dice = new Dice()          // the array-like set of 5 game dice
       this.players = []               // all players
-      this.player = this.newPlayer()  // current player
+      this.player = null              // current player
       this.player_index = 0           // index of current player in players[]
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
       this.started = false            // true onece a new game has started
-      this.next_delay = 1000         // how long the AI thinks between moves
+      this.next_delay = 500           // how long the AI pauses by default between moves
+      this.timeout_id = 0             // holds id for the next queued function
     }
     proto = this.Game.prototype = Object.extended()
     proto.newPlayer = function(playerTypeString) {
       if(this.started) return
       var PlayerConstructor = eval(playerTypeString) || Player // TODO remove use of eval
-      var player_name = playerTypeString ? 
-        playerTypeString + (Math.floor(Math.random() * 90) + 10) : 
-        "Player " + (this.players.length + 1)
+      var player_name = playerTypeString
       var p = new PlayerConstructor(player_name, this)
       this.players.push(p)
       return p
@@ -543,14 +542,13 @@ function Jahtzee() {
       })
     }
     proto.nextRoll = function() {
-      if(this.roll_count >= 3) return false
+      //if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
     }
 }
 
-  // ***************************************************************************
-
+// ***************************************************************************
 
 // the main app module
   var app = angular.module("jahtzee_app", []).service("jahtzee_service", Jahtzee)
@@ -560,6 +558,7 @@ function Jahtzee() {
 
     function($scope, jahtzee_service) {
 
+      var timeout_id = 0  
 
       // first a utility function to refresh Angular views while avoiding reentrancy
         function safeApply(fn) { 
@@ -570,7 +569,11 @@ function Jahtzee() {
       // expose ability to create a new game to the view
         $scope.newGame = function() {
 
+          // the very important game object
           $scope.g = new jahtzee_service.Game()
+
+          // add player
+          $scope.g.player = $scope.g.newPlayer("Player")
       
           // modify the standard roll function with implementation-specific animation 
           var origRollSelected = $scope.g.dice.rollSelected
@@ -592,14 +595,14 @@ function Jahtzee() {
             origNextRoll.apply($scope.g, arguments)
           }
 
-
           // add sound around the lockVal function
-          $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
-          $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
-            document.getElementById('lock-sound').play()
-            $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
+          if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
+            $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
+            $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
+              document.getElementById('lock-sound').play()
+              $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
+            }
           }
-
 
           // add sound + effects to the nextRound function
           var origNextRound = $scope.g.nextRound
@@ -613,19 +616,18 @@ function Jahtzee() {
             }
           }
 
+          // cycle loop lets us animate the view via model manipulation, which Angular otherwise avoids
+          window.clearTimeout(timeout_id) // first end any queued function loops from previous games
+          ;(function cycle() {
+              $scope.g.player.nextMove()
+              safeApply()
+              timeout_id = window.setTimeout(cycle, $scope.g.next_delay)
+          })()
+
         }
 
       // kick off the initial game
         $scope.newGame()
-
-
-      // cycle loop lets us animate the view via model manipulation, which Angular otherwise avoids
-        ;(function cycle() {
-            $scope.g.player.nextMove()
-            safeApply()
-            window.setTimeout(cycle, $scope.g.next_delay)
-        })()
-
 
     }
   ])
