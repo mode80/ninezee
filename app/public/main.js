@@ -2,6 +2,8 @@
 -   disable UI while AI is playing
 -   Undo feature
 -   Improve AI
+    . continue profiling, remove (apprently slow) sugarjs calls
+    . "never goes for Yahtzee!" (e.g. 55554 will go in 4-of-a-kind even with 1 roll left)
 -   implement <die> directive with dot die faces 
 -   other sound effects
 */
@@ -248,7 +250,9 @@ function Jahtzee() {
         return true
       }
     proto.sumOfVals = function() {
-      return this.sum( function(box){ return box.val} )
+      var i = this.length, retval = 0
+      while (i--) retval += this[i].val
+      return retval
     }
     proto.pushAll = function(array_of_stuff_to_push) {
       Array.prototype.push.apply(this, array_of_stuff_to_push)
@@ -392,24 +396,21 @@ function Jahtzee() {
       var a,b,c,d,e
       var combo_scores = []
       var selection = []
+      var choosables_length = this.choosables.length
+
 
       var avgOfMany = function(trials) {
         var total = 0
-
-        var bestBoxFn=function(b){
-          var retval = 0
-          b.proposeVal(fake_dice); 
-          retval += this.grand_total.val
-          b.unproposeVal(fake_dice)
-          return retval
-        }
-
-        //bestBoxFn=function(b){return b.unfinal? b.calcVal(fake_dice) :b.val}
         var i = trials
-        while (i--) {
+        while (i--) { // each trial
           var ii=5; while (ii--) if(fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
-          var score_this_trial = this.choosables.map(bestBoxFn,this).average()
-          total += score_this_trial 
+          var iii = choosables_length
+          while (iii--) { // each box
+            var box = this.choosables[iii]
+            box.proposeVal(fake_dice)
+            total += this.grand_total.val
+            box.unproposeVal(fake_dice)
+          }
         }
         return total / trials
       }
@@ -424,7 +425,7 @@ function Jahtzee() {
                 fake_dice = this.game.dice.clone()
                 fake_dice.selectByArray(selection)
                 var decimal_index = a*16+b*8+c*4+d*2+e // parseInt(selection.join(''),2) 
-                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0))*1 // enough times to get yahtzee 1x
+                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0))*10 // enough times to get yahtzee 10x
                 combo_scores[decimal_index] = avgOfMany.call(this,trial_count)
               }
 
@@ -476,9 +477,14 @@ function Jahtzee() {
       return this.slice().sort(function(a, b) {return(a.val - b.val)})
     }
     proto.allSame = function() {
-      var die_val_fn = function(die) {return die.val}
-      if(this[0].val === null) return false
-      return(this.max(die_val_fn) === this.min(die_val_fn))
+      var lastval = this[5]
+      if(lastval===null) return false
+      var i = 4
+      while (i--) { 
+        if (lastval !== this[i]) return false
+        lastval = this[i]
+      }
+      return true
     }
     proto.reset = function() {
       this.each(function(die) {die.val = null})
@@ -573,7 +579,7 @@ function Jahtzee() {
           $scope.g = new jahtzee_service.Game()
 
           // add player
-          $scope.g.player = $scope.g.newPlayer("Player")
+          $scope.g.player = $scope.g.newPlayer("Robot")
       
           // modify the standard roll function with implementation-specific animation 
           var origRollSelected = $scope.g.dice.rollSelected
