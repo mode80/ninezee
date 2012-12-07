@@ -426,17 +426,18 @@ function Jahtzee() {
     }
     var AIPlayer_ = AIPlayer.prototype = Object.create(Player.prototype)
     AIPlayer_.nextMove = function() {
-      if (this.game.round >= 13) return
+      if (this.game.round > 13) return
       if (this.game.roll_count === 0) { // need to make first roll 
         this.game.nextRoll()
         this.die_index_to_compare = 0
         this.game.next_delay = 500
       } else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
         this.game.next_delay = 2000
-        if (this.chosenBox().val === null)
-          this.chosenBox().proposeVal(this.game.dice)
+        var chosen_box = this.chosenBox()
+        if (chosen_box.val === null)
+          chosen_box.proposeVal(this.game.dice)
         else
-          this.chosenBox().lockVal(this.game.dice)
+          chosen_box.lockVal(this.game.dice)
       } else { // choose and select dice
         if(this.die_index_to_compare === 0) 
           this.chooseDice()
@@ -460,7 +461,7 @@ function Jahtzee() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
       var i = this.choosables.length
-      var bestbox = this.choosables[0], bestboxval = 0
+      var bestbox = this.choosables[0], bestboxval = -1
       while (i--) {
         var thisbox = this.choosables[i]
         var thisboxval = thisbox.unfinal? thisbox.calcVal(game_dice) : -1
@@ -570,12 +571,14 @@ function Jahtzee() {
     }
     Game_.nextRound = function() {
       this.round++
-      if(this.round > 13) // determine winner(s)
-      this.players.max(function(p) {
-        return p.grand_total.val
-      }, true).each(function(p) {
-        p.winner = true
-      })
+      if(this.round > 13) {// determine winner(s)
+        var i = this.players.count, score = 0, max = 0, winner = null
+        while (i--) {
+          score = this.players[i].grand_total.val
+          if(score>max) {max = score; winner = this.players[i]}
+        }
+        winner.winner = true
+      }
     }
     Game_.nextRoll = function() {
       if(this.roll_count >= 3) return false

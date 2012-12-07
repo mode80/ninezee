@@ -48,18 +48,18 @@
           }
 
           // add sound around the lockVal function
-          if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
-            $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
-            $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
-              document.getElementById('lock-sound').play()
-              $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
-            }
-          }
+          //if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
+          //  $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
+          //  $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
+          //    document.getElementById('lock-sound').play()
+          //    $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
+          //  }
+          //}
 
           // add sound + effects to the nextRound function
           var origNextRound = $scope.g.nextRound
           $scope.g.nextRound = function() {
-            origNextRound()
+            origNextRound.call($scope.g, arguments)
             if($scope.g.round > 13) {
               //TODO make happen only on human player win
               document.getElementById('fireworks-sound').play()
