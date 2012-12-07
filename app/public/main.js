@@ -112,6 +112,7 @@ function Jahtzee() {
       return retval
     }
 
+  // ***************************************************************************
   // Box
   // ***************************************************************************
 
@@ -347,6 +348,7 @@ function Jahtzee() {
         } while(i++ < len)
     }
 
+  // ***************************************************************************
   // Player 
   // ***************************************************************************
 
@@ -440,7 +442,8 @@ function Jahtzee() {
         else
           this.chosenBox().lockVal(this.game.dice)
       } else { // choose and select dice
-        if(this.die_index_to_compare === 0) this.chooseDice()
+        if(this.die_index_to_compare === 0) 
+          this.chooseDice()
         if(this.die_index_to_compare < 5) { // still more to select
           var i = this.die_index_to_compare
           this.game.dice[i].selected = this.dice_to_roll[i].selected
@@ -461,11 +464,14 @@ function Jahtzee() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
       var i = this.choosables.length
-      var bestbox = this.choosables[0]
+      var bestbox = this.choosables[0], bestboxval = 0
       while (i--) {
         var thisbox = this.choosables[i]
-        var boxval = thisbox.unfinal? thisbox.calcVal(game_dice) : -1
-        if (boxval > bestbox.val) bestbox = thisbox
+        var thisboxval = thisbox.unfinal? thisbox.calcVal(game_dice) : -1
+        if (thisboxval > bestboxval) {
+          bestbox = thisbox
+          bestboxval = thisboxval
+        }
       }
       return bestbox
     }
@@ -481,6 +487,7 @@ function Jahtzee() {
 
       var a,b,c,d,e
       var scores = []
+      var best_score = 0, best_selection = [0,0,0,0,0]
 
       // score each dice selection combo
       for (a=0; a<2; a++)
@@ -488,29 +495,26 @@ function Jahtzee() {
           for (c=0; c<2; c++)
             for (d=0; d<2; d++)
               for (e=0; e<2; e++) {
-                var decimal_index = a*16+b*8+c*4+d*2+e // decimal representation of this selection combo 
+                var selection = [a,b,c,d,e]
+                // var index = a*16+b*8+c*4+d*2+e // decimal representation of this selection combo 
                 var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0)) // at least one trial for each possible set of die values
                 if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
-                scores[decimal_index] = this.avgOfMany(trial_count, [a,b,c,d,e])
+                var score = this.scoreSelection(selection, trial_count)
+                if(score > best_score) {best_score = score; best_selection = selection}
+                scores[selection] = score // keep temporarily for debugging
               }
-
-      // dig out the highest-scoring selection combo
-      var i = scores.length
-      var max_score = 0, max_index = 0
-      while (i--) {
-        if(scores[i] > max_score) {
-          max_score = scores[i]
-          max_index = i
-        }
-      }
 
       // finally remember the best die selection
       this.dice_to_roll = this.game.dice.clone()
-      this.dice_to_roll.selectByBitArray(max_index)
+      this.dice_to_roll.selectByArray(best_selection)
+      
+      //
+      console.log(scores)
+      console.log(best_selection)
     }
 
-    Robot_.avgOfMany = function(trials, selection) { 
-      // returns the average score across available boxes for a given die selection combo
+    Robot_.scoreSelection = function(selection, trials) { 
+      // returns a score across available boxes for the given die selection combo
       var total = 0
       var i = Math.max(trials,1)
       var choosables_length = this.choosables.length
@@ -521,22 +525,22 @@ function Jahtzee() {
         ii = choosables_length
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
-          box.proposeVal(fake_dice)
-          //box.val = box.calcVal(fake_dice)
-          //this.yahtzee_bonus.proposeVal(fake_dice)
-          //this.refreshTotals()
-            total += this.grand_total.val
-            //if (total !== parseInt(total)) debugger
-          box.unproposeVal(fake_dice)
-          //this.yahtzee_bonus.unproposeVal(fake_dice)
-          //this.refreshTotals()
+          if (box.unfinal) {
+            var before_total = this.grand_total.val
+            box.proposeVal(fake_dice)
+            var after_total = this.grand_total.val
+            box.unproposeVal(fake_dice)
+            total += (after_total - before_total)
+          }
         }
+
       }
       return total / trials
     }
 
 
 
+  // ***************************************************************************
   // Game
   // ***************************************************************************
     this.Game = function() {
@@ -584,6 +588,7 @@ function Jahtzee() {
     }
 }
 
+// ***************************************************************************
 // ***************************************************************************
 
 // the main app module
@@ -659,6 +664,7 @@ function Jahtzee() {
               safeApply()
               timeout_id = window.setTimeout(cycle, $scope.g.next_delay)
           })()
+          // document.getElementsByTagName("body")[0].ondblclick = function() {$scope.g.player.nextMove()}
 
         }
 
