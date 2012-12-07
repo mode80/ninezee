@@ -191,11 +191,11 @@ function fireworks() {
 }
 
 // End Fireworks Effect copyrighted content
-
+window.stopfire = stopfire
 return {
-	stop_after_minutes: stopafter,
+	stopAfterMinutes: function(m) {stopafter=m},
 	start: fireworks,
-	stop: stopfire
+  stop: stopfire
 };
 
 

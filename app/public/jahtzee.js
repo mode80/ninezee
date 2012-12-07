@@ -8,7 +8,7 @@
 -   other sound effects
 */
 
-/*globals angular, Fireworks*/
+/*globals angular*/
 /*jshint asi: true, es5: true, proto: true, bitwise:false*/
 
 function Jahtzee() {
@@ -42,6 +42,7 @@ function Jahtzee() {
         dice.__proto__ = Dice.prototype
         return dice
     }
+    Dice.sortFn = function(a, b) {return(a.val - b.val)} // static fn for sorting
     var Dice_ = Dice.prototype = Object.create(Array.prototype)
     Dice_.rollSelected = function() {
       var i = 5
@@ -79,7 +80,7 @@ function Jahtzee() {
       return sum
     }
     Dice_.sortedCopy = function() {
-      return this.slice().sort(function(a, b) {return(a.val - b.val)})
+      return this.slice().sort(Dice.sortFn)
     }
     Dice_.allSame = function() {
       var lastval = this[5]
@@ -129,7 +130,12 @@ function Jahtzee() {
       }
     var ScoreBox_ = ScoreBox.prototype = Object.create(Box.prototype)
     ScoreBox_.calcVal = function(dice) {
-      // override this
+      // what this box would score with the given dice
+      // override this for specific box types
+    }
+    ScoreBox_.easyVal = function() {
+      // a smart human's average score when targeting this box with 3 rolls
+      // overrride this for specific box types
     }
     ScoreBox_.proposeVal = function(dice) {
       if(this.player.ready() && this.val === null) {
@@ -170,6 +176,9 @@ function Jahtzee() {
       while (i--) if(dice[i].val === this.n) sum += dice[i].val
       return sum
     }
+    SimpleBox_.easyVal = function() { 
+      return this.n * 1.634 // derived from statistical sampling
+    }
 
   // NOfAKindBox
   // ***************************************************************************
@@ -190,6 +199,12 @@ function Jahtzee() {
       if(this.n === 5) return 50 /*Yahtzee!*/ 
       return dice.sum()
     }
+    NOfAKindBox_.easyVal = function() { 
+      if(this.n===3) return 11.710 
+      if(this.n===4) return 4.865
+      if(this.n===5) return 1.233
+    }
+
 
   // ChanceBox
   // ***************************************************************************
@@ -201,6 +216,9 @@ function Jahtzee() {
     ChanceBox_.calcVal = function(dice) {
       return dice.sum()
     }
+    ChanceBox_.easyVal = function() { 
+      return 22.325
+    }
 
   // FullHouseBox
   // ***************************************************************************
@@ -211,7 +229,7 @@ function Jahtzee() {
     var FullHouseBox_ = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
     FullHouseBox_.calcVal = function(dice) {
       var sorted_dice = dice.sortedCopy()
-      var i = sorted_dice.length
+      var i = 5
       var count_type = 0
       var count = []
       var last_val = null
@@ -224,6 +242,9 @@ function Jahtzee() {
       }
       if(count[1] + count[2] === 5 || count[1] === 5) return 25;
       else return 0
+    }
+    FullHouseBox_.easyVal = function() { 
+      return 6.583
     }
 
   // SequenceOfNBox
@@ -254,6 +275,10 @@ function Jahtzee() {
           this.player.simple_scores[dice[0].val - 1].val !== null)
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
+    }
+    SequenceOfNBox_.easyVal = function() { 
+      if (this.n===4) return 3.820
+      if (this.n===5) return 0.480  // TODO: lower than yahtzee? bug?      
     }
 
   // TotalBox
@@ -321,24 +346,30 @@ function Jahtzee() {
     }
     var ScoreBoxGroup_ = ScoreBoxGroup.prototype = Object.create(Array.prototype)
     ScoreBoxGroup_.isDone = function() {
-        var i = this.length, box
-        while(i--) { 
-          box = this[i]
-          if(box.unfinal) return false
-        }
-        return true
+      var i = this.cached_length, box
+      while(i--) { 
+        box = this[i]
+        if(box.unfinal) return false
       }
+      return true
+    }
     ScoreBoxGroup_.sumOfVals = function() {
-      var i = this.length, retval = 0
+      var i = this.cached_length, retval = 0
       while (i--) retval += this[i].val
+      return retval
+    }
+    ScoreBoxGroup_.push = function() {
+      var retval = Array.prototype.push.apply(this, arguments)
+      this.cached_length = this.length // cache this for speed
       return retval
     }
     ScoreBoxGroup_.pushAll = function(array_of_stuff_to_push) {
       Array.prototype.push.apply(this, array_of_stuff_to_push)
+      this.cached_length = this.length 
       return this
     }
     ScoreBoxGroup_.firstEmpty = function() {
-      var len = this.length, i = 0
+      var len = this.cached_length, i = 0
         do {
           if(this[i].val === null) return this[i]
         } while(i++ < len)
@@ -460,7 +491,7 @@ function Jahtzee() {
     AIPlayer_.chosenBox = function() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
-      var i = this.choosables.length
+      var i = this.choosables.cached_length
       var bestbox = this.choosables[0], bestboxval = -1
       while (i--) {
         var thisbox = this.choosables[i]
@@ -505,16 +536,16 @@ function Jahtzee() {
       this.dice_to_roll = this.game.dice.clone()
       this.dice_to_roll.selectByArray(best_selection)
       
-      //
-      console.log(scores)
-      console.log(best_selection)
+      //for debugging
+      //console.log(scores)
+      //console.log(best_selection)
     }
 
     Robot_.scoreSelection = function(selection, trials) { 
       // returns a score across available boxes for the given die selection combo
       var total = 0
       var i = Math.max(trials,1)
-      var choosables_length = this.choosables.length
+      var choosables_length = this.choosables.cached_length
       var fake_dice = this.game.dice.clone()
       fake_dice.selectByArray(selection)
       while (i--) { // for each trial
@@ -523,11 +554,7 @@ function Jahtzee() {
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
           if (box.unfinal) {
-            var before_total = this.grand_total.val
-            box.proposeVal(fake_dice)
-            var after_total = this.grand_total.val
-            box.unproposeVal(fake_dice)
-            total += (after_total - before_total)
+            total += box.calcVal(fake_dice)
           }
         }
 
@@ -558,6 +585,7 @@ function Jahtzee() {
       var player_name = playerTypeString
       var p = new PlayerConstructor(player_name, this)
       this.players.push(p)
+      if(this.player===null) this.player=p
       return p
     }
     Game_.nextPlayer = function() {
@@ -572,10 +600,10 @@ function Jahtzee() {
     Game_.nextRound = function() {
       this.round++
       if(this.round > 13) {// determine winner(s)
-        var i = this.players.count, score = 0, max = 0, winner = null
+        var i = this.players.length, score = 0, max = 0, winner = null
         while (i--) {
           score = this.players[i].grand_total.val
-          if(score>max) {max = score; winner = this.players[i]}
+          if (score>=max) {max = score; winner = this.players[i]}
         }
         winner.winner = true
       }

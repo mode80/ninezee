@@ -63,7 +63,7 @@
             if($scope.g.round > 13) {
               //TODO make happen only on human player win
               document.getElementById('fireworks-sound').play()
-              Fireworks.stop_after_minutes = 0.33
+              Fireworks.stopAfterMinutes(0.33)
               Fireworks.start()
             }
           }
