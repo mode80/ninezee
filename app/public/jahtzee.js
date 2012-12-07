@@ -228,20 +228,16 @@ function Jahtzee() {
     }
     var FullHouseBox_ = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
     FullHouseBox_.calcVal = function(dice) {
-      var sorted_dice = dice.sortedCopy()
-      var i = 5
-      var count_type = 0
-      var count = []
-      var last_val = null
-      while(i--) {
-        if(sorted_dice[i].val === last_val)
-          count[count_type] = count[count_type] + 1 || 2
-        else
-          count_type++
-        last_val = sorted_dice[i].val
+      var i = 5, val_counts = [], different_vals = 0
+      while (i--) {
+          var die_val = dice[i].val
+          if (val_counts[die_val] === 0) different_vals++
+          val_counts[die_val]++
       }
-      if(count[1] + count[2] === 5 || count[1] === 5) return 25;
-      else return 0
+      if (different_vals===2 || different_vals===1) 
+          return 25
+      else 
+          return 0
     }
     FullHouseBox_.easyVal = function() { 
       return 6.583
@@ -258,15 +254,15 @@ function Jahtzee() {
     SequenceOfNBox_.calcVal = function(dice) {
       var sorted_dice = dice.sortedCopy()
       var in_a_row = 1
-      var last_val
+      var last_val = 0
       var point_val = 0
       var yahtzee_wildcard = false
       var i = 5    
       while (i--) {
-        var die = dice[i]
-        if(die.val === last_val + 1) in_a_row++
-        else if(die.val > last_val) in_a_row = 1
-        last_val = die.val      
+        var die_val = dice[i].val
+        if(die_val === last_val - 1) in_a_row++
+        else if(die_val < last_val) in_a_row = 1
+        last_val = die_val      
       }
       if(this.n === 4) point_val = 30;
       else if(this.n === 5) point_val = 40
@@ -609,7 +605,7 @@ function Jahtzee() {
       }
     }
     Game_.nextRoll = function() {
-      if(this.roll_count >= 3) return false
+      //if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
     }
