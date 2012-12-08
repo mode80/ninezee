@@ -526,16 +526,19 @@ function Jahtzee() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
       var i = this.choosables.cached_length
-      var bestbox = this.choosables[0], bestboxval = -10000
+      var best_box = this.choosables[0] 
+      var best_score = -Infinity
       while (i--) {
-        var thisbox = this.choosables[i]
-        var pref_score = thisbox.unfinal? thisbox.calcVal(game_dice) : -10000
-        if (pref_score > bestboxval) {
-          bestbox = thisbox
-          bestboxval = pref_score
+        var this_box = this.choosables[i]
+        if (this_box.unfinal) {
+          var pref_score = this_box.calcVal(game_dice)
+          if (pref_score > best_score) {
+            best_box = this_box
+            best_score = pref_score
+          }
         }
       }
-      return bestbox
+      return best_box
     }
 
   // SmartBot 
