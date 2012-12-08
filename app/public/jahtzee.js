@@ -1,9 +1,10 @@
 /*  TODO
--   disable UI while AI is playing
--   Undo feature
 -   Improve AI
-    . continue profiling, remove (apprently slow) sugarjs calls
+    . continue implementing bonusVal and prefScore for all boxes
     . "never goes for Yahtzee!" (e.g. 55554 will go in 4-of-a-kind even with 1 roll left)
+-   disable UI while AI is playing
+-   breakage with lock sound?
+-   Undo feature
 -   implement <die> directive with dot die faces 
 -   other sound effects
 */
@@ -137,10 +138,14 @@ function Jahtzee() {
       // a smart human's average score when targeting this box with 3 rolls
       // overrride this for specific box types
     }
-    ScoreBox_.avgBonus = function() {
+    ScoreBox_.avgBonus = function(dice) {
       // avg expected future contribution to a bonus 
       // overrride this for specific box types
       return 0
+    }
+    ScoreBox_.prefScore = function(dice) {
+      // a function to quantify the "likability" of this box for the AI 
+      return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice)
     }
     ScoreBox_.proposeVal = function(dice) {
       if(this.player.ready() && this.val === null) {
@@ -193,6 +198,7 @@ function Jahtzee() {
       // while (i--) {
       //   if simple_boxes[i].unfinal
       // }
+      return 0
     }
     // What % of the time are matching die counts of [0..5] acheived on average
     SimpleBox_.ROLLCOUNT_RATIO = [0.0653,0.2299,0.3415,0.2577,0.0929,0.0127]
@@ -523,10 +529,10 @@ function Jahtzee() {
       var bestbox = this.choosables[0], bestboxval = -1
       while (i--) {
         var thisbox = this.choosables[i]
-        var thisboxval = thisbox.unfinal? thisbox.calcVal(game_dice) : -1
-        if (thisboxval > bestboxval) {
+        var pref_score = thisbox.unfinal? thisbox.calcVal(game_dice) : Number.MIN_VALUE
+        if (pref_score > bestboxval) {
           bestbox = thisbox
-          bestboxval = thisboxval
+          bestboxval = pref_score
         }
       }
       return bestbox
@@ -556,7 +562,7 @@ function Jahtzee() {
                 if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
                 var score = this.scoreSelection(selection, trial_count)
                 if(score > best_score) {best_score = score; best_selection = selection}
-                // scores[selection] = score // for debugging
+                scores[selection] = score // for debugging
               }
 
       // return the best die selection
@@ -569,7 +575,7 @@ function Jahtzee() {
     SmartBot_.scoreSelection = function(selection, trials) { 
       // returns a score across available boxes for the given die selection combo
       var total = 0
-      var i = Math.max(trials,1)
+      var i = trials || 1
       var choosables_length = this.choosables.cached_length
       var fake_dice = this.game.dice.clone()
       fake_dice.selectByArray(selection)
@@ -579,14 +585,13 @@ function Jahtzee() {
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
           if (box.unfinal) {
-            total += box.calcVal(fake_dice)
+            total += box.calcVal(fake_dice)//box.prefScore(fake_dice)
           }
         }
 
       }
       return total / trials
     }
-
 
 
   // ***************************************************************************
