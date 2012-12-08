@@ -526,10 +526,10 @@ function Jahtzee() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
       var i = this.choosables.cached_length
-      var bestbox = this.choosables[0], bestboxval = Number.MIN_VALUE
+      var bestbox = this.choosables[0], bestboxval = -10000
       while (i--) {
         var thisbox = this.choosables[i]
-        var pref_score = thisbox.unfinal? thisbox.calcVal(game_dice) : Number.MIN_VALUE
+        var pref_score = thisbox.unfinal? thisbox.calcVal(game_dice) : -10000
         if (pref_score > bestboxval) {
           bestbox = thisbox
           bestboxval = pref_score
