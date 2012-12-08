@@ -137,6 +137,11 @@ function Jahtzee() {
       // a smart human's average score when targeting this box with 3 rolls
       // overrride this for specific box types
     }
+    ScoreBox_.avgBonus = function() {
+      // avg expected future contribution to a bonus 
+      // overrride this for specific box types
+      return 0
+    }
     ScoreBox_.proposeVal = function(dice) {
       if(this.player.ready() && this.val === null) {
         this.val = this.calcVal(dice)
@@ -168,7 +173,6 @@ function Jahtzee() {
     function SimpleBox(player, n) {
         ScoreBox.apply(this, arguments)
         this.n = n
-        this.typical_val = 3*n
       }
     var SimpleBox_ = SimpleBox.prototype = Object.create(ScoreBox.prototype)
     SimpleBox_.calcVal = function(dice) {
@@ -177,8 +181,21 @@ function Jahtzee() {
       return sum
     }
     SimpleBox_.easyVal = function() { 
-      return this.n * 1.634 // derived from statistical sampling
+      return this.n * 1.621 // derived from statistical sampling
     }
+    SimpleBox_.avgBonus = function(dice) {
+      var full_bonus_amount = 35
+      var percent_contribution_toward_bonus = this.n/21 //21=(6+5+4+3+2+1)
+      var total_so_far = this.player.simple_scores.sumOfVals()
+      var liklihood_of_bonus = 0 
+      var simple_boxes = this.player.simple_scores
+      var i = simple_boxes.cached_length
+      // while (i--) {
+      //   if simple_boxes[i].unfinal
+      // }
+    }
+    // What % of the time are matching die counts of [0..5] acheived on average
+    SimpleBox_.ROLLCOUNT_RATIO = [0.0653,0.2299,0.3415,0.2577,0.0929,0.0127]
 
   // NOfAKindBox
   // ***************************************************************************
@@ -200,9 +217,9 @@ function Jahtzee() {
       return dice.sum()
     }
     NOfAKindBox_.easyVal = function() { 
-      if(this.n===3) return 11.710 
-      if(this.n===4) return 4.865
-      if(this.n===5) return 1.233
+      if(this.n===3) return 11.700 
+      if(this.n===4) return 4.890
+      if(this.n===5) return 1.192
     }
 
 
@@ -217,7 +234,7 @@ function Jahtzee() {
       return dice.sum()
     }
     ChanceBox_.easyVal = function() { 
-      return 22.325
+      return 22.372
     }
 
   // FullHouseBox
@@ -228,19 +245,22 @@ function Jahtzee() {
     }
     var FullHouseBox_ = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
     FullHouseBox_.calcVal = function(dice) {
-      var i = 5, val_counts = [], different_vals = 0
+      var i = 5, val_counts = [0,0,0,0,0,0,0], different_vals = 0
+      var last = 0
       while (i--) {
           var die_val = dice[i].val
           if (val_counts[die_val] === 0) different_vals++
           val_counts[die_val]++
+          last = die_val
       }
-      if (different_vals===2 || different_vals===1) 
+      if (different_vals===1) return 25 // yahtzee's count as full house
+      if (different_vals===2 && (val_counts[last]===2 || val_counts[last]===3))
           return 25
       else 
           return 0
     }
     FullHouseBox_.easyVal = function() { 
-      return 6.583
+      return 6.811
     }
 
   // SequenceOfNBox
@@ -259,7 +279,7 @@ function Jahtzee() {
       var yahtzee_wildcard = false
       var i = 5    
       while (i--) {
-        var die_val = dice[i].val
+        var die_val = sorted_dice[i].val
         if(die_val === last_val - 1) in_a_row++
         else if(die_val < last_val) in_a_row = 1
         last_val = die_val      
@@ -273,8 +293,8 @@ function Jahtzee() {
       else return 0
     }
     SequenceOfNBox_.easyVal = function() { 
-      if (this.n===4) return 3.820
-      if (this.n===5) return 0.480  // TODO: lower than yahtzee? bug?      
+      if (this.n===4) return 15.580
+      if (this.n===5) return 9.413 
     }
 
   // TotalBox
@@ -448,43 +468,55 @@ function Jahtzee() {
   // ***************************************************************************
     var AIPlayer = function(name, game) {
       Player.apply(this, arguments) // call super-constructor
-      this.dice_to_roll = null
-      this.die_index_to_compare = 0
+      this.chosen_dice = null
+      this.die_index = 0 // incremented inside .nextMove() when selecting
     }
     var AIPlayer_ = AIPlayer.prototype = Object.create(Player.prototype)
+
     AIPlayer_.nextMove = function() {
-      if (this.game.round > 13) return
-      if (this.game.roll_count === 0) { // need to make first roll 
-        this.game.nextRoll()
-        this.die_index_to_compare = 0
-        this.game.next_delay = 500
-      } else if (this.game.roll_count >= 3) { // rolling is over, choose a box 
-        this.game.next_delay = 2000
-        var chosen_box = this.chosenBox()
-        if (chosen_box.val === null)
-          chosen_box.proposeVal(this.game.dice)
-        else
-          chosen_box.lockVal(this.game.dice)
-      } else { // choose and select dice
-        if(this.die_index_to_compare === 0) 
-          this.chooseDice()
-        if(this.die_index_to_compare < 5) { // still more to select
-          var i = this.die_index_to_compare
-          this.game.dice[i].selected = this.dice_to_roll[i].selected
-          this.die_index_to_compare++
-          this.game.next_delay = this.die_index_to_compare * 100
-        } else { // done selecting, time to roll
-          this.die_index_to_compare = 0
-          this.game.nextRoll()
-          this.game.next_delay = 500
+      if (this.game.round > 13) return  // bail if game over already
+
+      var rolls = this.game.roll_count
+      var game = this.game
+
+      // roll
+        if (rolls === 0 || (rolls < 3 && this.die_index >= 5)) { 
+          game.nextRoll()
+          this.die_index = 0
+          game.next_delay = 500
+          return
         }
-      }
+  
+      // choose dice
+        if(this.die_index === 0 && rolls < 3 && game.dice.selectedCount()>0) 
+          this.chosen_dice = this.chooseDice()
+  
+      // animate selection
+        if (this.die_index < 5 && rolls < 3) { 
+          var i = this.die_index
+          game.dice[i].selected = this.chosen_dice[i].selected
+          this.die_index++; 
+          game.next_delay = this.die_index * 100
+          return
+        }
+
+      // choose a box 
+        if (rolls === 3) { 
+          var chosen_box = this.chooseBox()
+          if (chosen_box.val === null) {    
+            chosen_box.proposeVal(game.dice)
+          } else {
+            chosen_box.lockVal(game.dice)
+          }
+          game.next_delay = 1000 
+        }
+
     }
 
     AIPlayer_.chooseDice = function() {
-      this.dice_to_roll = new Dice()
+      return new Dice()
     }
-    AIPlayer_.chosenBox = function() {
+    AIPlayer_.chooseBox = function() {
       // find the highest scoring box with just the current gamedice values
       var game_dice = this.game.dice
       var i = this.choosables.cached_length
@@ -500,14 +532,14 @@ function Jahtzee() {
       return bestbox
     }
 
-  // Robot 
+  // SmartBot 
   // ***************************************************************************
-    function Robot(name, game){ 
+    function SmartBot(name, game){ 
       AIPlayer.apply(this, arguments) // call super-constructor
     }
-    var Robot_ = Robot.prototype = Object.create(AIPlayer.prototype)
+    var SmartBot_ = SmartBot.prototype = Object.create(AIPlayer.prototype)
     
-    Robot_.chooseDice = function(trials) {
+    SmartBot_.chooseDice = function(trials) {
 
       var a,b,c,d,e
       var scores = []
@@ -520,24 +552,21 @@ function Jahtzee() {
             for (d=0; d<2; d++)
               for (e=0; e<2; e++) {
                 var selection = [a,b,c,d,e]
-                // var index = a*16+b*8+c*4+d*2+e // decimal representation of this selection combo 
-                var trial_count = Math.pow(6,Math.max(a+b+c+d+e-1,0)) // at least one trial for each possible set of die values
+                var trial_count = Math.pow(6,Math.max(a+b+c+d+e,0)) // at least one trial for each possible set of die values
                 if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
                 var score = this.scoreSelection(selection, trial_count)
                 if(score > best_score) {best_score = score; best_selection = selection}
-                scores[selection] = score // keep temporarily for debugging
+                // scores[selection] = score // for debugging
               }
 
-      // finally remember the best die selection
-      this.dice_to_roll = this.game.dice.clone()
-      this.dice_to_roll.selectByArray(best_selection)
+      // return the best die selection
+      var chosen_dice = this.game.dice.clone()
+      chosen_dice.selectByArray(best_selection)
+      return chosen_dice
       
-      //for debugging
-      //console.log(scores)
-      //console.log(best_selection)
     }
 
-    Robot_.scoreSelection = function(selection, trials) { 
+    SmartBot_.scoreSelection = function(selection, trials) { 
       // returns a score across available boxes for the given die selection combo
       var total = 0
       var i = Math.max(trials,1)

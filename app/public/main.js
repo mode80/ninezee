@@ -25,7 +25,7 @@
           $scope.g = new jahtzee_service.Game()
 
           // add player
-          $scope.g.player = $scope.g.newPlayer("Player")
+          $scope.g.newPlayer("SmartBot")
       
           // modify the standard roll function with implementation-specific animation 
           var origRollSelected = $scope.g.dice.rollSelected
@@ -48,13 +48,13 @@
           }
 
           // add sound around the lockVal function
-          //if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
-          //  $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
-          //  $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
-          //    document.getElementById('lock-sound').play()
-          //    $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
-          //  }
-          //}
+          if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
+            $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
+            $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
+              document.getElementById('lock-sound').play()
+              $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
+            }
+          }
 
           // add sound + effects to the nextRound function
           var origNextRound = $scope.g.nextRound
@@ -75,7 +75,7 @@
               safeApply()
               timeout_id = window.setTimeout(cycle, $scope.g.next_delay)
           })()
-          // document.getElementsByTagName("body")[0].ondblclick = function() {$scope.g.player.nextMove()}
+          //document.getElementsByTagName("body")[0].ondblclick = function() {$scope.g.player.nextMove()}
 
         }
 
