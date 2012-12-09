@@ -531,7 +531,7 @@ function Jahtzee() {
       while (i--) {
         var this_box = this.choosables[i]
         if (this_box.unfinal) {
-          var pref_score = this_box.calcVal(game_dice)
+          var pref_score = this_box.prefScore(game_dice) //this_box.calcVal(game_dice)
           if (pref_score > best_score) {
             best_box = this_box
             best_score = pref_score
@@ -552,7 +552,7 @@ function Jahtzee() {
 
       var a,b,c,d,e
       var scores = []
-      var best_score = 0, best_selection = [0,0,0,0,0]
+      var best_score = -Infinity, best_selection = [0,0,0,0,0]
 
       // score each dice selection combo
       for (a=0; a<2; a++)
@@ -564,7 +564,9 @@ function Jahtzee() {
                 var trial_count = Math.pow(6,Math.max(a+b+c+d+e,0)) // at least one trial for each possible set of die values
                 if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
                 var score = this.scoreSelection(selection, trial_count)
-                if(score > best_score) {best_score = score; best_selection = selection}
+                if(score > best_score) 
+                    {best_score = score; 
+                    best_selection = selection}
                 scores[selection] = score // for debugging
               }
 
@@ -588,7 +590,7 @@ function Jahtzee() {
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
           if (box.unfinal) {
-            total += box.calcVal(fake_dice)//box.prefScore(fake_dice)
+            total += box.prefScore(fake_dice) // box.calcVal(fake_dice)
           }
         }
 
