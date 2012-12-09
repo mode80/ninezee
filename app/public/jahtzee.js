@@ -1,7 +1,7 @@
 /*  TODO
 -   Improve AI
+      . encourage AI to go for yahtzee (with correct bonus) even though filled in
       . rerun easyVal status including new algo & expected bonus
-      . encourage AI to go for yahtzee 2nd time for bonus even though filled in
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -118,7 +118,10 @@ function Jahtzee() {
   // ***************************************************************************
 
     function Box(player) {
-        this.player = player, this.val = null, this.unfinal = true
+        this.player = player
+        this.val = null
+        this.unfinal = true
+        this.yahtzee = false //yahtzee box has to be ID'd and treated special
       }
     var Box_ = Box.prototype = {} //Object.extended()
 
@@ -177,6 +180,7 @@ function Jahtzee() {
     function SimpleBox(player, n) {
         ScoreBox.apply(this, arguments)
         this.n = n
+        this.max_val = n*6
       }
     var SimpleBox_ = SimpleBox.prototype = Object.create(ScoreBox.prototype)
     SimpleBox_.calcVal = function(dice) {
@@ -234,6 +238,10 @@ function Jahtzee() {
     function NOfAKindBox(player, n) {
       ScoreBox.apply(this, arguments)
       this.n = n
+      this.yahtzee = (n===5)
+      if (this.yahtzee) this.max_val = 50
+      // continue TODO
+
     }
     var NOfAKindBox_ = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
     NOfAKindBox_.calcVal = function(dice) {
@@ -256,11 +264,32 @@ function Jahtzee() {
       var chance_of_another_yahtzee
       var rounds_remaining
       if(this.n===5) {
-        if (player.yahtzee.unfinal === true)
-        rounds_remaining = 13 - this.player.game.round
-        chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
-        return 100 * chance_of_another_yahtzee
+        if (this.player.yahtzee.unfinal === true) {
+          rounds_remaining = 13 - this.player.game.round
+          chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
+          return 100 * chance_of_another_yahtzee
+        }
+        else
+          return 100
       }
+    }
+    NOfAKindBox_.prefScore = function(dice) {
+      if (this.yahtzee) {
+        //find highest available empty box
+        var i = this.player.choosables.cached_length
+        var choosables = this.player.choosables
+        var max = 0, current = 0, max_box = null
+        while (i--) {
+          current = choosables[i].max_val
+          if (current> max) {
+            max = current
+            max_box = choosables[i]
+          }
+        }
+        // TODO finish this
+      }
+      else
+        return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice)
     }
 
 
@@ -626,7 +655,7 @@ function Jahtzee() {
         ii = choosables_length
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
-          if (box.unfinal) {
+          if (box.unfinal || box.yahtzee) {
             total += box.prefScore(fake_dice) // box.calcVal(fake_dice)
           }
         }
