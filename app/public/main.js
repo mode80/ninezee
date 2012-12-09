@@ -61,7 +61,7 @@
           $scope.g.nextRound = function() {
             origNextRound.call($scope.g, arguments)
             if($scope.g.round > 13) {
-              if ((! $scope.g.player.AI) && $scope.g.players.length > 1) {
+              if ($scope.g.winner.AI===false && $scope.g.players.length > 1) {
                 document.getElementById('fireworks-sound').play()
                 Fireworks.stopAfterMinutes(0.33)
                 Fireworks.start()

@@ -1,6 +1,7 @@
 /*  TODO
 -   Improve AI
       . rerun easyVal status including new algo & expected bonus
+      . encourage AI to go for yahtzee 2nd time for bonus even though filled in
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -255,6 +256,7 @@ function Jahtzee() {
       var chance_of_another_yahtzee
       var rounds_remaining
       if(this.n===5) {
+        if (player.yahtzee.unfinal === true)
         rounds_remaining = 13 - this.player.game.round
         chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
         return 100 * chance_of_another_yahtzee
