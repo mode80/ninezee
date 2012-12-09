@@ -562,7 +562,7 @@ function Jahtzee() {
               for (e=0; e<2; e++) {
                 var selection = [a,b,c,d,e]
                 var trial_count = Math.pow(6,Math.max(a+b+c+d+e,0)) // at least one trial for each possible set of die values
-                if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
+                if(trial_count > 1) trial_count *= 3 // times enough to "get yahtzee" 3x on average
                 var score = this.scoreSelection(selection, trial_count)
                 if(score > best_score) 
                     {best_score = score; 
