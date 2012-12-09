@@ -25,7 +25,7 @@
           $scope.g = new jahtzee_service.Game()
 
           // add player
-          $scope.g.newPlayer("SmartBot")
+          $scope.g.newPlayer("Player")
       
           // modify the standard roll function with implementation-specific animation 
           var origRollSelected = $scope.g.dice.rollSelected
