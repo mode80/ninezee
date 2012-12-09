@@ -1,9 +1,7 @@
 /*  TODO
 -   Improve AI
-    . continue implementing bonusVal and prefScore for all boxes
-    . "never goes for Yahtzee!" (e.g. 55554 will go in 4-of-a-kind even with 1 roll left)
+      . rerun easyVal status including new algo & expected bonus
 -   disable UI while AI is playing
--   breakage with lock sound?
 -   Undo feature
 -   implement <die> directive with dot die faces 
 -   other sound effects
@@ -189,15 +187,41 @@ function Jahtzee() {
       return this.n * 1.621 // derived from statistical sampling
     }
     SimpleBox_.avgBonus = function(dice) {
+      var n_count = this.calcVal(dice) / this.n
+      var typical_bonus_portion = this.n*3/63
+      var typical_bonus = 35 * typical_bonus_portion
+      if(n_count>=3) 
+        return typical_bonus * n_count / 3
+      else
+        return -1 * typical_bonus * (3-n_count) / 3
+    }
+    SimpleBox_.avgBonusBeta = function(dice) {
+      //under development replacement for the existing crude avgBonus method
       var full_bonus_amount = 35
       var percent_contribution_toward_bonus = this.n/21 //21=(6+5+4+3+2+1)
       var total_so_far = this.player.simple_scores.sumOfVals()
-      var liklihood_of_bonus = 0 
       var simple_boxes = this.player.simple_scores
       var i = simple_boxes.cached_length
-      // while (i--) {
-      //   if simple_boxes[i].unfinal
-      // }
+      var liklihood_of_bonus = 0 //TODO
+      var expected_top = 0 // TODO
+      var given_top = 0
+      var n = this.n, RCR = this.ROLLCOUNT_RATIO
+      var BONUS_THRESHOLD = 63 // per the rules
+      var a=6,b=6,c=6,d=6,e=6,f=6
+      while (i--) {
+        if (!simple_boxes[i].unfinal)
+          given_top += simple_boxes[i].val
+        else 
+          expected_top += (n*RCR[0] + n*RCR[1] + n*RCR[2] + n*RCR[3] + n*RCR[4] + n*RCR[5])
+      }
+      var target_threshold = BONUS_THRESHOLD - given_top
+      while (a--)
+        while (b--)
+          while (c--)
+            while (d--)
+              while (e--)
+                while (f--)
+                  //something
       return 0
     }
     // What % of the time are matching die counts of [0..5] acheived on average
@@ -226,6 +250,15 @@ function Jahtzee() {
       if(this.n===3) return 11.700 
       if(this.n===4) return 4.890
       if(this.n===5) return 1.192
+    }
+    NOfAKindBox_.bonusVal = function() {
+      var chance_of_another_yahtzee
+      var rounds_remaining
+      if(this.n===5) {
+        rounds_remaining = 13 - this.player.game.round
+        chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
+        return 100 * chance_of_another_yahtzee
+      }
     }
 
 
@@ -406,6 +439,7 @@ function Jahtzee() {
     this.name = name || "Player"
     this.game = game
     this.winner = null
+    this.AI = false
 
     this.aces = new SimpleBox(this, 1)
     this.twos = new SimpleBox(this, 2)
@@ -476,6 +510,7 @@ function Jahtzee() {
       Player.apply(this, arguments) // call super-constructor
       this.chosen_dice = null
       this.die_index = 0 // incremented inside .nextMove() when selecting
+      this.AI = true
     }
     var AIPlayer_ = AIPlayer.prototype = Object.create(Player.prototype)
 
@@ -606,6 +641,7 @@ function Jahtzee() {
       this.dice = new Dice()          // the array-like set of 5 game dice
       this.players = []               // all players
       this.player = null              // current player
+      this.winner = null              // set to eventual winner
       this.player_index = 0           // index of current player in players[]
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
@@ -641,10 +677,11 @@ function Jahtzee() {
           if (score>=max) {max = score; winner = this.players[i]}
         }
         winner.winner = true
+        this.winner = winner
       }
     }
     Game_.nextRoll = function() {
-      //if(this.roll_count >= 3) return false
+      if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
     }

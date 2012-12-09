@@ -61,10 +61,11 @@
           $scope.g.nextRound = function() {
             origNextRound.call($scope.g, arguments)
             if($scope.g.round > 13) {
-              //TODO make happen only on human player win
-              document.getElementById('fireworks-sound').play()
-              Fireworks.stopAfterMinutes(0.33)
-              Fireworks.start()
+              if ((! $scope.g.player.AI) && $scope.g.players.length > 1) {
+                document.getElementById('fireworks-sound').play()
+                Fireworks.stopAfterMinutes(0.33)
+                Fireworks.start()
+              }
             }
           }
 
@@ -75,7 +76,6 @@
               safeApply()
               timeout_id = window.setTimeout(cycle, $scope.g.next_delay)
           })()
-          //document.getElementsByTagName("body")[0].ondblclick = function() {$scope.g.player.nextMove()}
 
         }
 
