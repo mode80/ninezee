@@ -1,7 +1,7 @@
 /*  TODO
 -   Improve AI
-      . rerun easyVal status including new algo & expected bonus
       . encourage AI to go for yahtzee 2nd time for bonus even though filled in
+      . rerun easyVal stats including new algo & expected bonus
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
