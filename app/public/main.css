@@ -147,3 +147,9 @@ body {
 #player-name.current-player {
     background: #fdffe2;
 }
+
+.version {
+    color: #ddd;
+    text-align: center;
+    font-size: 10px;
+}
