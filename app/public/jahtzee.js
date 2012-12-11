@@ -1,6 +1,8 @@
 /*  TODO
 -   Improve AI
+      . sortedCopy is taking half the time
       . rerun easyVal status including new algo & expected bonus
+      . had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -282,8 +284,11 @@ function Jahtzee() {
       var calc_val
       if(!this.final) // first yahtzee's score per their 
         calc_val = this.calcVal(dice)
-      else             // otherwise they can score as the best available other box
-        calc_val = this.player.chooseBox(dice).calcVal(dice)
+      else             // otherwise they can score as the best available other box if it's not zeroed
+        if (this.val === 0)
+          calc_val = 0
+        else
+          calc_val = this.player.chooseBox(dice).calcVal(dice)
       return calc_val - this.easyVal() + this.avgBonus(dice)
     }
 
