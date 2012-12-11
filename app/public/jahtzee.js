@@ -1,7 +1,5 @@
 /*  TODO
--   Yahtzee bonus no work
 -   Improve AI
-      . test AI to goes for yahtzee (with correct bonus) even though filled in
       . rerun easyVal status including new algo & expected bonus
 -   disable UI while AI is playing
 -   Undo feature
@@ -121,7 +119,7 @@ function Jahtzee() {
     function Box(player) {
         this.player = player
         this.val = null
-        this.unfinal = true
+        this.final = false
         this.yahtzee = false //yahtzee box has to be ID'd and treated special
       }
     var Box_ = Box.prototype = {} //Object.extended()
@@ -158,15 +156,15 @@ function Jahtzee() {
       }
     }
     ScoreBox_.unproposeVal = function(dice) {
-      if(this.player.ready() && this.unfinal) {
+      if(this.player.ready() && !this.final) {
         this.val = null
         this.player.yahtzee_bonus.unproposeVal(dice)
         this.player.refreshTotals()
       }
     }
     ScoreBox_.lockVal = function(dice) {
-      if(this.player.ready() && this.unfinal) {
-        this.unfinal = false
+      if(this.player.ready() && !this.final) {
+        this.final = true
         this.val = this.calcVal(dice)
         this.player.yahtzee_bonus.lockVal(dice)
         this.player.refreshTotals()
@@ -215,7 +213,7 @@ function Jahtzee() {
       var BONUS_THRESHOLD = 63 // per the rules
       var a=6,b=6,c=6,d=6,e=6,f=6
       while (i--) {
-        if (!simple_boxes[i].unfinal)
+        if (simple_boxes[i].final)
           given_top += simple_boxes[i].val
         else 
           expected_top += (n*RCR[0] + n*RCR[1] + n*RCR[2] + n*RCR[3] + n*RCR[4] + n*RCR[5])
@@ -272,7 +270,7 @@ function Jahtzee() {
       return 1.192
     }
     Yahtzee_.avgBonus = function(dice) {
-      if (this.unfinal) {
+      if (!this.final) {
         var rounds_remaining = 13 - this.player.game.round
         var chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
         return 100 * chance_of_another_yahtzee
@@ -282,7 +280,7 @@ function Jahtzee() {
     }
     Yahtzee_.prefScore = function(dice) {
       var calc_val
-      if(this.unfinal) // first yahtzee's score per their 
+      if(!this.final) // first yahtzee's score per their 
         calc_val = this.calcVal(dice)
       else             // otherwise they can score as the best available other box
         calc_val = this.player.chooseBox(dice).calcVal(dice)
@@ -354,8 +352,8 @@ function Jahtzee() {
       if(this.n === 4) point_val = 30; else if(this.n === 5) point_val = 40
       yahtzee_wildcard = (
         (dice.allSame()) && // rules say extra yahtzee's count as straights
-        (!this.player.yahtzee.unfinal  && this.player.yahtzee.val > 0) && // as long as yahtzee box hasn't been zeroed
-        (!this.player.simple_scores[dice[0].val-1].unfinal) // and it can't go in the corresponding SimpleScore box
+        (this.player.yahtzee.final  && this.player.yahtzee.val > 0) && // as long as yahtzee box hasn't been zeroed
+        (this.player.simple_scores[dice[0].val-1].final) // and it can't go in the corresponding SimpleScore box
       )
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
@@ -374,7 +372,7 @@ function Jahtzee() {
     }
     var TotalBox_ = TotalBox.prototype = Object.create(Box.prototype)
     TotalBox_.refresh = function() {
-      this.unfinal = !this.score_box_group.isDone()
+      this.final = this.score_box_group.isDone()
       this.val = this.score_box_group.sumOfVals()
     }
 
@@ -383,28 +381,28 @@ function Jahtzee() {
 
     function YahtzeeBonusBox(player, score_box_group) {
       Box.apply(this, arguments)
-      this.unfinal = true
+      this.final = false
       this.score_box_group = score_box_group
     }
     var YahtzeeBonusBox_ = YahtzeeBonusBox.prototype = Object.create(Box.prototype)
     YahtzeeBonusBox_.calcVal = function(dice) {
       if(dice.allSame() && 
           this.player.yahtzee.val > 0 &&
-          this.player.yahtzee.unfinal === false ) 
+          this.player.yahtzee.final ) 
         return 100 
       else 
         return 0
     }
     YahtzeeBonusBox_.proposeVal = function(dice) {
-      if(this.player.yahtzee.val > 0 && this.player.yahtzee.unfinal === false)
+      if(this.player.yahtzee.val > 0 && this.player.yahtzee.final)
         this.val += this.calcVal(dice)
     }
     YahtzeeBonusBox_.unproposeVal = function(dice) {
-      if(this.player.yahtzee.val > 0 && this.player.yahtzee.unfinal === false)
+      if(this.player.yahtzee.val > 0 && this.player.yahtzee.final)
         this.val -= this.calcVal(dice)
     }
     YahtzeeBonusBox_.lockVal = function(dice) {
-      if(this.score_box_group.isDone()) this.unfinal = false
+      if(this.score_box_group.isDone()) this.final
     }
 
   // UpperBonusBox
@@ -415,9 +413,9 @@ function Jahtzee() {
     }
     var UpperBonusBox_ = UpperBonusBox.prototype = Object.create(Box.prototype)
     UpperBonusBox_.refresh = function() {
-      this.unfinal = this.player.simple_total.unfinal
+      this.final = this.player.simple_total.final
       if(this.player.simple_total.val >= 63) this.val = 35
-      if(!this.unfinal && this.val === null) this.val = 0
+      if(this.final && this.val === null) this.val = 0
     }
 
   // ScoreBoxGroup
@@ -433,7 +431,7 @@ function Jahtzee() {
       var i = this.cached_length, box
       while(i--) { 
         box = this[i]
-        if(box.unfinal) return false
+        if(!box.final) return false
       }
       return true
     }
@@ -594,7 +592,7 @@ function Jahtzee() {
       var best_score = -Infinity
       while (i--) {
         var this_box = this.choosables[i]
-        if (this_box.unfinal) {
+        if (!this_box.final) {
           var pref_score = this_box.prefScore(game_dice) //this_box.calcVal(game_dice)
           if (pref_score > best_score) {
             best_box = this_box
@@ -626,7 +624,7 @@ function Jahtzee() {
               for (e=0; e<2; e++) {
                 var selection = [a,b,c,d,e]
                 var trial_count = Math.pow(6,Math.max(a+b+c+d+e,0)) // at least one trial for each possible set of die values
-                if(trial_count > 1) trial_count *= 3 // times enough to "get yahtzee" 3x on average
+                if(trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
                 var score = this.scoreSelection(selection, trial_count)
                 if(score > best_score) 
                     {best_score = score; 
@@ -637,7 +635,7 @@ function Jahtzee() {
       // return the best die selection
       var chosen_dice = this.game.dice.clone()
       chosen_dice.selectByArray(best_selection)
-      return chosen_dice
+      return chosen_dice 
       
     }
 
@@ -653,7 +651,7 @@ function Jahtzee() {
         ii = choosables_length
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
-          if (box.unfinal || box.yahtzee) {
+          if (!box.final || box.yahtzee) {
             total += box.prefScore(fake_dice) // box.calcVal(fake_dice)
           }
         }
@@ -710,7 +708,7 @@ function Jahtzee() {
       }
     }
     Game_.nextRoll = function() {
-      //if(this.roll_count >= 3) return false
+      if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
     }

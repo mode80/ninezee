@@ -53,7 +53,7 @@
  								ng-mouseenter="p.aces.proposeVal(g.dice)"
 								ng-mouseleave="p.aces.unproposeVal(g.dice)" 
 								ng-click="p.aces.lockVal(g.dice)" 
-								ng-class="{temp : p.aces.unfinal, interactive : p.aces.unfinal && p == g.player }"> 
+								ng-class="{temp : !p.aces.final, interactive : !p.aces.final && p == g.player }"> 
 								{{p.aces.val}} 
 						</td>
 					</tr>
@@ -63,7 +63,7 @@
 								ng-mouseenter="p.twos.proposeVal(g.dice)" 
 								ng-mouseleave="p.twos.unproposeVal(g.dice)" 
 								ng-click="p.twos.lockVal(g.dice)" 
-								ng-class="{temp: p.twos.unfinal, interactive : p.twos.unfinal && p == g.player }"> 
+								ng-class="{temp: !p.twos.final, interactive : !p.twos.final && p == g.player }"> 
 								{{p.twos.val}} 
 						</td>
 					</tr>
@@ -73,7 +73,7 @@
 								ng-mouseenter="p.threes.proposeVal(g.dice)" 
 								ng-mouseleave="p.threes.unproposeVal(g.dice)" 
 								ng-click="p.threes.lockVal(g.dice)" 
-								ng-class="{temp: p.threes.unfinal, interactive : p.threes.unfinal && p == g.player }">
+								ng-class="{temp: !p.threes.final, interactive : !p.threes.final && p == g.player }">
 								{{p.threes.val}}
 						</td>
 					</tr>
@@ -83,7 +83,7 @@
 								ng-mouseenter="p.fours.proposeVal(g.dice)" 
 								ng-mouseleave="p.fours.unproposeVal(g.dice)" 
 								ng-click="p.fours.lockVal(g.dice)" 
-								ng-class="{temp: p.fours.unfinal, interactive : p.fours.unfinal && p == g.player }">
+								ng-class="{temp: !p.fours.final, interactive : !p.fours.final && p == g.player }">
 								{{p.fours.val}}
 						</td>
 					</tr>
@@ -93,7 +93,7 @@
 								ng-mouseenter="p.fives.proposeVal(g.dice)" 
 								ng-mouseleave="p.fives.unproposeVal(g.dice)" 
 								ng-click="p.fives.lockVal(g.dice)" 
-								ng-class="{temp: p.fives.unfinal, interactive : p.fives.unfinal && p == g.player }">
+								ng-class="{temp: !p.fives.final, interactive : !p.fives.final && p == g.player }">
 								{{p.fives.val}}
 						</td>
 					</tr>
@@ -103,7 +103,7 @@
 								ng-mouseenter="p.sixes.proposeVal(g.dice)" 
 								ng-mouseleave="p.sixes.unproposeVal(g.dice)" 
 								ng-click="p.sixes.lockVal(g.dice)" 
-								ng-class="{temp: p.sixes.unfinal, interactive : p.sixes.unfinal && p == g.player }">
+								ng-class="{temp: !p.sixes.final, interactive : !p.sixes.final && p == g.player }">
 								{{p.sixes.val}}
 						</td>
 					</tr>
@@ -111,7 +111,7 @@
 					<tr><td>TOTAL SCORE</small></td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.simple_total.unfinal}">
+								ng-class="{temp: !p.simple_total.final}">
 								{{ p.simple_total.val }}
 						</td>
 					</tr>
@@ -119,7 +119,7 @@
 					<tr><td>BONUS <small class="scorebox-note">If total is 63+ above</small></td><td>SCORE 35</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.upper_bonus.unfinal}">
+								ng-class="{temp: !p.upper_bonus.final}">
 								{{p.upper_bonus.val}}
 						</td>
 					</tr>
@@ -127,7 +127,7 @@
 					<tr><td>TOTAL <small class="scorebox-note">Of upper section</td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.upper_total.unfinal}">
+								ng-class="{temp: !p.upper_total.final}">
 								{{p.upper_total.val}}
 						</td>
 					</tr>
@@ -139,7 +139,7 @@
 								ng-mouseenter="p.three_of_a_kind.proposeVal(g.dice)" 
 								ng-mouseleave="p.three_of_a_kind.unproposeVal(g.dice)" 
 								ng-click="p.three_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: p.three_of_a_kind.unfinal, interactive : p.three_of_a_kind.unfinal && p == g.player }">
+								ng-class="{temp: !p.three_of_a_kind.final, interactive : !p.three_of_a_kind.final && p == g.player }">
 								{{p.three_of_a_kind.val}}
 						</td>
 					</tr>
@@ -149,7 +149,7 @@
 								ng-mouseenter="p.four_of_a_kind.proposeVal(g.dice)" 
 								ng-mouseleave="p.four_of_a_kind.unproposeVal(g.dice)" 
 								ng-click="p.four_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: p.four_of_a_kind.unfinal, interactive : p.four_of_a_kind.unfinal && p == g.player }">
+								ng-class="{temp: !p.four_of_a_kind.final, interactive : !p.four_of_a_kind.final && p == g.player }">
 								{{p.four_of_a_kind.val}}
 						</td>
 					</tr>
@@ -159,7 +159,7 @@
 								ng-mouseenter="p.full_house.proposeVal(g.dice)" 
 								ng-mouseleave="p.full_house.unproposeVal(g.dice)" 
 								ng-click="p.full_house.lockVal(g.dice)" 
-								ng-class="{temp: p.full_house.unfinal, interactive : p.full_house.unfinal && p == g.player }">
+								ng-class="{temp: !p.full_house.final, interactive : !p.full_house.final && p == g.player }">
 								{{p.full_house.val}}
 						</td>
 					</tr>
@@ -169,7 +169,7 @@
 								ng-mouseenter="p.sm_straight.proposeVal(g.dice)" 
 								ng-mouseleave="p.sm_straight.unproposeVal(g.dice)" 
 								ng-click="p.sm_straight.lockVal(g.dice)" 
-								ng-class="{temp: p.sm_straight.unfinal, interactive : p.sm_straight.unfinal && p == g.player }">
+								ng-class="{temp: !p.sm_straight.final, interactive : !p.sm_straight.final && p == g.player }">
 								{{p.sm_straight.val}}
 						</td>
 					</tr>
@@ -179,7 +179,7 @@
 								ng-mouseenter="p.lg_straight.proposeVal(g.dice)" 
 								ng-mouseleave="p.lg_straight.unproposeVal(g.dice)" 
 								ng-click="p.lg_straight.lockVal(g.dice)" 
-								ng-class="{temp: p.lg_straight.unfinal, interactive : p.lg_straight.unfinal && p == g.player }">
+								ng-class="{temp: !p.lg_straight.final, interactive : !p.lg_straight.final && p == g.player }">
 								{{p.lg_straight.val}}
 						</td>
 					</tr>
@@ -189,7 +189,7 @@
 								ng-mouseenter="p.yahtzee.proposeVal(g.dice)" 
 								ng-mouseleave="p.yahtzee.unproposeVal(g.dice)" 
 								ng-click="p.yahtzee.lockVal(g.dice)" 
-								ng-class="{temp: p.yahtzee.unfinal, interactive : p.yahtzee.unfinal && p == g.player }">
+								ng-class="{temp: !p.yahtzee.final, interactive : !p.yahtzee.final && p == g.player }">
 								{{p.yahtzee.val}}
 						</td>
 					</tr>
@@ -199,14 +199,14 @@
 								ng-mouseenter="p.chance.proposeVal(g.dice)" 
 								ng-mouseleave="p.chance.unproposeVal(g.dice)" 
 								ng-click="p.chance.lockVal(g.dice)" 
-								ng-class="{temp: p.chance.unfinal, interactive : p.chance.unfinal && p == g.player }">
+								ng-class="{temp: !p.chance.final, interactive : !p.chance.final && p == g.player }">
 								{{p.chance.val}}
 						</td>
 					</tr>
 					<tr><td>JAHTZEE BONUS </td><td>SCORE 100 PER</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.yahtzee_bonus.unfinal}"> 
+								ng-class="{temp: !p.yahtzee_bonus.final}"> 
 								{{p.yahtzee_bonus.val}}
 						</td>
 					</tr>
@@ -214,7 +214,7 @@
 					<tr><td>TOTAL <small class="scorebox-note">Of Lower Section</small></td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.lower_total.unfinal}">
+								ng-class="{temp: !p.lower_total.final}">
 								{{p.lower_total.val}}
 						</td>
 					</tr>
@@ -223,7 +223,7 @@
 					<tr><td>TOTAL <small class="scorebox-note">Of Upper Section</small></td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.upper_total.unfinal}">
+								ng-class="{temp: !p.upper_total.final}">
 								{{p.upper_total.val}}
 						</td>
 					</tr>
@@ -231,7 +231,7 @@
 					<tr><td>GRAND TOTAL</td><td><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-class="{temp: p.grand_total.unfinal}">
+								ng-class="{temp: !p.grand_total.final}">
 								{{p.grand_total.val}}
 						</td>
 					</tr>
