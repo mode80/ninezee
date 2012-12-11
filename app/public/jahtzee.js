@@ -1,4 +1,5 @@
 /*  TODO
+-   Yahtzee bonus no work
 -   Improve AI
       . test AI to goes for yahtzee (with correct bonus) even though filled in
       . rerun easyVal status including new algo & expected bonus
@@ -83,12 +84,12 @@ function Jahtzee() {
       return this.slice().sort(Dice.sortFn)
     }
     Dice_.allSame = function() {
-      var lastval = this[5]
+      var lastval = this[4].val
       if(lastval===null) return false
       var i = 4
       while (i--) { 
-        if (lastval !== this[i]) return false
-        lastval = this[i]
+        if (lastval !== this[i].val) return false
+        lastval = this[i].val
       }
       return true
     }
@@ -709,7 +710,7 @@ function Jahtzee() {
       }
     }
     Game_.nextRoll = function() {
-      if(this.roll_count >= 3) return false
+      //if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
     }
