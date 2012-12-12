@@ -3,6 +3,7 @@
       . sortedCopy is taking half the time
       . rerun easyVal status including new algo & expected bonus
       . had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
+-   gray totals and yahtzee bonus even after complete
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -190,7 +191,7 @@ function Jahtzee() {
       return sum
     }
     SimpleBox_.easyVal = function() { 
-      return this.n * 1.621 // derived from statistical sampling
+      return this.n * 2.106 // derived from statistical sampling
     }
     SimpleBox_.avgBonus = function(dice) {
       var n_count = this.calcVal(dice) / this.n
@@ -253,8 +254,8 @@ function Jahtzee() {
       return dice.sum()
     }
     NOfAKindBox_.easyVal = function() { 
-      if(this.n===3) return 11.700 
-      if(this.n===4) return 4.890
+      if(this.n===3) return 14.732 
+      if(this.n===4) return 5.473
     }
 
 
@@ -269,7 +270,7 @@ function Jahtzee() {
       if (dice.allSame()) return 50; else return 0
     }
     Yahtzee_.easyVal = function() {
-      return 1.192
+      return 2.095
     }
     Yahtzee_.avgBonus = function(dice) {
       if (!this.final) {
@@ -304,7 +305,7 @@ function Jahtzee() {
       return dice.sum()
     }
     ChanceBox_.easyVal = function() { 
-      return 22.372
+      return 22.999
     }
 
   // FullHouseBox
@@ -330,7 +331,7 @@ function Jahtzee() {
           return 0
     }
     FullHouseBox_.easyVal = function() { 
-      return 6.811
+      return 8.945
     }
 
   // SequenceOfNBox
@@ -364,8 +365,8 @@ function Jahtzee() {
       else return 0
     }
     SequenceOfNBox_.easyVal = function() { 
-      if (this.n===4) return 15.580
-      if (this.n===5) return 9.413 
+      if (this.n===4) return 17.334
+      if (this.n===5) return 9.888 
     }
 
   // TotalBox
