@@ -29,12 +29,12 @@ function test() {
         p.nextMove()
         if (box.final) { // just finished choosing
           box.runavg += box.val / trials
-          if(box.val===0) box.s0++; else
+          /*if(box.val===0) box.s0++; else
           if(box.val===1) box.s1++; else
           if(box.val===2) box.s2++; else
           if(box.val===3) box.s3++; else
           if(box.val===4) box.s4++; else
-          if(box.val===5) box.s5++; 
+          if(box.val===5) box.s5++; */
           g.round = 1
           break
         }

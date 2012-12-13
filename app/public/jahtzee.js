@@ -1,7 +1,5 @@
 /*  TODO
 -   Improve AI
-      . sortedCopy is taking half the time
-      . rerun easyVal status including new algo & expected bonus
       . had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   gray totals and yahtzee bonus even after complete
 -   disable UI while AI is playing
@@ -343,23 +341,24 @@ function Jahtzee() {
     }
     var SequenceOfNBox_ = SequenceOfNBox.prototype = Object.create(ScoreBox.prototype)
     SequenceOfNBox_.calcVal = function(dice) {
-      var sorted_dice = dice.sortedCopy()
+      var sorted_vals = [dice[0].val, dice[1].val, dice[2].val, 
+                         dice[3].val, dice[4].val].sort()
       var in_a_row = 1
       var last_val = 0
       var point_val = 0
       var yahtzee_wildcard = false
       var i = 5    
       while (i--) {
-        var die_val = sorted_dice[i].val
+        var die_val = sorted_vals[i]
         if(die_val === last_val - 1) in_a_row++
         else if(die_val < last_val) in_a_row = 1
         last_val = die_val      
       }
       if(this.n === 4) point_val = 30; else if(this.n === 5) point_val = 40
       yahtzee_wildcard = (
-        (dice.allSame()) && // rules say extra yahtzee's count as straights
         (this.player.yahtzee.final  && this.player.yahtzee.val > 0) && // as long as yahtzee box hasn't been zeroed
-        (this.player.simple_scores[dice[0].val-1].final) // and it can't go in the corresponding SimpleScore box
+        (this.player.simple_scores[dice[0].val-1].final) && // and it can't go in the corresponding SimpleScore box
+        (dice.allSame())  // rules say extra yahtzee's count as straights
       )
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
