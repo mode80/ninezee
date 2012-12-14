@@ -25,18 +25,21 @@
           $scope.g = new jahtzee_service.Game()
 
           // add player
-          $scope.g.newPlayer("MaxBot")
+          $scope.g.newPlayer("Player")
       
           // modify the standard roll function with implementation-specific animation 
-          var origRollSelected = $scope.g.dice.rollSelected
-          $scope.g.dice.rollSelected = function () {
-            var shakes = 5
-            ;(function repeatedRollSelected() {
-              if (shakes--) {
-                safeApply(origRollSelected.call($scope.g.dice))
-                window.setTimeout(repeatedRollSelected, 80)
-              }
-            })()
+          if($scope.g.base_delay > 100) { // don't bother if there's not enough animation time
+            var origRollSelected = $scope.g.dice.rollSelected
+            $scope.g.dice.rollSelected = function () {
+              var shakes = 5, i = shakes
+              ;(function repeatedRollSelected() {
+                if (i--) {
+                  safeApply(origRollSelected.call($scope.g.dice))
+                  var delay = ($scope.g.base_delay - 100) / shakes
+                  window.setTimeout(repeatedRollSelected, delay) 
+                }
+              })()
+            }
           }
 
           // add sound around the nextRoll function

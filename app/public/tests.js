@@ -1,6 +1,6 @@
 /*globals Jahtzee*/
 
-function test() {
+function generateEasyVals() {
 
   var j = new Jahtzee()
   var g = new j.Game()
@@ -45,6 +45,32 @@ function test() {
     console.log(box.runavg)
 
   }
+
+}
+
+function battlePlayers() {
+  //takes a list of Player class names as arguments to battle each other
+  var ii = arguments.length
+  var i = 0
+
+  var j = new Jahtzee()
+  var g = new j.Game()
+  g.base_delay = 0 
+
+  while (ii--)
+    g.newPlayer(arguments[i])
+
+  i = 10
+  while (i--) {
+    g.player.nextMove()
+    if (g.gameOver()) {
+      ii = g.players.length
+      while (ii--)
+        console.log(g.players[i].constructor.name, g.players[i].grand_total.val)
+      console.log("-----------")
+    }
+  }
+
 
 }
 

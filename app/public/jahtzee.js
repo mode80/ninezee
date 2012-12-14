@@ -3,11 +3,11 @@
       . rerun stats after Yahtzee.prefScore fix
       . had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
       . had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
--   gray totals and yahtzee bonus even after complete
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
 -   other sound effects
+-   fix game. startOver()
 */
 
 /*globals angular*/
@@ -469,6 +469,8 @@ function Jahtzee() {
 
   function Player(name, game) {
 
+    this.constructor = Player
+
     this.name = name || "Player"
     this.game = game
     this.winner = null
@@ -540,6 +542,7 @@ function Jahtzee() {
   // AIPlayer
   // ***************************************************************************
     var AIPlayer = function(name, game) {
+      this.constructor = AIPlayer
       Player.apply(this, arguments) // call super-constructor
       this.chosen_dice = null
       this.die_index = 0 // incremented inside .nextMove() when selecting
@@ -557,7 +560,7 @@ function Jahtzee() {
         if (rolls === 0 || (rolls < 3 && this.die_index >= 5)) { 
           game.nextRoll()
           this.die_index = 0
-          game.next_delay = 500
+          game.next_delay = game.base_delay
           return
         }
   
@@ -570,7 +573,7 @@ function Jahtzee() {
           var i = this.die_index
           game.dice[i].selected = this.chosen_dice[i].selected
           this.die_index++; 
-          game.next_delay = this.die_index * 100
+          game.next_delay = this.die_index * (game.base_delay / 5)
           return
         }
 
@@ -582,7 +585,7 @@ function Jahtzee() {
           } else {
             chosen_box.lockVal(game.dice)
           }
-          game.next_delay = 1000 
+          game.next_delay = game.base_delay * 2 
         }
 
     }
@@ -612,6 +615,7 @@ function Jahtzee() {
   // SmartBot 
   // ***************************************************************************
     function SmartBot(name, game){ 
+      this.constructor = SmartBot
       AIPlayer.apply(this, arguments) // call super-constructor
     }
     var SmartBot_ = SmartBot.prototype = Object.create(AIPlayer.prototype)
@@ -671,6 +675,7 @@ function Jahtzee() {
   // MaxBot 
   // ***************************************************************************
   function MaxBot() {
+    this.constructor = MaxBot
     SmartBot.apply(this, arguments)
   }
   var MaxBot_ = MaxBot.prototype = Object.create(SmartBot.prototype)
@@ -703,7 +708,8 @@ function Jahtzee() {
   // ***************************************************************************
   // Game
   // ***************************************************************************
-    this.Game = function() {
+    this.Game = function Game() {
+      this.constructor = Game
       this.dice = new Dice()          // the array-like set of 5 game dice
       this.players = []               // all players
       this.player = null              // current player
@@ -712,7 +718,8 @@ function Jahtzee() {
       this.round = 1                  // a game has 13 rounds to score all boxes
       this.roll_count = 0             // each players gets 3 rolls
       this.started = false            // true onece a new game has started
-      this.next_delay = 500           // how long the AI pauses by default between moves
+      this.base_delay = 500           // how long the AI pauses by default between moves
+      this.next_delay =this.base_delay// then next AI pause as adjusted from time to time
       this.timeout_id = 0             // holds id for the next queued function
     }
     var Game_ = this.Game.prototype = {} //Object.extended()
@@ -736,7 +743,7 @@ function Jahtzee() {
     }
     Game_.nextRound = function() {
       this.round++
-      if(this.round > 13) {// determine winner(s)
+      if(this.gameOver()) {// determine winner(s)
         var i = this.players.length, score = 0, max = 0, winner = null
         while (i--) {
           score = this.players[i].grand_total.val
@@ -750,5 +757,19 @@ function Jahtzee() {
       if(this.roll_count >= 3) return false
       this.roll_count++
       this.dice.rollSelected()
+    }
+    Game_.gameOver = function() {
+      return (this.round > 13)
+    }
+    Game_.startOver = function() {
+      var i = this.players.length
+      while (i--){
+        var old_name = this.players[i].name
+        this.players[i] = new this.players[i].constructor(old_name)
+      }
+      var old_players = this.players
+      this.constructor(this) //reinitialize game vars
+      this.players = old_players
+      this.player = this.players[0]
     }
 }
