@@ -4,7 +4,7 @@ function generateEasyVals() {
 
   var j = new Jahtzee()
   var g = new j.Game()
-  var p = g.newPlayer("SmartBot")
+  var p = g.newPlayer("MaxBot")
   var ii
   
   var trials = 10000
@@ -48,9 +48,12 @@ function generateEasyVals() {
 
 }
 
-function battlePlayers(trials) {
+function battlePlayers(trials, player1, player2, etc) {
   //takes a trial_count followed by list of Player class names to battle 
-
+  
+  // last result: 
+  // [2000, "AIPlayer", "SmartBot", "MaxBot"]
+  // [118.55400000000002, 219.40099999999953, 227.64149999999947] 
 
   var games = 0
 
