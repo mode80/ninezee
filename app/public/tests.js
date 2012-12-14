@@ -48,28 +48,41 @@ function generateEasyVals() {
 
 }
 
-function battlePlayers() {
-  //takes a list of Player class names as arguments to battle each other
-  var ii = arguments.length
-  var i = 0
+function battlePlayers(trials) {
+  //takes a trial_count followed by list of Player class names to battle 
+
+
+  var games = 0
 
   var j = new Jahtzee()
   var g = new j.Game()
   g.base_delay = 0 
+  var avg_scores = []
+  var i = 0
 
-  while (ii--)
-    g.newPlayer(arguments[i])
+  var setUp = function setUp(args) {
+      games++
+      g = new j.Game()
+      for(var i=1; i<args.length; i++ )
+        g.newPlayer(args[i])
+  }
+  setUp(arguments)
 
-  i = 10
-  while (i--) {
+  while (true) {
     g.player.nextMove()
     if (g.gameOver()) {
-      ii = g.players.length
-      while (ii--)
-        console.log(g.players[i].constructor.name, g.players[i].grand_total.val)
-      console.log("-----------")
+      console.log(games)
+      i = g.players.length
+      while (i--) {
+        avg_scores[i] = (avg_scores[i] || 0) + g.players[i].grand_total.val / trials
+      }
+      setUp(arguments)
+      if(games > trials) break
     }
   }
+
+  console.log(arguments)
+  console.log(avg_scores)  
 
 
 }
