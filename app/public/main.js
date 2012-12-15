@@ -25,7 +25,7 @@
           $scope.g = new jahtzee_service.Game()
 
           // add player
-          $scope.g.newPlayer("MaxBot")
+          $scope.g.newPlayer("Player")
       
           // modify the standard roll function with implementation-specific animation 
           if($scope.g.base_delay > 100) { // don't bother if there's not enough animation time

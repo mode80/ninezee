@@ -704,6 +704,21 @@ function Jahtzee() {
     return total / trials
   }
 
+  // MixBot 
+  // ***************************************************************************
+  function MixBot() {
+    this.constructor = MixBot
+    SmartBot.apply(this, arguments)
+  }
+  var MixBot_ = MixBot.prototype = Object.create(SmartBot.prototype)
+
+  MixBot_.scoreSelection = function(selection, trials) {
+    if(this.game.roll_count===1)
+      return SmartBot.prototype.scoreSelection.apply(this, arguments)
+    else // if(this.game.roll_count===2)
+      return MaxBot.prototype.scoreSelection.apply(this, arguments)
+  }
+  
 
   // ***************************************************************************
   // Game
