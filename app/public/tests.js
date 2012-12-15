@@ -1,13 +1,13 @@
 /*globals Jahtzee*/
 
-function generateEasyVals() {
+function generateEasyVals(trials) {
 
   var j = new Jahtzee()
   var g = new j.Game()
   var p = g.newPlayer("MaxBot")
   var ii
   
-  var trials = 10000
+  var trials = trials || 10000
   
   var i = p.choosables.length
   
@@ -51,9 +51,11 @@ function generateEasyVals() {
 function battlePlayers(trials, player1, player2, etc) {
   //takes a trial_count followed by list of Player class names to battle 
   
-  // last result: 
+  // latest  results: 
+  // [2000, "AIPlayer", "SmartBot", "MaxBot", "MixBot"]
+  //        [120.149,   229.187,    239.052,  234.082] 
   // [2000, "AIPlayer", "SmartBot", "MaxBot"]
-  // [118.55400000000002, 219.40099999999953, 227.64149999999947] 
+  //        [118.554,   219.400,    227.641] 
 
   var games = 0
 

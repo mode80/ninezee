@@ -1,8 +1,8 @@
 /*  TODO
 -   Improve AI
       . rerun stats after various scoring fixes
-      . SmartBot had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
-      . SmartBot had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
+      . HejBot had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
+      . HejBot had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -591,36 +591,6 @@ function Jahtzee() {
     }
 
     AIPlayer_.chooseDice = function() {
-      return new Dice()
-    }
-    AIPlayer_.chooseBox = function() {
-      // find the highest scoring box with just the current gamedice values
-      var game_dice = this.game.dice
-      var i = this.choosables.cached_length
-      var best_box = this.choosables[0] 
-      var best_score = -Infinity
-      while (i--) {
-        var this_box = this.choosables[i]
-        if (!this_box.final) {
-          var pref_score = this_box.prefScore(game_dice) //this_box.calcVal(game_dice)
-          if (pref_score > best_score) {
-            best_box = this_box
-            best_score = pref_score
-          }
-        }
-      }
-      return best_box
-    }
-
-  // SmartBot 
-  // ***************************************************************************
-    function SmartBot(name, game){ 
-      this.constructor = SmartBot
-      AIPlayer.apply(this, arguments) // call super-constructor
-    }
-    var SmartBot_ = SmartBot.prototype = Object.create(AIPlayer.prototype)
-    
-    SmartBot_.chooseDice = function(trials) {
 
       var a,b,c,d,e
       var scores = []
@@ -646,10 +616,41 @@ function Jahtzee() {
       var chosen_dice = this.game.dice.clone()
       chosen_dice.selectByArray(best_selection)
       return chosen_dice 
-      
     }
 
-    SmartBot_.scoreSelection = function(selection, trials) { 
+    AIPlayer_.scoreSelection = function() {
+      // override this in smarter bots
+      return 0
+    }
+
+    AIPlayer_.chooseBox = function() {
+      // find the highest scoring box with the current gamedice values
+      var game_dice = this.game.dice
+      var i = this.choosables.cached_length
+      var best_box = this.choosables[0] 
+      var best_score = -Infinity
+      while (i--) {
+        var this_box = this.choosables[i]
+        if (!this_box.final) {
+          var pref_score = this_box.prefScore(game_dice) //this_box.calcVal(game_dice)
+          if (pref_score > best_score) {
+            best_box = this_box
+            best_score = pref_score
+          }
+        }
+      }
+      return best_box
+    }
+
+  // HejBot 
+  // ***************************************************************************
+    function HejBot(name, game){ 
+      this.constructor = HejBot
+      AIPlayer.apply(this, arguments) // call super-constructor
+    }
+    var HejBot_ = HejBot.prototype = Object.create(AIPlayer.prototype)
+
+    HejBot_.scoreSelection = function(selection, trials) { 
       // returns a score across available boxes for the given die selection combo
       var total = 0
       var i = trials || 1
@@ -676,9 +677,9 @@ function Jahtzee() {
   // ***************************************************************************
   function MaxBot() {
     this.constructor = MaxBot
-    SmartBot.apply(this, arguments)
+    HejBot.apply(this, arguments)
   }
-  var MaxBot_ = MaxBot.prototype = Object.create(SmartBot.prototype)
+  var MaxBot_ = MaxBot.prototype = Object.create(AIPlayer.prototype)
   
   MaxBot_.scoreSelection = function(selection, trials) { 
     // returns a max across available boxes for the given die selection combo
@@ -708,13 +709,13 @@ function Jahtzee() {
   // ***************************************************************************
   function MixBot() {
     this.constructor = MixBot
-    SmartBot.apply(this, arguments)
+    HejBot.apply(this, arguments)
   }
-  var MixBot_ = MixBot.prototype = Object.create(SmartBot.prototype)
+  var MixBot_ = MixBot.prototype = Object.create(AIPlayer.prototype)
 
   MixBot_.scoreSelection = function(selection, trials) {
     if(this.game.roll_count===1)
-      return SmartBot.prototype.scoreSelection.apply(this, arguments)
+      return HejBot.prototype.scoreSelection.apply(this, arguments)
     else // if(this.game.roll_count===2)
       return MaxBot.prototype.scoreSelection.apply(this, arguments)
   }
