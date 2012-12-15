@@ -1,7 +1,6 @@
 /*  TODO
 -   Improve AI
-      . MaxBot had 6,6,6,6,3 and put it in 4-of-a-kind with one roll left instead of going for Yahtzee
-      . rerun stats after Yahtzee.prefScore fix
+      . rerun stats after various scoring fixes
       . SmartBot had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
       . SmartBot had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   disable UI while AI is playing
@@ -281,7 +280,7 @@ function Jahtzee() {
     Yahtzee_.prefScore = function(dice) {
       var avg_bonus = 0
       var calc_val = 0
-      if (this.val > 0) { // not zeroed out
+      if (this.val !== 0) { // not zeroed out
         calc_val = this.calcVal(dice)
         if(!this.final) { // first yahtzee available
           if (calc_val > 0) avg_bonus = this.avgBonus(dice)
