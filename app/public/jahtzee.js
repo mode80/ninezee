@@ -1,8 +1,9 @@
 /*  TODO
 -   Improve AI
+      . MaxBot had 6,6,6,6,3 and put it in 4-of-a-kind with one roll left instead of going for Yahtzee
       . rerun stats after Yahtzee.prefScore fix
-      . had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
-      . had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
+      . SmartBot had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
+      . SmartBot had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   disable UI while AI is playing
 -   Undo feature
 -   implement <die> directive with dot die faces 
@@ -352,7 +353,7 @@ function Jahtzee() {
       while (i--) {
         var die_val = sorted_vals[i]
         if(die_val === last_val - 1) in_a_row++
-        else if(die_val < last_val) in_a_row = 1
+        else if(die_val < last_val && in_a_row < this.n) in_a_row = 1
         last_val = die_val      
       }
       if(this.n === 4) point_val = 30; else if(this.n === 5) point_val = 40
