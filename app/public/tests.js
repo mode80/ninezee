@@ -1,13 +1,13 @@
 /*globals Jahtzee*/
 
-function generateEasyVals(trials) {
+function generateEasyVals(trial_count) {
 
   var j = new Jahtzee()
   var g = new j.Game()
   var p = g.newPlayer("MaxBot")
   var ii
   
-  var trials = trials || 10000
+  var trials = trial_count || 10000
   
   var i = p.choosables.length
   

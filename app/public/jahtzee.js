@@ -138,19 +138,6 @@ function Jahtzee() {
       // what this box would score with the given dice
       // override this for specific box types
     }
-    ScoreBox_.easyVal = function() {
-      // a smart human's average score when targeting this box with 3 rolls
-      // overrride this for specific box types
-    }
-    ScoreBox_.avgBonus = function(dice) {
-      // avg expected future contribution to a bonus 
-      // overrride this for specific box types
-      return 0
-    }
-    ScoreBox_.prefScore = function(dice) {
-      // a function to quantify the "likability" of this box for the AI 
-      return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice)
-    }
     ScoreBox_.proposeVal = function(dice) {
       if(this.player.ready() && this.val === null) {
         this.val = this.calcVal(dice)
@@ -190,50 +177,6 @@ function Jahtzee() {
       while (i--) if(dice[i].val === this.n) sum += dice[i].val
       return sum
     }
-    SimpleBox_.easyVal = function() { 
-      return this.n * 2.106 // derived from statistical sampling
-    }
-    SimpleBox_.avgBonus = function(dice) {
-      var n_count = this.calcVal(dice) / this.n
-      var typical_bonus_portion = this.n*3/63
-      var typical_bonus = 35 * typical_bonus_portion
-      if(n_count>=3) 
-        return typical_bonus * n_count / 3
-      else
-        return -1 * typical_bonus * (3-n_count) / 3
-    }
-/*    SimpleBox_.avgBonusBeta = function(dice) {
-      //under development replacement for the existing crude avgBonus method
-      var full_bonus_amount = 35
-      var percent_contribution_toward_bonus = this.n/21 //21=(6+5+4+3+2+1)
-      var total_so_far = this.player.simple_scores.sumOfVals()
-      var simple_boxes = this.player.simple_scores
-      var i = simple_boxes.cached_length
-      var liklihood_of_bonus = 0 //TODO
-      var expected_top = 0 // TODO
-      var given_top = 0
-      var n = this.n, RCR = this.ROLLCOUNT_RATIO
-      var BONUS_THRESHOLD = 63 // per the rules
-      var a=6,b=6,c=6,d=6,e=6,f=6
-      while (i--) {
-        if (simple_boxes[i].final)
-          given_top += simple_boxes[i].val
-        else 
-          expected_top += (n*RCR[0] + n*RCR[1] + n*RCR[2] + n*RCR[3] + n*RCR[4] + n*RCR[5])
-      }
-      var target_threshold = BONUS_THRESHOLD - given_top
-      while (a--)
-        while (b--)
-          while (c--)
-            while (d--)
-              while (e--)
-                while (f--)
-                  //something
-      return 0
-    }
-    // What % of the time are matching die counts of [0..5] acheived on average
-    SimpleBox_.ROLLCOUNT_RATIO = [0.0653,0.2299,0.3415,0.2577,0.0929,0.0127]
-  */
 
   // NOfAKindBox
   // ***************************************************************************
@@ -253,10 +196,6 @@ function Jahtzee() {
       if(most_count < this.n) return 0
       return dice.sum()
     }
-    NOfAKindBox_.easyVal = function() { 
-      if(this.n===3) return 14.732 
-      if(this.n===4) return 5.473
-    }
 
 
   // Yahtzee
@@ -268,28 +207,6 @@ function Jahtzee() {
     var Yahtzee_ = Yahtzee.prototype = Object.create(NOfAKindBox.prototype)
     Yahtzee_.calcVal = function(dice) {
       if (dice.allSame()) return 50; else return 0
-    }
-    Yahtzee_.easyVal = function() {
-      return 2.095
-    }
-    Yahtzee_.avgBonus = function(dice) {
-      var rounds_remaining = 13 - this.player.game.round
-      var chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
-      return 100 * chance_of_another_yahtzee
-    }
-    Yahtzee_.prefScore = function(dice) {
-      var avg_bonus = 0
-      var calc_val = 0
-      if (this.val !== 0) { // not zeroed out
-        calc_val = this.calcVal(dice)
-        if(!this.final) { // first yahtzee available
-          if (calc_val > 0) avg_bonus = this.avgBonus(dice)
-        } else if (calc_val > 0) { // rescore as the best available other box 
-          calc_val = this.player.chooseBox(dice).calcVal(dice) 
-          avg_bonus = 100
-        }
-      }
-      return calc_val - this.easyVal() + avg_bonus
     }
 
 
@@ -303,9 +220,7 @@ function Jahtzee() {
     ChanceBox_.calcVal = function(dice) {
       return dice.sum()
     }
-    ChanceBox_.easyVal = function() { 
-      return 22.999
-    }
+
 
   // FullHouseBox
   // ***************************************************************************
@@ -329,9 +244,7 @@ function Jahtzee() {
       else 
           return 0
     }
-    FullHouseBox_.easyVal = function() { 
-      return 8.945
-    }
+
 
   // SequenceOfNBox
   // ***************************************************************************
@@ -364,10 +277,7 @@ function Jahtzee() {
       if(in_a_row >= this.n || yahtzee_wildcard) return point_val;
       else return 0
     }
-    SequenceOfNBox_.easyVal = function() { 
-      if (this.n===4) return 17.334
-      if (this.n===5) return 9.888 
-    }
+
 
   // TotalBox
   // ***************************************************************************
@@ -542,12 +452,94 @@ function Jahtzee() {
   // AIPlayer
   // ***************************************************************************
     var AIPlayer = function(name, game) {
-      this.constructor = AIPlayer
-      Player.apply(this, arguments) // call super-constructor
-      this.chosen_dice = null
-      this.die_index = 0 // incremented inside .nextMove() when selecting
-      this.AI = true
+
+      // init instance
+
+        this.constructor = AIPlayer
+        Player.apply(this, arguments) // call super-constructor
+        this.chosen_dice = null
+        this.die_index = 0 // incremented inside .nextMove() when selecting
+        this.AI = true
+
+      // attach Player-specific AI strategy functions to corresponding boxes
+
+        var i 
+        i = this.choosables.length
+        while (i--) {
+          this.choosables[i].prefScore    = AIPlayer.ScoreBox_prefScore
+        }
+        i = this.simple_scores.length
+        while (i--) {
+          this.simple_scores[i].easyVal   = AIPlayer.SimpleBox_easyVal
+          this.simple_scores[i].avgBonus  = AIPlayer.SimpleBox_avgBonus
+        }
+        this.four_of_a_kind.easyVal       = AIPlayer.NOfAKindBox_easyVal
+        this.three_of_a_kind.easyVal      = AIPlayer.NOfAKindBox_easyVal
+        this.yahtzee.easyVal              = AIPlayer.Yahtzee_easyVal
+        this.yahtzee.avgBonus             = AIPlayer.Yahtzee_avgBonus
+        this.yahtzee.prefScore            = AIPlayer.Yahtzee_prefScore
+        this.chance.easyVal               = AIPlayer.ChanceBox_easyVal
+        this.full_house.easyVal           = AIPlayer.FullHouseBox_easyVal
+        this.sm_straight.easyVal          = AIPlayer.SequenceOfNBox_easyVal
+        this.lg_straight.easyVal          = AIPlayer.SequenceOfNBox_easyVal
+
     }
+
+    // define key pieces of this Player's AI strategy as static functions
+      AIPlayer.ScoreBox_prefScore = function(dice) {
+        // a function to quantify the "likability" of a box for the AI 
+        return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice)
+      }
+
+      AIPlayer.SimpleBox_easyVal = function() { 
+        // a smart human's average score when targeting this box with 3 rolls
+        return this.n * 2.106 // derived from statistical sampling
+      }
+      AIPlayer.SimpleBox_avgBonus = function(dice) { 
+        // avg expected future contribution to a bonus
+        var n_count = this.calcVal(dice) / this.n
+        var typical_bonus_portion = this.n*3/63
+        var typical_bonus = 35 * typical_bonus_portion
+        if(n_count>=3) 
+          return typical_bonus * n_count / 3
+        else
+          return -1 * typical_bonus * (3-n_count) / 3
+      }
+
+      AIPlayer.NOfAKindBox_easyVal = function() { 
+        if(this.n===3) return 14.732 
+        if(this.n===4) return 5.473
+      }
+
+      AIPlayer.Yahtzee_easyVal = function() {
+        return 2.095
+      }
+      AIPlayer.Yahtzee_avgBonus = function(dice) {
+        var rounds_remaining = 13 - this.player.game.round
+        var chance_of_another_yahtzee = 0.0127 * rounds_remaining // roughly anyway
+        return 100 * chance_of_another_yahtzee
+      }
+      AIPlayer.Yahtzee_prefScore = function(dice) {
+        var avg_bonus = 0
+        var calc_val = 0
+        if (this.val !== 0) { // not zeroed out
+          calc_val = this.calcVal(dice)
+          if(!this.final) { // first yahtzee available
+            if (calc_val > 0) avg_bonus = this.avgBonus(dice)
+          } else if (calc_val > 0) { // rescore as the best available other box 
+            calc_val = this.player.chooseBox(dice).calcVal(dice) 
+            avg_bonus = 100
+          }
+        }
+        return calc_val - this.easyVal() + avg_bonus
+      }
+      AIPlayer.ChanceBox_easyVal = function() {return 22.999 }
+      AIPlayer.FullHouseBox_easyVal = function() {return 8.945 }
+      AIPlayer.SequenceOfNBox_easyVal = function() { 
+        if (this.n===4) return 17.334
+        if (this.n===5) return 9.888 
+      }
+
     var AIPlayer_ = AIPlayer.prototype = Object.create(Player.prototype)
 
     AIPlayer_.nextMove = function() {
