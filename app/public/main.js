@@ -15,8 +15,7 @@
       // first a utility function to refresh Angular views while avoiding reentrancy
         function safeApply(fn) { 
             var phase = $scope.$root.$$phase
-            if(phase !== '$apply' && phase !== '$digest') $scope.$apply(fn)
-        }
+            if(phase !== '$apply' && phase !== '$digest') $scope.$apply(fn) }
 
       // expose ability to create a new game to the view
         $scope.newGame = function() {
@@ -38,26 +37,21 @@
                   var delay = ($scope.g.base_delay - 100) / shakes
                   window.setTimeout(repeatedRollSelected, delay) 
                 }
-              })()
-            }
-          }
+              })() } }
 
           // add sound around the nextRoll function
           var origNextRoll = $scope.g.nextRoll
           $scope.g.nextRoll = function() {
             if($scope.g.roll_count < 3 && $scope.g.dice.selectedCount() > 0) 
               document.getElementById('roll-sound').play()
-            origNextRoll.apply($scope.g, arguments)
-          }
+            origNextRoll.apply($scope.g, arguments) }
 
           // add sound around the lockVal function
           if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
             $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
             $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
               document.getElementById('lock-sound').play()
-              $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments)
-            }
-          }
+              $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments) } }
 
           // add sound + effects to the nextRound function
           var origNextRound = $scope.g.nextRound
@@ -67,10 +61,7 @@
               if ($scope.g.winner.AI===false && $scope.g.players.length > 1) {
                 document.getElementById('fireworks-sound').play()
                 Fireworks.stopAfterMinutes(0.33)
-                Fireworks.start()
-              }
-            }
-          }
+                Fireworks.start() } } }
 
           // cycle loop lets us animate the view via model manipulation, which Angular otherwise avoids
           window.clearTimeout(timeout_id) // first end any queued function loops from previous games

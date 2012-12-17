@@ -121,6 +121,7 @@
 								{{p.sixes.val}}
 						</td>
 					</tr>
+					<!--
  					<tr>
 						<td>TOTAL SCORE</small></td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -130,6 +131,7 @@
 								{{ p.simple_total.val }}
 						</td>
 					</tr> 
+					-->
 					<tr>
 						<td>BONUS <small class="visible-desktop scorebox-note">If total is 63+ above</small></td>
 						<td class="hidden-tablet hidden-phone">SCORE 35</td>
@@ -138,8 +140,8 @@
 								ng-class="{temp: !p.upper_bonus.final}">
 								{{p.upper_bonus.val}}
 						</td>
-				  <!--
 					</tr>
+				  <!--
 					<tr  class="hidden-tablet hidden-phone">
 						<td>TOTAL <small class="visible-desktop scorebox-note">Of upper section</td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -318,10 +320,10 @@
 				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
 				ng-click="g.newPlayer('MixBot')"> 
-				Add MixBot <i class="icon-cog icon-white"></i>
+				Add Bot <i class="icon-cog icon-white"></i>
 			</button>
 			<br><br>
-			<small class=version>v.0.8.5</small>
+			<small class=version>v.0.8.6</small>
 
 		</div>
 
