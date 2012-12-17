@@ -467,6 +467,7 @@ function Jahtzee() {
         i = this.choosables.length
         while (i--) {
           this.choosables[i].prefScore    = AIPlayer.ScoreBox_prefScore
+          this.choosables[i].avgBonus     = AIPlayer.ScoreBox_easyVal
         }
         i = this.simple_scores.length
         while (i--) {
@@ -490,9 +491,11 @@ function Jahtzee() {
         // a function to quantify the "likability" of a box for the AI 
         return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice)
       }
-
-      AIPlayer.SimpleBox_easyVal = function() { 
+      AIPlayer.ScoreBox_easyVal = function() { 
         // a smart human's average score when targeting this box with 3 rolls
+        return 0
+      }
+      AIPlayer.SimpleBox_easyVal = function() { 
         return this.n * 2.106 // derived from statistical sampling
       }
       AIPlayer.SimpleBox_avgBonus = function(dice) { 
@@ -505,12 +508,10 @@ function Jahtzee() {
         else
           return -1 * typical_bonus * (3-n_count) / 3
       }
-
       AIPlayer.NOfAKindBox_easyVal = function() { 
         if(this.n===3) return 14.732 
         if(this.n===4) return 5.473
       }
-
       AIPlayer.Yahtzee_easyVal = function() {
         return 2.095
       }

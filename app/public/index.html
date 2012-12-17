@@ -36,7 +36,9 @@
 
 			<div class="scorecard-section">
 				<table class="scorecard table table-bordered ">
-					<tr><td><strong>UPPER SECTION</strong></td><td>HOW TO SCORE</td>
+					<tr>
+						<td><strong>UPPER SECTION</strong></td>
+						<td class="hidden-tablet hidden-phone">HOW TO SCORE</td>
 						<td ng-repeat="p in g.players" >
 								 <input 
 								 		id="player-name" 
@@ -47,7 +49,9 @@
 								 </input>
 						</td>
 					</tr>
-					<tr><td>Aces <small class="scorebox-note">= 1</small></td><td>Count and Add Only Aces</td>
+					<tr>
+						<td>Aces <small class="visible-desktop scorebox-note">= 1</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Aces</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
  								ng-mouseenter="p.aces.proposeVal(g.dice)"
@@ -57,7 +61,9 @@
 								{{p.aces.val}} 
 						</td>
 					</tr>
-					<tr><td>Twos <small class="scorebox-note">= 2</small></td><td>Count and Add Only Twos</td>
+					<tr>
+						<td>Twos <small class="visible-desktop scorebox-note">= 2</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Twos</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.twos.proposeVal(g.dice)" 
@@ -67,7 +73,9 @@
 								{{p.twos.val}} 
 						</td>
 					</tr>
-					<tr><td>Threes <small class="scorebox-note">= 3</small></td><td>Count and Add Only Threes</td>
+					<tr>
+						<td>Threes <small class="visible-desktop scorebox-note">= 3</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Threes</td>
 						<td 	class="box"
 								<td	ng-repeat="p in g.players"
 								ng-mouseenter="p.threes.proposeVal(g.dice)" 
@@ -77,7 +85,9 @@
 								{{p.threes.val}}
 						</td>
 					</tr>
-					<tr><td>Fours <small class="scorebox-note">= 4</small></td><td>Count and Add Only Fours</td>
+					<tr>
+						<td>Fours <small class="visible-desktop scorebox-note">= 4</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Fours</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.fours.proposeVal(g.dice)" 
@@ -87,7 +97,9 @@
 								{{p.fours.val}}
 						</td>
 					</tr>
-					<tr><td>Fives <small class="scorebox-note">= 5</small></td><td>Count and Add Only Fives</td>
+					<tr>
+						<td>Fives <small class="visible-desktop scorebox-note">= 5</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Fives</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.fives.proposeVal(g.dice)" 
@@ -97,7 +109,9 @@
 								{{p.fives.val}}
 						</td>
 					</tr>
-					<tr><td>Sixes <small class="scorebox-note">= 6</small></td><td>Count and Add Only Sixes</td>
+					<tr>
+						<td>Sixes <small class="visible-desktop scorebox-note">= 6</small></td>
+						<td class="hidden-tablet hidden-phone">Count and Add Only Sixes</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.sixes.proposeVal(g.dice)" 
@@ -107,33 +121,43 @@
 								{{p.sixes.val}}
 						</td>
 					</tr>
-					<!--
-					<tr><td>TOTAL SCORE</small></td><td><i class="icon-arrow-right"></i></td>
+ 					<tr>
+						<td>TOTAL SCORE</small></td>
+						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.simple_total.final}">
 								{{ p.simple_total.val }}
 						</td>
-					</tr>
-					-->
-					<tr><td>BONUS <small class="scorebox-note">If total is 63+ above</small></td><td>SCORE 35</td>
+					</tr> 
+					<tr>
+						<td>BONUS <small class="visible-desktop scorebox-note">If total is 63+ above</small></td>
+						<td class="hidden-tablet hidden-phone">SCORE 35</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.upper_bonus.final}">
 								{{p.upper_bonus.val}}
 						</td>
+				  <!--
 					</tr>
-					<!--
-					<tr><td>TOTAL <small class="scorebox-note">Of upper section</td><td><i class="icon-arrow-right"></i></td>
+					<tr  class="hidden-tablet hidden-phone">
+						<td>TOTAL <small class="visible-desktop scorebox-note">Of upper section</td>
+						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.upper_total.final}">
 								{{p.upper_total.val}}
 						</td>
 					</tr>
-					-->
-					<tr><td><strong>LOWER SECTION</strong></td><td></td><td 	ng-repeat="p in g.players"></td></tr>
-					<tr><td>3 of a kind</td><td>Add Total Of All Dice</td>
+				  -->
+					<tr>
+						<td><strong>LOWER SECTION</strong></td>
+						<td class="hidden-tablet hidden-phone"></td>
+						<td 	ng-repeat="p in g.players"></td>
+					</tr>
+					<tr>
+						<td>3 of a kind</td>
+						<td class="hidden-tablet hidden-phone">Add Total Of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.three_of_a_kind.proposeVal(g.dice)" 
@@ -143,7 +167,9 @@
 								{{p.three_of_a_kind.val}}
 						</td>
 					</tr>
-					<tr><td>4 of a kind</td><td>Add Total Of All Dice</td>
+					<tr>
+						<td>4 of a kind</td>
+						<td class="hidden-tablet hidden-phone">Add Total Of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.four_of_a_kind.proposeVal(g.dice)" 
@@ -153,7 +179,9 @@
 								{{p.four_of_a_kind.val}}
 						</td>
 					</tr>
-					<tr><td>Full House</td><td>Score 25</td>
+					<tr>
+						<td>Full House</td>
+						<td class="hidden-tablet hidden-phone">Score 25</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.full_house.proposeVal(g.dice)" 
@@ -163,7 +191,9 @@
 								{{p.full_house.val}}
 						</td>
 					</tr>
-					<tr><td>Sm. Straight <small class="scorebox-note">Sequence of 4</small></td><td>Score 30</td>
+					<tr>
+						<td>Sm. Straight <small class="visible-desktop scorebox-note">Sequence of 4</small></td>
+						<td class="hidden-tablet hidden-phone">Score 30</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.sm_straight.proposeVal(g.dice)" 
@@ -173,7 +203,9 @@
 								{{p.sm_straight.val}}
 						</td>
 					</tr>
-					<tr><td>Lg. Straight <small class="scorebox-note">Sequence of 5</small></td><td>Score 40</td>
+					<tr>
+						<td>Lg. Straight <small class="visible-desktop scorebox-note">Sequence of 5</small></td>
+						<td class="hidden-tablet hidden-phone">Score 40</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.lg_straight.proposeVal(g.dice)" 
@@ -183,7 +215,9 @@
 								{{p.lg_straight.val}}
 						</td>
 					</tr>
-					<tr><td>JAHTZEE <small class="scorebox-note">5 of a kind</small></td><td>Score 50</td>
+					<tr>
+						<td>JAHTZEE <small class="visible-desktop scorebox-note">5 of a kind</small></td>
+						<td class="hidden-tablet hidden-phone">Score 50</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.yahtzee.proposeVal(g.dice)" 
@@ -193,7 +227,9 @@
 								{{p.yahtzee.val}}
 						</td>
 					</tr>
-					<tr><td>Chance</td><td>Score Total of All 5 Dice</td>
+					<tr>
+						<td>Chance</td>
+						<td class="hidden-tablet hidden-phone">Score Total of All 5 Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.chance.proposeVal(g.dice)" 
@@ -203,32 +239,38 @@
 								{{p.chance.val}}
 						</td>
 					</tr>
-					<tr><td>JAHTZEE BONUS </td><td>SCORE 100 PER</td>
+					<tr>
+						<td>JAHTZEE BONUS </td>
+						<td class="hidden-tablet hidden-phone">SCORE 100 PER</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.yahtzee_bonus.final}"> 
 								{{p.yahtzee_bonus.val}}
 						</td>
 					</tr>
-					<!--
-					<tr><td>TOTAL <small class="scorebox-note">Of Lower Section</small></td><td><i class="icon-arrow-right"></i></td>
+				  <!--
+					<tr class="hidden-tablet hidden-phone">
+						<td>TOTAL <small class="visible-desktop scorebox-note">Of Lower Section</small></td>
+						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.lower_total.final}">
 								{{p.lower_total.val}}
 						</td>
 					</tr>
-					-->
-					<!--
-					<tr><td>TOTAL <small class="scorebox-note">Of Upper Section</small></td><td><i class="icon-arrow-right"></i></td>
+					<tr class="hidden-tablet hidden-phone">
+						<td>TOTAL <small class="visible-desktop scorebox-note">Of Upper Section</small></td>
+						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.upper_total.final}">
 								{{p.upper_total.val}}
 						</td>
 					</tr>
-					-->
-					<tr><td>GRAND TOTAL</td><td><i class="icon-arrow-right"></i></td>
+				  -->
+					<tr>
+						<td>GRAND TOTAL</td>
+						<td  class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.grand_total.final}">
