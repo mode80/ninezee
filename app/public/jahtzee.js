@@ -746,5 +746,5 @@ function Jahtzee() {
     Game_.gameOver = function() {
       return (this.round > 13) }
 
-  
+
 }
