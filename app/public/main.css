@@ -95,7 +95,7 @@ body {
 }
 
 .die {
-    border: 2px solid black;
+    /* border: 2px solid black; */
     width: 96px;
     height: 96px;
     margin: 30px auto;
@@ -105,7 +105,7 @@ body {
 }
 
 .die:hover {
-    border-style: dashed;
+    /* border-style: dashed; */
 }
 
 .selected {
