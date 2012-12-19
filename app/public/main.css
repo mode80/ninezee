@@ -100,7 +100,7 @@ body {
     height: 96px;
     margin: 30px auto;
     font-size: 90px;
-    line-height: 98px;
+    /* line-height: 98px; */
     cursor: pointer;
 }
 
