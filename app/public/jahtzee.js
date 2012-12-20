@@ -423,7 +423,7 @@ function Jahtzee() {
       this.lower_total = new TotalBox(this, this.lower_scores)
       this.grand_total = new TotalBox(this, this.all_scores) }
 
-    var Player_ = Player.prototype = {} //Object.extended()
+    var Player_ = Player.prototype = {} 
 
     Player_.refreshTotals = function() {
       this.simple_total.refresh()
@@ -707,7 +707,7 @@ function Jahtzee() {
       this.next_delay =this.base_delay// then next AI pause as adjusted from time to time
       this.timeout_id = 0             /* holds id for the next queued function */ }
 
-    var Game_ = this.Game.prototype = {} //Object.extended()
+    var Game_ = this.Game.prototype = {} 
 
     Game_.newPlayer = function(playerTypeString) {
       if(this.started) return
