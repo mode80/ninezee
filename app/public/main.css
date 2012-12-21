@@ -95,15 +95,13 @@ body {
 }
 
 .die {
-    /* border: 2px solid black; */
     width: 96px;
     height: 96px;
     margin: 30px auto;
     font-size: 90px;
-    /* line-height: 98px; */
     cursor: pointer;
-    opacity:0.25;
-    filter:alpha(opacity=25);
+    opacity:0.50;
+    filter:alpha(opacity=50);
 }
 
 .die:hover {
