@@ -1,13 +1,10 @@
 /*  TODO
--   implement <die> directive with dot die faces 
--   Improve AI
-      . rerun stats after various scoring fixes
-      . HejBot had 4,4,4,6,6 with another roll and (basically) only 3-of-a-kind and fours left. Chose fours without rolling again.
-      . HejBot had 3,3,3,5,2 and only 4-of-akind left, rolled only the 2
 -   disable UI while AI is playing
--   Undo feature
--   other sound effects
--   fix game. startOver()
+-   Improve AI
+    . Make bot aware of opponent's score (e.g. take a long shot if it needs one to win)
+-   optimize wav file sizes
+-   Undo feature ?
+-   implement <die> directive ?
 */
 
 /*globals angular*/
@@ -488,7 +485,7 @@ function Jahtzee() {
         return 0 }
 
       AIPlayer.SimpleBox_easyVal = function() { 
-        return this.n * 2.106 /* derived from statistical sampling */ }
+        return this.n * 2.103 /* derived from statistical sampling */ }
 
       AIPlayer.SimpleBox_avgBonus = function(dice) { 
         // avg expected future contribution to a bonus
@@ -501,11 +498,11 @@ function Jahtzee() {
           return -1 * typical_bonus * (3-n_count) / 3 }
 
       AIPlayer.NOfAKindBox_easyVal = function() { 
-        if(this.n===3) return 14.732 
-        if(this.n===4) return 5.473 }
+        if(this.n===3) return 14.342 
+        if(this.n===4) return 5.366 }
 
       AIPlayer.Yahtzee_easyVal = function() {
-        return 2.095 }
+        return 0.085 }
 
       AIPlayer.Yahtzee_avgBonus = function(dice) {
         var rounds_remaining = 13 - this.player.game.round
@@ -526,11 +523,11 @@ function Jahtzee() {
 
       AIPlayer.ChanceBox_easyVal = function() {return 22.999 }
 
-      AIPlayer.FullHouseBox_easyVal = function() {return 8.945 }
+      AIPlayer.FullHouseBox_easyVal = function() {return 9.080 }
 
       AIPlayer.SequenceOfNBox_easyVal = function() { 
-        if (this.n===4) return 17.334
-        if (this.n===5) return 9.888 }
+        if (this.n===4) return 18.009
+        if (this.n===5) return 10.376 }
 
     // Player-centric AI stuff goes on the prototype
 
