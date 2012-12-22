@@ -100,20 +100,10 @@ body {
     margin: 30px auto;
     font-size: 90px;
     cursor: pointer;
-    opacity:0.50;
-    filter:alpha(opacity=50);
 }
 
 .die:hover {
 /*    border-style: dashed; */
-}
-
-.selected {
-/*    background-color: #545;*/
-    color: white;
-    border-color: white;
-    opacity:1;
-    filter:alpha(opacity=100);
 }
 
 .section-btn {
