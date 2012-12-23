@@ -8,7 +8,7 @@ function generateEasyVals(trial_count) {
   var ii
   
   var trials = trial_count || 10000
-  
+
   var i = p.choosables.length
   
   while (i--) { // each box
@@ -21,32 +21,19 @@ function generateEasyVals(trial_count) {
     box.final = false
 
     box.runavg = 0
-    box.s0 =0, box.s1=0, box.s2=0, box.s3=0, box.s4=0, box.s5=0
     ii = trials
     while (ii--) { // each trial
       box.final = false
+      box.val = null
       while (true) {
         p.nextMove()
         if (box.final) { // just finished choosing
           box.runavg += box.val / trials
-          /*if(box.val===0) box.s0++; else
-          if(box.val===1) box.s1++; else
-          if(box.val===2) box.s2++; else
-          if(box.val===3) box.s3++; else
-          if(box.val===4) box.s4++; else
-          if(box.val===5) box.s5++; */
           g.round = 1
-          break
-        }
-      } 
-    }
+          break } } }
 
     console.log(box)
-    console.log(box.runavg)
-
-  }
-
-}
+    console.log(box.runavg) } }
 
 function battlePlayers(trials, player1, player2, etc) {
   //takes a trial_count followed by list of Player class names to battle 
@@ -68,9 +55,8 @@ function battlePlayers(trials, player1, player2, etc) {
   var setUp = function setUp(args) {
       games++
       g = new j.Game()
-      for(var i=1; i<args.length; i++ )
-        g.newPlayer(args[i])
-  }
+      for(var i=1; i<args.length; i++ ) g.newPlayer(args[i]) }
+
   setUp(arguments)
 
   while (true) {
@@ -78,17 +64,10 @@ function battlePlayers(trials, player1, player2, etc) {
     if (g.gameOver()) {
       console.log(games)
       i = g.players.length
-      while (i--) {
+      while (i--) 
         avg_scores[i] = (avg_scores[i] || 0) + g.players[i].grand_total.val / trials
-      }
       setUp(arguments)
-      if(games > trials) break
-    }
-  }
+      if(games > trials) break } }
 
   console.log(arguments)
-  console.log(avg_scores)  
-
-
-}
-
+  console.log(avg_scores)  }

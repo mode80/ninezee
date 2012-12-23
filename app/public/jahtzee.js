@@ -502,7 +502,7 @@ function Jahtzee() {
         if(this.n===4) return 5.366 }
 
       AIPlayer.Yahtzee_easyVal = function() {
-        return 0.085 }
+        return 2.297 }
 
       AIPlayer.Yahtzee_avgBonus = function(dice) {
         var rounds_remaining = 13 - this.player.game.round
@@ -521,13 +521,13 @@ function Jahtzee() {
             avg_bonus = 100 } }
         return calc_val - this.easyVal() + avg_bonus }
 
-      AIPlayer.ChanceBox_easyVal = function() {return 22.999 }
+      AIPlayer.ChanceBox_easyVal = function() {return 22.176 }
 
-      AIPlayer.FullHouseBox_easyVal = function() {return 9.080 }
+      AIPlayer.FullHouseBox_easyVal = function() {return 9.138 }
 
       AIPlayer.SequenceOfNBox_easyVal = function() { 
-        if (this.n===4) return 18.009
-        if (this.n===5) return 10.376 }
+        if (this.n===4) return 17.994
+        if (this.n===5) return 10.088 }
 
     // Player-centric AI stuff goes on the prototype
 
