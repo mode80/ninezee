@@ -1,14 +1,15 @@
 /*  TODO
--   refactor chosen dice to use a selection array instead of slower dice.clone
--   fix inline TODOs
 -   use minimized CDN version of angular et al
+-   optimize wav file sizes
+-   fix inline TODOs
+-   implement <die> directive to contain HTML expression ugliness
+-   refactor chosen_dice to use a selection array instead of slower dice.clone
 -   disable UI while AI is playing
 -   Improve AI
     . Make bot aware of opponent's score (e.g. take a long shot if it needs one to win)
     . Investigate: MixBot had perfectly good FullHouse on 1st roll yet went for Yahtzee 
--   optimize wav file sizes
+    . Add a "GlennBot" http://www.cs.loyola.edu/~jglenn/research/optimal_yahtzee.pdf
 -   cache die images client-side with sprites
--   implement <die> directive to contain HTML expression ugliness
 */
 
 // Setting helpers for JSHint
