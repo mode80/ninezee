@@ -286,10 +286,11 @@
 
 		<div class="dice-section span2">
 			<p 	ng-repeat="die in g.dice" 
-				class="die" 
-				id=die{{$index+1}}
-				ng-click="die.selected = !die.selected">
-				<img src="../assets/img/die_{{ die.val }}{{ {true:'_selected', false:''}[die.selected] }}.gif" />
+					class="die" 
+					id=die{{$index+1}}
+					ng-click="die.selected = !die.selected"
+			>
+				<img ng-src="../assets/img/die_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.gif" >
 			</p>
 		</div>
 

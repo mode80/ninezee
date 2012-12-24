@@ -26,7 +26,7 @@ function generateEasyVals(trial_count) {
       box.final = false
       box.val = null
       while (true) {
-        p.nextMove()
+        p.nextAction()
         if (box.final) { // just finished choosing
           box.runavg += box.val / trials
           g.round = 1
@@ -60,7 +60,7 @@ function battlePlayers(trials, player1, player2, etc) {
   setUp(arguments)
 
   while (true) {
-    g.player.nextMove()
+    g.player.nextAction()
     if (g.gameOver()) {
       console.log(games)
       i = g.players.length
