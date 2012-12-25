@@ -10,6 +10,7 @@
     . Investigate: MixBot had perfectly good FullHouse on 1st roll yet went for Yahtzee 
     . Add a "GlennBot" http://www.cs.loyola.edu/~jglenn/research/optimal_yahtzee.pdf
 -   cache die images client-side with sprites
+-   speed up with webworkers?
 */
 
 // Setting helpers for JSHint
