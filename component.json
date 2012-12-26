@@ -1,11 +1,9 @@
 {
     "name":"YahtzeeJS",
-    "version": "0.0.1",
+    "version": "0.9.0",
     "main": ["./main.css", "./main.js", "./index.html" ],
     "dependencies": {
         "bootstrap":">0",
-        "jquery":">0",
-        "underscore":">0",
         "angular":">0"
     }
 
