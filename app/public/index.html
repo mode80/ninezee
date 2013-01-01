@@ -76,7 +76,7 @@
 						<td>Threes <small class="visible-desktop scorebox-note">= 3</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Threes</td>
 						<td 	class="box"
-								<td	ng-repeat="p in g.players"
+								ng-repeat="p in g.players"
 								ng-mouseenter="p.threes.proposeVal(g.dice)" 
 								ng-mouseleave="p.threes.unproposeVal(g.dice)" 
 								ng-click="p.threes.lockVal(g.dice)" 
