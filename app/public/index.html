@@ -10,8 +10,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-	<link href="../assets/css/bootstrap.css" rel="stylesheet">
-	<link href="../assets/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">	
 	<link href="main.css" rel="stylesheet">
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -77,7 +76,7 @@
 						<td>Threes <small class="visible-desktop scorebox-note">= 3</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Threes</td>
 						<td 	class="box"
-								<td	ng-repeat="p in g.players"
+								ng-repeat="p in g.players"
 								ng-mouseenter="p.threes.proposeVal(g.dice)" 
 								ng-mouseleave="p.threes.unproposeVal(g.dice)" 
 								ng-click="p.threes.lockVal(g.dice)" 
@@ -286,10 +285,11 @@
 
 		<div class="dice-section span2">
 			<p 	ng-repeat="die in g.dice" 
-				class="die" 
-				id=die{{$index+1}}
-				ng-click="die.selected = !die.selected">
-				<img src="../assets/img/die_{{ die.val }}{{ {true:'_selected', false:''}[die.selected] }}.gif" />
+					class="die" 
+					id=die{{$index+1}}
+					ng-click="die.selected = !die.selected"
+			>
+				<img ng-src="../assets/img/die_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.gif" >
 			</p>
 		</div>
 
@@ -323,8 +323,7 @@
 				Add Bot <i class="icon-cog icon-white"></i>
 			</button>
 			<br><br>
-			<small class=version>v.9.1.0</small>
-
+			<small class=version>v.9.2.2</small>
 		</div>
 
 	</div> 
@@ -337,7 +336,7 @@
 
 <!-- ================================================== -->
 
-<script src="../assets/js/angular.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.3/angular.min.js"></script>
 <script src="../assets/js/fireworks.js"></script>
 <script src="jahtzee.js"></script>
 <script src="main.js"></script>
