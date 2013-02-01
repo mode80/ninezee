@@ -1,4 +1,4 @@
-/*globals angular, Jahtzee, Fireworks*/
+/*globals angular, Jahtzee, Fireworks, bootbox*/
 /*jshint asi: true, es5: true, proto: true*/
 
 
@@ -18,6 +18,10 @@
             if(phase !== '$apply' && phase !== '$digest') $scope.$apply(fn) }
 
       // expose ability to create a new game to the view
+
+        $scope.confirmNewGame = function(bool) { 
+          bootbox.confirm('Sure you want to start over?', function(bool){ if(bool) $scope.newGame() }) /**/}
+          
         $scope.newGame = function() {
 
           // the very important game object

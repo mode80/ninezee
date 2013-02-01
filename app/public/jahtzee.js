@@ -1,9 +1,6 @@
-    // Setting helpers for JSHint
-      /*globals angular*/
-      /*jshint asi: true, es5: true, proto: true */
+// JSHint: /*globals angular*/ /*jshint asi: true, es5: true, proto: true */
 
 function Jahtzee() { // packages the functionality for a game of Jahtzee
-
 
   // Die 
   // ***************************************************************************
