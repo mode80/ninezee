@@ -1,5 +1,5 @@
 /*globals angular, Jahtzee, Fireworks, bootbox*/
-/*jshint asi: true, es5: true, proto: true*/
+/*jshint asi: true, proto: true*/
 
 
 // the main app module
@@ -21,7 +21,11 @@
 
         $scope.confirmNewGame = function(bool) { 
           bootbox.confirm('Sure you want to start over?', function(bool){ if(bool) $scope.newGame() }) /**/}
-          
+
+        $scope.toggleDie = function(die) {
+          if ($scope.g.toggleDie(die) === false)
+            bootbox.alert('No cheating!') }
+
         $scope.newGame = function() {
 
           // the very important game object

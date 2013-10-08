@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en" ng-app="jahtzee_app">
 <head>
@@ -287,7 +288,7 @@
 			<p 	ng-repeat="die in g.dice" 
 					class="die" 
 					id=die{{$index+1}}
-					ng-click="die.selected = !die.selected"
+					ng-click="toggleDie(die)"
 			>
 				<img ng-src="../assets/img/die_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.gif" >
 			</p>
@@ -325,7 +326,7 @@
 				Add Bot <i class="icon-cog icon-white"></i>
 			</button>
 			<br><br>
-			<small class=version>v.9.2.2</small>
+			<small class=version>v.9.3</small>
 
 		</div>
 

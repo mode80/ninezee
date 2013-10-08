@@ -719,5 +719,12 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     Game_.gameOver = function() { // returns true when game is over
       return (this.round > 13) }
 
+    Game_.toggleDie = function(die) { // toggles selection of a die. Returns false if not allowed.
+      if (this.roll_count >=1 && this.player.AI === false ) {
+        die.selected = !die.selected
+        return true
+      } else {
+        return false
+      } }
 
 }
