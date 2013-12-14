@@ -334,9 +334,24 @@
 
 </div>
 
-<audio id="roll-sound" src="../assets/wav/roll.wav"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
-<audio id="lock-sound" src="../assets/wav/switch3.wav"></audio> 
-<audio id="fireworks-sound" src="../assets/wav/fireworks.wav"></audio> 
+<div id="preloaded-images">
+   <img src="../assets/img/die_1.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_2.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_3.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_4.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_5.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_6.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_1_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_2_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_3_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_4_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_5_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/die_6_selected.gif" width="1" height="1" alt="" />
+</div>
+
+<audio id="roll-sound" src="../assets/wav/roll.wav" preload="auto"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
+<audio id="lock-sound" src="../assets/wav/switch3.wav" preload="auto"></audio> 
+<audio id="fireworks-sound" src="../assets/wav/fireworks.wav" preload="auto"></audio> 
 
 <!-- ================================================== -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -346,7 +361,6 @@
 <script src="../assets/js/bootbox.min.js"></script>
 <script src="jahtzee.js"></script>
 <script src="main.js"></script>
-
 
 </body>
 </html>
