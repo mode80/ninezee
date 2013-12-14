@@ -5,14 +5,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Die 
   // ***************************************************************************
 
-    function Die(val) { // creates a die object that does, you know, die stuff
-      this.val = val || null
+    function Die(val, sides) { // creates a die object that does, you know, die stuff
+      this.sides = sides || 6 
+      this.val = val || this.roll() 
       this.selected = true }
 
     var Die_ = Die.prototype = {} // set the prototype object and a create a handy name for it
 
     Die_.roll = function() {
-      this.val = Math.ceil(Math.random() * 6) }
+      this.val = Math.ceil(Math.random() * this.sides) 
+      return this.val}
 
     Die_.select = function() { this.selected = true }
 
@@ -22,11 +24,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Dice
   // ***************************************************************************
 
-    function Dice(n) { // creates a set of dice
+    function Dice(n,sides) { // creates a set of n "sides"-sided dice
       n = n || 5
+      sides = sides || 6
       var dice = []
-      for(var i = 1; i<=n; i++) dice.push(new Die(i))
+      for(var i = 1; i<=n; i++) dice.push(new Die(undefined,sides))
       dice.__proto__ = Dice.prototype // need to set proto explicitly to get array-like behavior
+      dice.sides = sides
       return dice }
 
     Dice.sortFn = function(a, b) {return(a.val - b.val)} // pre-defined fn for sort operations
@@ -64,6 +68,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       return sum }
 
     Dice_.sortedCopy = function() { return this.slice().sort(Dice.sortFn) }
+
+    Dice_.sortedVals = function() { 
+      var vals_to_sort = []
+      var i = this.length
+      while (i--) vals_to_sort.push(this[i].val)
+      return vals_to_sort.sort() 
+    }
 
     Dice_.allSame = function() { // return true when all die vals are equal
       var i = this.length - 1
@@ -130,15 +141,14 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // SimpleBox 
   // ***************************************************************************
 
-    function SimpleBox(player, n) { // creates one of the first 5 boxes on a scorecard. e.g. "Aces" when given n=1
+    function SimpleBox(player, n) { // creates one of the top boxes on a scorecard. e.g. "Aces" when given n=1
         ScoreBox.apply(this, arguments) // call "super constructor"
-        this.n = n
-        this.max_val = n*5 }
+        this.n = n }
 
     var SimpleBox_ = SimpleBox.prototype = Object.create(ScoreBox.prototype)
 
     SimpleBox_.calcVal = function(dice) { // find and sum only dice of value 'n'
-      var sum = 0, i = 5
+      var sum = 0, i = dice.length 
       while (i--) if (dice[i].val === this.n) sum += dice[i].val
       return sum }
 
@@ -153,20 +163,21 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     var NOfAKindBox_ = NOfAKindBox.prototype = Object.create(ScoreBox.prototype)
 
     NOfAKindBox_.calcVal = function(dice) { // returns sum of all dice when at least 'n' dice are equal
-      var i = 5, ii = 6
-      var val_counts = [0,0,0,0,0,0]
-      while (i--) val_counts[dice[i].val-1]++
-      var most_val = 0, most_count = 0
+      var i = dice.length , ii = dice.sides+1 
+      var val_counts = Array(ii) //
+      while (i--) val_counts[dice[i].val] = (val_counts[dice[i].val]||0) + 1
+      var most_count = 0
       while (ii--) 
-        if (val_counts[ii] > most_count) most_count = val_counts[ii]
+        if ((val_counts[ii]||0) > most_count) most_count = val_counts[ii]
       if (most_count < this.n) return 0
       return dice.sum() }
 
 
   // Yahtzee
   // ***************************************************************************
-    function YahtzeeBox(player) { // the one and only yathzee box
-      NOfAKindBox.call(this, player, 5) } // it's basically a special NOfAKindBox with n=5
+    function YahtzeeBox(player, n) { // the one and only yathzee box
+      n = n || 5
+      NOfAKindBox.call(this, player, n) } // it's basically a special NOfAKindBox with n="all dice"
 
     var YahtzeeBox_ = YahtzeeBox.prototype = Object.create(NOfAKindBox.prototype)
 
@@ -188,21 +199,26 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // FullHouseBox
   // ***************************************************************************
 
-    function FullHouseBox(player) { // creates the FullHouse box where you need both a pair and 3 of a kind
+    function FullHouseBox(player) { // creates the FullHouse box where all dice are one of only 2 (near-evenly split) values 
       ScoreBox.apply(this, arguments) } // call super
 
     var FullHouseBox_ = FullHouseBox.prototype = Object.create(ScoreBox.prototype)
 
     FullHouseBox_.calcVal = function(dice) {
-      var i = 5, val_counts = [0,0,0,0,0,0,0], different_vals = 0
+      var i = dice.length, val_counts = Array(dice.sides+1), different_vals = 0
       var last = 0
       while (i--) {
           var die_val = dice[i].val
-          if (val_counts[die_val] === 0) different_vals++
-          val_counts[die_val]++
+          if ((val_counts[die_val]||0) === 0) different_vals++
+          val_counts[die_val] = (val_counts[die_val]||0) + 1
           last = die_val }
       if (different_vals===1) return 25 // yahtzee also counts as a full house
-      if (different_vals===2 && (val_counts[last]===2 || val_counts[last]===3))
+      if (
+        different_vals===2 && (
+          val_counts[last]===Math.floor(dice.length/2) || 
+          val_counts[last]===Math.ceil(dice.length/2)
+        )
+      )
           return 25
       else 
           return 0 }
@@ -211,15 +227,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // SequenceOfNBox
   // ***************************************************************************
 
-    function SequenceOfNBox(player, n) { // creates the box otherwise know as a straight. n=4 in a row is a small one, n=5 is large 
+    function SequenceOfNBox(player, n, small_n, large_n) { // creates the box otherwise know as a straight. small_n in a row is a small one, large_n is large 
       ScoreBox.apply(this, arguments) // call super
+      this.small_n = small_n || 4
+      this.large_n = large_n || 5
       this.n = n }
 
     var SequenceOfNBox_ = SequenceOfNBox.prototype = Object.create(ScoreBox.prototype)
 
     SequenceOfNBox_.calcVal = function(dice) { // returns 30 for a qualifying small straight, 40 for a large
-      var sorted_vals = [dice[0].val, dice[1].val, dice[2].val, 
-                         dice[3].val, dice[4].val].sort()
+      var sorted_vals = dice.sortedVals() 
       var in_a_row = 1
       var last_val = 0
       var point_val = 0
@@ -230,7 +247,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         if (die_val === last_val - 1) in_a_row++
         else if (die_val < last_val && in_a_row < this.n) in_a_row = 1 // reset sequence count when there's a "gap"
         last_val = die_val }
-      if (this.n === 4) point_val = 30; else if (this.n === 5) point_val = 40
+      if (this.n === this.small_n) point_val = 30; else if (this.n === this.large_n) point_val = 40
       yahtzee_wildcard = ( // will be true when we're dealing with a yahtzee that counts as a straight per official rules
         (this.player.yahtzee.final) && // a first yahtzee has been scored already, so this is an "extra"
         (this.player.yahtzee.val > 0) && // as long as yahtzee box hasn't been zeroed
@@ -670,7 +687,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     this.Game = function Game() {     // creates a jahtzee game object
       this.constructor = Game
-      this.dice = new Dice()          // the array-like set of 5 game dice
+      this.dice = new Dice()         // the array-like set of game dice
       this.players = []               // array of all players
       this.player = null              // current player
       this.winner = null              // eventually set to the game winner
