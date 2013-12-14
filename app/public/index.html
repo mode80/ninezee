@@ -50,6 +50,18 @@
 						</td>
 					</tr>
 					<tr>
+						<td>Zeros <small class="visible-desktop scorebox-note">= 0</small></td>
+						<td class="hidden-tablet hidden-phone">Sum Only Zeros</td>
+						<td 	class="box"
+								ng-repeat="p in g.players"
+ 								ng-mouseenter="p.zeros.proposeVal(g.dice)"
+								ng-mouseleave="p.zeros.unproposeVal(g.dice)" 
+								ng-click="p.zeros.lockVal(g.dice)" 
+								ng-class="{temp : !p.zeros.final, interactive : !p.zeros.final && p == g.player }"> 
+								{{p.zeros.val}} 
+						</td>
+					</tr>
+					<tr>
 						<td>Aces <small class="visible-desktop scorebox-note">= 1</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Aces</td>
 						<td 	class="box"
@@ -121,7 +133,42 @@
 								{{p.sixes.val}}
 						</td>
 					</tr>
-					<!--
+					<tr>
+						<td>Sevens<small class="visible-desktop scorebox-note">= 7</small></td>
+						<td class="hidden-tablet hidden-phone">Sum Only Sevens</td>
+						<td 	class="box"
+								ng-repeat="p in g.players"
+								ng-mouseenter="p.sevens.proposeVal(g.dice)" 
+								ng-mouseleave="p.sevens.unproposeVal(g.dice)" 
+								ng-click="p.sevens.lockVal(g.dice)" 
+								ng-class="{temp: !p.sevens.final, interactive : !p.sevens.final && p == g.player }">
+								{{p.sevens.val}}
+						</td>
+					</tr>
+					<tr>
+						<td>Eights<small class="visible-desktop scorebox-note">= 8</small></td>
+						<td class="hidden-tablet hidden-phone">Sum Only Eights</td>
+						<td 	class="box"
+								ng-repeat="p in g.players"
+								ng-mouseenter="p.eights.proposeVal(g.dice)" 
+								ng-mouseleave="p.eights.unproposeVal(g.dice)" 
+								ng-click="p.eights.lockVal(g.dice)" 
+								ng-class="{temp: !p.eights.final, interactive : !p.eights.final && p == g.player }">
+								{{p.eights.val}}
+						</td>
+					</tr>
+					<tr>
+						<td>Nines<small class="visible-desktop scorebox-note">= 9</small></td>
+						<td class="hidden-tablet hidden-phone">Sum Only Nines</td>
+						<td 	class="box"
+								ng-repeat="p in g.players"
+								ng-mouseenter="p.nines.proposeVal(g.dice)" 
+								ng-mouseleave="p.nines.unproposeVal(g.dice)" 
+								ng-click="p.nines.lockVal(g.dice)" 
+								ng-class="{temp: !p.nines.final, interactive : !p.nines.final && p == g.player }">
+								{{p.nines.val}}
+						</td>
+					</tr>					
  					<tr>
 						<td>TOTAL SCORE</small></td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -131,7 +178,6 @@
 								{{ p.simple_total.val }}
 						</td>
 					</tr> 
-					-->
 					<tr>
 						<td>BONUS <small class="visible-desktop scorebox-note">If upper sum is 63 or more </small></td>
 						<td class="hidden-tablet hidden-phone">SCORE 35</td>
@@ -141,7 +187,6 @@
 								{{p.upper_bonus.val}}
 						</td>
 					</tr>
-				  <!--
 					<tr  class="hidden-tablet hidden-phone">
 						<td>TOTAL <small class="visible-desktop scorebox-note">Of upper section</td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -151,7 +196,6 @@
 								{{p.upper_total.val}}
 						</td>
 					</tr>
-				  -->
 					<tr>
 						<td><strong>LOWER SECTION</strong></td>
 						<td class="hidden-tablet hidden-phone"></td>
@@ -250,7 +294,6 @@
 								{{p.yahtzee_bonus.val}}
 						</td>
 					</tr>
-				  <!--
 					<tr class="hidden-tablet hidden-phone">
 						<td>TOTAL <small class="visible-desktop scorebox-note">Of Lower Section</small></td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -278,7 +321,6 @@
 								{{p.grand_total.val}}
 						</td>
 					</tr>
-				  -->
 				</table>
 			</div>
 
@@ -290,7 +332,7 @@
 					id=die{{$index+1}}
 					ng-click="toggleDie(die)"
 			>
-				<img ng-src="../assets/img/die_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.gif" >
+				<img class="die-img" ng-src="../assets/img/d10_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.svg" >
 			</p>
 		</div>
 
@@ -335,24 +377,26 @@
 </div>
 
 <div id="preloaded-images">
-   <img src="../assets/img/die_1.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_2.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_3.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_4.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_5.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_6.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_7.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_8.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_9.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_1_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_2_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_3_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_4_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_5_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_6_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_7_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_8_selected.gif" width="1" height="1" alt="" />
-   <img src="../assets/img/die_9_selected.gif" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_0.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_1.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_2.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_3.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_4.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_5.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_6.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_7.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_8.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_9.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_0_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_1_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_2_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_3_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_4_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_5_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_6_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_7_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_8_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_9_selected.svg" width="1" height="1" alt="" />
 </div>
 
 <audio id="roll-sound" src="../assets/wav/roll.wav" preload="auto"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->

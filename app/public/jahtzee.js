@@ -364,12 +364,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       // initialize all the box objects that would appear on a player's scorecard
 
         // the normal scoring boxes
+          this.zeros            = new SimpleBox(this, 0)
           this.aces             = new SimpleBox(this, 1)
           this.twos             = new SimpleBox(this, 2)
           this.threes           = new SimpleBox(this, 3)
           this.fours            = new SimpleBox(this, 4)
           this.fives            = new SimpleBox(this, 5)
           this.sixes            = new SimpleBox(this, 6)
+          this.sevens           = new SimpleBox(this, 7)
+          this.eights           = new SimpleBox(this, 8)
+          this.nines            = new SimpleBox(this, 9)
           this.upper_bonus      = new UpperBonusBox(this)
           this.three_of_a_kind  = new NOfAKindBox(this, 3)
           this.four_of_a_kind   = new NOfAKindBox(this, 4)
@@ -386,8 +390,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.bonus_triggers   = new ScoreBoxGroup()
           this.choosables       = new ScoreBoxGroup()
           this.all_scores       = new ScoreBoxGroup()
-          this.simple_scores.push( this.aces, this.twos, this.threes, 
-            this.fours, this.fives, this.sixes)
+          this.simple_scores.push( this.zeros, this.aces, this.twos, this.threes, 
+            this.fours, this.fives, this.sixes, this.sevens, this.eights, this.nines)
           this.upper_scores.pushAll(this.simple_scores).push(this.upper_bonus)
           this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind,
             this.full_house, this.sm_straight, this.lg_straight, this.chance)

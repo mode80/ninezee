@@ -95,11 +95,12 @@ body {
 }
 
 .die {
-    width: 60px;
-    height: 60px;
-    margin: 10px auto;
-    font-size: 90px;
+}
+
+.die-img {
     cursor: pointer;
+    height: 56px;
+    margin: 3px auto;
 }
 
 .die:hover {
