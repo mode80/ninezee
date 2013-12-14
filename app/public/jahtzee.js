@@ -22,9 +22,10 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Dice
   // ***************************************************************************
 
-    function Dice() { // creates a set of 5 dice
+    function Dice(n) { // creates a set of dice
+      n = n || 5
       var dice = []
-      for(var i = 1; i<=5; i++) dice.push(new Die(i))
+      for(var i = 1; i<=n; i++) dice.push(new Die(i))
       dice.__proto__ = Dice.prototype // need to set proto explicitly to get array-like behavior
       return dice }
 
@@ -33,41 +34,41 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     var Dice_ = Dice.prototype = Object.create(Array.prototype)
 
     Dice_.rollSelected = function() {
-      var i = 5
+      var i = this.length 
       while(i--) if (this[i].selected) this[i].roll() }
 
     Dice_.selectByArray = function (selection) { // takes an array of 5 booleans and selects dice accordingly
-      var i = 5
+      var i = this.length 
       while (i--) this[i].selected = (selection[i]? true: false) }
 
     Dice_.selectAll = function() {
-      var i = 5
+      var i = this.length  
       while(i--) this[i].selected = true }
 
     Dice_.selectNone = function() {
-      var i = 5
+      var i = this.length 
       while(i--) this[i].selected = false }
 
     Dice_.selectInverse = function() {
-      var i = 5
+      var i = this.length 
       while (i--) this[i].selected = !this[i].selected }
 
     Dice_.selectedCount = function() { // return count of selected dice
-      var i = 5, retval = 0
+      var i = this.length , retval = 0
       while (i--) if (this[i].selected) retval++
       return retval }
 
     Dice_.sum = function() { // sum of all die vals
-      var i = 5, sum = 0
+      var i = this.length , sum = 0
       while (i--) sum += this[i].val
       return sum }
 
     Dice_.sortedCopy = function() { return this.slice().sort(Dice.sortFn) }
 
     Dice_.allSame = function() { // return true when all die vals are equal
-      var lastval = this[4].val
+      var i = this.length - 1
+      var lastval = this[i].val
       if (lastval===null) return false
-      var i = 4
       while (i--) { 
         if (lastval !== this[i].val) return false
         lastval = this[i].val }
@@ -75,7 +76,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     Dice_.clone = function() { // return deep copy of this dice object
       var retval = new Dice()
-      var i = 5
+      var i = this.length 
       while (i--) {
         retval[i].val = this[i].val
         retval[i].selected = this[i].selected }
