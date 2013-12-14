@@ -95,9 +95,9 @@ body {
 }
 
 .die {
-    width: 96px;
-    height: 96px;
-    margin: 30px auto;
+    width: 60px;
+    height: 60px;
+    margin: 10px auto;
     font-size: 90px;
     cursor: pointer;
 }

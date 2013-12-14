@@ -685,9 +685,11 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Game
   // ***************************************************************************
 
-    this.Game = function Game() {     // creates a jahtzee game object
+    this.Game = function Game(dice_count,die_sides) {     // creates a jahtzee game object, option diecount & sides
+      die_count = dice_count || 5
+      die_sides = die_sides || 6
       this.constructor = Game
-      this.dice = new Dice()         // the array-like set of game dice
+      this.dice = new Dice(dice_count,die_sides)         // the array-like set of game dice
       this.players = []               // array of all players
       this.player = null              // current player
       this.winner = null              // eventually set to the game winner
