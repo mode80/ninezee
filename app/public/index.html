@@ -50,18 +50,6 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Zeros <small class="visible-desktop scorebox-note">= 0</small></td>
-						<td class="hidden-tablet hidden-phone">Sum Only Zeros</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
- 								ng-mouseenter="p.zeros.proposeVal(g.dice)"
-								ng-mouseleave="p.zeros.unproposeVal(g.dice)" 
-								ng-click="p.zeros.lockVal(g.dice)" 
-								ng-class="{temp : !p.zeros.final, interactive : !p.zeros.final && p == g.player }"> 
-								{{p.zeros.val}} 
-						</td>
-					</tr>
-					<tr>
 						<td>Aces <small class="visible-desktop scorebox-note">= 1</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Aces</td>
 						<td 	class="box"
@@ -179,14 +167,15 @@
 						</td>
 					</tr> 
 					<tr>
-						<td>BONUS <small class="visible-desktop scorebox-note">If upper sum is 63 or more </small></td>
-						<td class="hidden-tablet hidden-phone">SCORE 35</td>
+						<td>BONUS <small class="visible-desktop scorebox-note">If upper sum is 225 or more </small></td>
+						<td class="hidden-tablet hidden-phone">SCORE 125</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.upper_bonus.final}">
 								{{p.upper_bonus.val}}
 						</td>
 					</tr>
+					<!--
 					<tr  class="hidden-tablet hidden-phone">
 						<td>TOTAL <small class="visible-desktop scorebox-note">Of upper section</td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -312,6 +301,7 @@
 								{{p.upper_total.val}}
 						</td>
 					</tr>
+					-->
 					<tr>
 						<td>GRAND TOTAL</td>
 						<td  class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>

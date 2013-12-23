@@ -29,7 +29,7 @@
         $scope.newGame = function() {
 
           // the very important game object
-            $scope.g = new jahtzee_service.Game(10,10)
+            $scope.g = new jahtzee_service.Game(9,10,6) 
 
           // add player
             $scope.g.newPlayer('Player')

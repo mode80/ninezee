@@ -290,14 +290,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // UpperBonusBox
   // ***************************************************************************
 
-    function UpperBonusBox(player) { // creates a box that contains 35 when the sum of SimpleBox values >= 63
+    function UpperBonusBox(player,bonus,threshold) { // creates a box that contains 'bonus' when the sum of SimpleBox values >= 'threshold' 
+      this.bonus = bonus || 35
+      this.threshold = threshold || 63
       Box.apply(this, arguments) } // call super
 
     var UpperBonusBox_ = UpperBonusBox.prototype = Object.create(Box.prototype)
     
     UpperBonusBox_.refresh = function() {
       this.final = this.player.simple_total.final
-      if (this.player.simple_total.val >= 63) this.val = 35
+      if (this.player.simple_total.val >= this.threshold) this.val = this.bonus 
       if (this.final && this.val === null) this.val = 0 }
 
 
@@ -364,7 +366,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       // initialize all the box objects that would appear on a player's scorecard
 
         // the normal scoring boxes
-          this.zeros            = new SimpleBox(this, 0)
           this.aces             = new SimpleBox(this, 1)
           this.twos             = new SimpleBox(this, 2)
           this.threes           = new SimpleBox(this, 3)
@@ -374,7 +375,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.sevens           = new SimpleBox(this, 7)
           this.eights           = new SimpleBox(this, 8)
           this.nines            = new SimpleBox(this, 9)
-          this.upper_bonus      = new UpperBonusBox(this)
+          this.upper_bonus      = new UpperBonusBox(this,125,225)
           this.three_of_a_kind  = new NOfAKindBox(this, 3)
           this.four_of_a_kind   = new NOfAKindBox(this, 4)
           this.full_house       = new FullHouseBox(this)
@@ -390,7 +391,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.bonus_triggers   = new ScoreBoxGroup()
           this.choosables       = new ScoreBoxGroup()
           this.all_scores       = new ScoreBoxGroup()
-          this.simple_scores.push( this.zeros, this.aces, this.twos, this.threes, 
+          this.simple_scores.push( this.aces, this.twos, this.threes, 
             this.fours, this.fives, this.sixes, this.sevens, this.eights, this.nines)
           this.upper_scores.pushAll(this.simple_scores).push(this.upper_bonus)
           this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind,
@@ -688,18 +689,19 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Game
   // ***************************************************************************
 
-    this.Game = function Game(dice_count,die_sides) {     // creates a jahtzee game object, option diecount & sides
+    this.Game = function Game(dice_count, die_sides, max_rolls) {     // creates a jahtzee game object, option diecount & sides, 
       die_count = dice_count || 5
       die_sides = die_sides || 6
+      max_rolls = max_rolls || 3
       this.constructor = Game
       this.dice = new Dice(dice_count,die_sides)         // the array-like set of game dice
       this.players = []               // array of all players
       this.player = null              // current player
       this.winner = null              // eventually set to the game winner
       this.player_index = 0           // index of current player in players[]
-      this.max_rounds = 17            // a game has this many rounds to score all boxes
+      this.max_rounds = 9             // a game has this many rounds to score all boxes
       this.round = 1                  // starting at round 1 
-      this.max_rolls = 5              // each players gets this many rolls
+      this.max_rolls = max_rolls      // each players gets this many rolls
       this.roll_count = 0             // starting at 0 
       this.started = false            // true once a new game has started
       this.base_delay = 500           // how long the AI pauses by default between actions
