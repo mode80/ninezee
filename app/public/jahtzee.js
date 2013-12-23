@@ -471,24 +471,24 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         // takes the next action based on the game state
         // will be called in a loop with view updates between calls
 
-        if (this.game.round > 13) return // bail if game over already
+        if (this.game.round > this.max_rounds) return // bail if game over already
 
         var rolls = this.game.roll_count // abbreviation var
         var game = this.game             // "
 
         // roll
-          if (rolls === 0 || (rolls < 3 && this.die_index >= 5)) { 
+          if (rolls === 0 || (rolls < this.game.max_rolls && this.die_index >= this.games.dice_count)) { 
             game.nextRoll()
             this.die_index = 0
             game.next_delay = game.base_delay // set base animation delay for view updates
             return }
     
         // choose dice
-          if (this.die_index === 0 && rolls < 3 && game.dice.selectedCount()>0) 
+          if (this.die_index === 0 && rolls < this.game.max_rolls && game.dice.selectedCount()>0) 
             this.chosen_dice = this.chooseDice()
     
         // select each chosen dice, one at a time
-          if (this.die_index < 5 && rolls < 3) { 
+          if (this.die_index < this.games.dice_count && rolls < this.game.max_rolls) { 
             var i = this.die_index // which die are we selecting?
             game.dice[i].selected = this.chosen_dice[i].selected
             this.die_index++; 
@@ -496,7 +496,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             return }
 
         // choose a box 
-          if (rolls === 3) { 
+          if (rolls === this.game.max_rolls) { 
             var chosen_box = this.chooseBox()
             if (chosen_box.val === null) {    
               chosen_box.proposeVal(game.dice)
@@ -524,7 +524,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                     if (score > best_score) {
                       best_score = score; 
                       best_selection = selection } }
-
+                      
         // return the best die selection
           var chosen_dice = this.game.dice.clone()
           chosen_dice.selectByArray(best_selection)
@@ -589,7 +589,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           return -1 * typical_bonus * (3-n_count) / 3 }
 
       AIPlayer_.YahtzeeBox_avgBonus = function(dice) {
-        var rounds_remaining = 13 - this.player.game.round
+        var rounds_remaining = this.player.game.max_rounds - this.player.game.round
         var chance_of_another_yahtzee = 2.297 * rounds_remaining // roughly anyway
         return 100 * chance_of_another_yahtzee }
 
@@ -698,8 +698,10 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       this.player = null              // current player
       this.winner = null              // eventually set to the game winner
       this.player_index = 0           // index of current player in players[]
-      this.round = 1                  // a game has 13 rounds to score all boxes
-      this.roll_count = 0             // each players gets 3 rolls
+      this.max_rounds = 17            // a game has this many rounds to score all boxes
+      this.round = 1                  // starting at round 1 
+      this.max_rolls = 5              // each players gets this many rolls
+      this.roll_count = 0             // starting at 0 
       this.started = false            // true once a new game has started
       this.base_delay = 500           // how long the AI pauses by default between actions
       this.next_delay =this.base_delay// the next AI pause, as adjusted from time to time
@@ -736,12 +738,12 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         this.winner = winner } }
 
     Game_.nextRoll = function() { // set game state and execute the next roll
-      if (this.roll_count >= 3) return false
+      if (this.roll_count >= this.max_rolls) return false
       this.roll_count++
       this.dice.rollSelected() }
 
     Game_.gameOver = function() { // returns true when game is over
-      return (this.round > 13) }
+      return (this.round > this.max_rounds) }
 
     Game_.toggleDie = function(die) { // toggles selection of a die. Returns false if not allowed.
       if (this.roll_count >=1 && this.player.AI === false ) {

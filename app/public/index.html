@@ -341,7 +341,7 @@
 			<br>
 			<button 
 				class="btn-roll section-btn btn btn-block btn-success"
-				ng-class="{disabled : g.roll_count >= 3 }"
+				ng-class="{disabled : g.roll_count >= g.max_rolls }"
 				ng-click="g.nextRoll()" > 
 				ROLL [{{g.roll_count}}]
 			</button>
