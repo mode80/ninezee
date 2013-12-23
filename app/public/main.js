@@ -3,10 +3,10 @@
 
 
 // the main app module
-  var app = angular.module("jahtzee_app", []).service("jahtzee_service", Jahtzee)
+  var app = angular.module('jahtzee_app', []).service('jahtzee_service', Jahtzee)
 
 // the main controller
-  app.controller('bodyController', ["$scope", "jahtzee_service",
+  app.controller('bodyController', ['$scope', 'jahtzee_service',
 
     function($scope, jahtzee_service) {
 
@@ -19,7 +19,7 @@
 
       // expose ability to create a new game to the view
 
-        $scope.confirmNewGame = function(bool) { 
+        $scope.confirmNewGame = function() { 
           bootbox.confirm('Sure you want to start over?', function(bool){ if(bool) $scope.newGame() }) /**/}
 
         $scope.toggleDie = function(die) {
@@ -32,7 +32,7 @@
             $scope.g = new jahtzee_service.Game(10,10)
 
           // add player
-            $scope.g.newPlayer("Player")
+            $scope.g.newPlayer('Player')
       
           // modify the standard roll function with implementation-specific animation 
             if($scope.g.base_delay > 100) { // don't bother if there's not enough animation time

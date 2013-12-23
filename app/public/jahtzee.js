@@ -507,7 +507,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       AIPlayer_.chooseDice = function() { // the key decision
 
         var a,b,c,d,e
-        var scores = []
         var best_score = -Infinity, best_selection = [0,0,0,0,0]
 
         // score each possible dice selection combo (there are 31 of these)
@@ -524,13 +523,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                     if (score > best_score) {
                       best_score = score; 
                       best_selection = selection } }
-                      
+
         // return the best die selection
           var chosen_dice = this.game.dice.clone()
           chosen_dice.selectByArray(best_selection)
           return chosen_dice }
 
-      AIPlayer_.scoreSelection = function(selection, trials) { 
+      AIPlayer_.scoreSelection = function(selection, trials ) { 
         // score how good a given die selection possibility is  
         // this is the heart of the AI "smarts"
         // override this in AIPlayer subclasses to make bots with different strategies
