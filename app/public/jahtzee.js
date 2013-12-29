@@ -5,15 +5,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Die 
   // ***************************************************************************
 
-    function Die(val, sides) { // creates a die object that does, you know, die stuff
+    function Die(val, sides, lowest_val) { // creates a die object that does, you know, die stuff
       this.sides = sides || 6 
+      this.lowest_val = (lowest_val===undefined)? 1: lowest_val 
       this.val = val || this.roll() 
       this.selected = true }
 
     var Die_ = Die.prototype = {} // set the prototype object and a create a handy name for it
 
     Die_.roll = function() {
-      this.val = Math.ceil(Math.random() * this.sides) 
+      this.val = Math.floor(Math.random() * this.sides) + this.lowest_val
       return this.val}
 
     Die_.select = function() { this.selected = true }
@@ -24,11 +25,12 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Dice
   // ***************************************************************************
 
-    function Dice(n,sides) { // creates a set of n "sides"-sided dice
-      n = n || 5
-      sides = sides || 6
+    function Dice(n,sides,lowest_val) { // creates a set of n "sides"-sided dice
+      this.n = n = n || 5
+      this.sides = sides = sides || 6
+      this.lowest_val = (lowest_val===undefined)? 1: lowest_val 
       var dice = []
-      for(var i = 1; i<=n; i++) dice.push(new Die(undefined,sides))
+      for(var i = 1; i<=n; i++) dice.push(new Die(lowest_val,sides,lowest_val))
       dice.__proto__ = Dice.prototype // need to set proto explicitly to get array-like behavior
       dice.sides = sides
       return dice }
@@ -86,7 +88,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       return true }
 
     Dice_.clone = function() { // return deep copy of this dice object
-      var retval = new Dice()
+      var retval = new Dice(this.n, this.sides, this.lowest_val)
       var i = this.length 
       while (i--) {
         retval[i].val = this[i].val
@@ -123,7 +125,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         this.val = this.calcVal(dice)
         this.player.yahtzee_bonus.lockVal(dice) // any box update could affect yahtzee bonus
         this.player.refreshTotals()
-        this.player.game.nextPlayer() } } // scoring a box marks the end of this players turn
+        this.player.game.nextPlayer() } } // scoring a box marks the end of this player's turn
 
     ScoreBox_.proposeVal = function(dice) { // pretend to score this box with the given dice, but without finalizing it
       if (this.player.ready() && this.val === null) {
@@ -175,14 +177,15 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
   // Yahtzee
   // ***************************************************************************
-    function YahtzeeBox(player, n) { // the one and only yathzee box
+    function YahtzeeBox(player, n, score) { // the one and only yathzee box
       n = n || 5
+      this.score = score || 50
       NOfAKindBox.call(this, player, n) } // it's basically a special NOfAKindBox with n="all dice"
 
     var YahtzeeBox_ = YahtzeeBox.prototype = Object.create(NOfAKindBox.prototype)
 
     YahtzeeBox_.calcVal = function(dice) { // you get 50 points when all dice are the same
-      if (dice.allSame()) return 50; else return 0 }
+      if (dice.allSame()) return this.score; else return 0 }
 
 
   // ChanceBox
@@ -223,14 +226,37 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       else 
           return 0 }
 
+  // NValues 
+  // ***************************************************************************
+
+    function NValues(player,n,score) { // creates the FullHouse box where all dice are one of only 2 (near-evenly split) values 
+      this.n = n || 2
+      this.score = score || 100
+      ScoreBox.apply(this, arguments) } // call super
+
+    var NValues_ = NValues.prototype = Object.create(ScoreBox.prototype)
+
+    NValues_.calcVal = function(dice) {
+      var i = dice.length, val_counts = Array(dice.sides+1), different_vals = 0
+      var last = 0
+      while (i--) {
+        var die_val = dice[i].val
+        if ((val_counts[die_val]||0) === 0) different_vals++
+        val_counts[die_val] = (val_counts[die_val]||0) + 1
+        last = die_val }
+      if (different_vals===1) return this.score // yahtzee also counts here 
+      if (different_vals===2)
+        return this.score 
+      else 
+        return 0 }
+
 
   // SequenceOfNBox
   // ***************************************************************************
 
-    function SequenceOfNBox(player, n, small_n, large_n) { // creates the box otherwise know as a straight. small_n in a row is a small one, large_n is large 
+    function SequenceOfNBox(player, n, score) { // creates the box otherwise know as a straight. small_n in a row is a small one, large_n is large 
+      this.score = score 
       ScoreBox.apply(this, arguments) // call super
-      this.small_n = small_n || 4
-      this.large_n = large_n || 5
       this.n = n }
 
     var SequenceOfNBox_ = SequenceOfNBox.prototype = Object.create(ScoreBox.prototype)
@@ -239,28 +265,27 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var sorted_vals = dice.sortedVals() 
       var in_a_row = 1
       var last_val = 0
-      var point_val = 0
       var yahtzee_wildcard = false
-      var i = 5    
+      var i = dice.length    
       while (i--) {
         var die_val = sorted_vals[i]
         if (die_val === last_val - 1) in_a_row++
         else if (die_val < last_val && in_a_row < this.n) in_a_row = 1 // reset sequence count when there's a "gap"
         last_val = die_val }
-      if (this.n === this.small_n) point_val = 30; else if (this.n === this.large_n) point_val = 40
       yahtzee_wildcard = ( // will be true when we're dealing with a yahtzee that counts as a straight per official rules
         (this.player.yahtzee.final) && // a first yahtzee has been scored already, so this is an "extra"
         (this.player.yahtzee.val > 0) && // as long as yahtzee box hasn't been zeroed
         (this.player.simple_scores[dice[0].val-1].final) && // and it can't go in the corresponding SimpleScore box
         (dice.allSame()) ) // then the rules say extra yahtzee's count as straights 
-      if (in_a_row >= this.n || yahtzee_wildcard) return point_val;
+      if (in_a_row >= this.n || yahtzee_wildcard) return this.score;
       else return 0 }
 
 
   // Yahtzee Bonus
   // ***************************************************************************
 
-    function YahtzeeBonusBox(player, score_box_group) { // creates a box that reflects 100 times each yahtzee rolled beyond the first one
+    function YahtzeeBonusBox(player, score_box_group, score) { // creates a box that reflects 100 times each yahtzee rolled beyond the first one
+      this.score = score || 100
       Box.apply(this, arguments) // call super
       this.final = false
       this.score_box_group = score_box_group }
@@ -271,7 +296,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       if (dice.allSame() && 
           this.player.yahtzee.val > 0 &&
           this.player.yahtzee.final ) 
-        return 100 
+        return this.score 
       else 
         return 0 }
 
@@ -376,13 +401,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.eights           = new SimpleBox(this, 8)
           this.nines            = new SimpleBox(this, 9)
           this.upper_bonus      = new UpperBonusBox(this,125,225)
-          this.three_of_a_kind  = new NOfAKindBox(this, 3)
-          this.four_of_a_kind   = new NOfAKindBox(this, 4)
-          this.full_house       = new FullHouseBox(this)
-          this.sm_straight      = new SequenceOfNBox(this, 4)
-          this.lg_straight      = new SequenceOfNBox(this, 5)
+          this.five_of_a_kind   = new NOfAKindBox(this, 5)
+          this.seven_of_a_kind  = new NOfAKindBox(this, 7)
+          this.two_values       = new NValues(this, 2, 100)
+          this.sm_straight      = new SequenceOfNBox(this, 7, 100)
+          this.lg_straight      = new SequenceOfNBox(this, 9, 500)
           this.chance           = new ChanceBox(this)
-          this.yahtzee          = new YahtzeeBox(this)
+          this.yahtzee          = new YahtzeeBox(this, 2500)
 
         // define groups for totalling etc
           this.simple_scores    = new ScoreBoxGroup()
@@ -394,12 +419,12 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.simple_scores.push( this.aces, this.twos, this.threes, 
             this.fours, this.fives, this.sixes, this.sevens, this.eights, this.nines)
           this.upper_scores.pushAll(this.simple_scores).push(this.upper_bonus)
-          this.lower_scores.push(this.three_of_a_kind, this.four_of_a_kind,
-            this.full_house, this.sm_straight, this.lg_straight, this.chance)
+          this.lower_scores.push(this.five_of_a_kind, this.seven_of_a_kind,
+            this.two_values, this.sm_straight, this.lg_straight, this.chance)
           this.bonus_triggers.pushAll(this.simple_scores)
           this.bonus_triggers.pushAll(this.lower_scores)
           this.choosables.pushAll(this.bonus_triggers).push(this.yahtzee)
-          this.yahtzee_bonus    = new YahtzeeBonusBox(this, this.bonus_triggers) 
+          this.yahtzee_bonus    = new YahtzeeBonusBox(this, this.bonus_triggers, 5000) 
           this.lower_scores.push(this.yahtzee, this.yahtzee_bonus)
           this.all_scores.pushAll(this.upper_scores).pushAll(this.lower_scores)
        
@@ -689,19 +714,16 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // Game
   // ***************************************************************************
 
-    this.Game = function Game(dice_count, die_sides, max_rolls) {     // creates a jahtzee game object, option diecount & sides, 
-      die_count = dice_count || 5
-      die_sides = die_sides || 6
-      max_rolls = max_rolls || 3
+    this.Game = function Game() {     // creates a jahtzee game object, option diecount & sides, 
       this.constructor = Game
-      this.dice = new Dice(dice_count,die_sides)         // the array-like set of game dice
+      this.dice = new Dice(9,10,0)    // the array-like set of game dice
       this.players = []               // array of all players
       this.player = null              // current player
       this.winner = null              // eventually set to the game winner
       this.player_index = 0           // index of current player in players[]
-      this.max_rounds = 9             // a game has this many rounds to score all boxes
+      this.max_rounds = 16            // a game has this many rounds to score all boxes
       this.round = 1                  // starting at round 1 
-      this.max_rolls = max_rolls      // each players gets this many rolls
+      this.max_rolls = 6              // each players gets this many rolls
       this.roll_count = 0             // starting at 0 
       this.started = false            // true once a new game has started
       this.base_delay = 500           // how long the AI pauses by default between actions

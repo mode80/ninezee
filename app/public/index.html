@@ -157,6 +157,7 @@
 								{{p.nines.val}}
 						</td>
 					</tr>					
+					<!--
  					<tr>
 						<td>TOTAL SCORE</small></td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
@@ -166,6 +167,7 @@
 								{{ p.simple_total.val }}
 						</td>
 					</tr> 
+					-->
 					<tr>
 						<td>BONUS <small class="visible-desktop scorebox-note">If upper sum is 225 or more </small></td>
 						<td class="hidden-tablet hidden-phone">SCORE 125</td>
@@ -185,50 +187,51 @@
 								{{p.upper_total.val}}
 						</td>
 					</tr>
+					-->
 					<tr>
 						<td><strong>LOWER SECTION</strong></td>
 						<td class="hidden-tablet hidden-phone"></td>
 						<td 	ng-repeat="p in g.players"></td>
 					</tr>
 					<tr>
-						<td>3 of a kind</td>
+						<td>5 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-mouseenter="p.three_of_a_kind.proposeVal(g.dice)" 
-								ng-mouseleave="p.three_of_a_kind.unproposeVal(g.dice)" 
-								ng-click="p.three_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: !p.three_of_a_kind.final, interactive : !p.three_of_a_kind.final && p == g.player }">
-								{{p.three_of_a_kind.val}}
+								ng-mouseenter="p.five_of_a_kind.proposeVal(g.dice)" 
+								ng-mouseleave="p.five_of_a_kind.unproposeVal(g.dice)" 
+								ng-click="p.five_of_a_kind.lockVal(g.dice)" 
+								ng-class="{temp: !p.five_of_a_kind.final, interactive : !p.five_of_a_kind.final && p == g.player }">
+								{{p.five_of_a_kind.val}}
 						</td>
 					</tr>
 					<tr>
-						<td>4 of a kind</td>
+						<td>7 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-mouseenter="p.four_of_a_kind.proposeVal(g.dice)" 
-								ng-mouseleave="p.four_of_a_kind.unproposeVal(g.dice)" 
-								ng-click="p.four_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: !p.four_of_a_kind.final, interactive : !p.four_of_a_kind.final && p == g.player }">
-								{{p.four_of_a_kind.val}}
+								ng-mouseenter="p.seven_of_a_kind.proposeVal(g.dice)" 
+								ng-mouseleave="p.seven_of_a_kind.unproposeVal(g.dice)" 
+								ng-click="p.seven_of_a_kind.lockVal(g.dice)" 
+								ng-class="{temp: !p.seven_of_a_kind.final, interactive : !p.seven_of_a_kind.final && p == g.player }">
+								{{p.seven_of_a_kind.val}}
 						</td>
 					</tr>
 					<tr>
-						<td>Full House</td>
-						<td class="hidden-tablet hidden-phone">Score 25</td>
+						<td>Two Values</td>
+						<td class="hidden-tablet hidden-phone">Score 100</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
-								ng-mouseenter="p.full_house.proposeVal(g.dice)" 
-								ng-mouseleave="p.full_house.unproposeVal(g.dice)" 
-								ng-click="p.full_house.lockVal(g.dice)" 
-								ng-class="{temp: !p.full_house.final, interactive : !p.full_house.final && p == g.player }">
-								{{p.full_house.val}}
+								ng-mouseenter="p.two_values.proposeVal(g.dice)" 
+								ng-mouseleave="p.two_values.unproposeVal(g.dice)" 
+								ng-click="p.two_values.lockVal(g.dice)" 
+								ng-class="{temp: !p.two_values.final, interactive : !p.two_values.final && p == g.player }">
+								{{p.two_values.val}}
 						</td>
 					</tr>
 					<tr>
-						<td>Sm. Straight <small class="visible-desktop scorebox-note">Sequence of 4</small></td>
-						<td class="hidden-tablet hidden-phone">Score 30</td>
+						<td>Sm. Straight <small class="visible-desktop scorebox-note">Sequence of 7</small></td>
+						<td class="hidden-tablet hidden-phone">Score 100</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.sm_straight.proposeVal(g.dice)" 
@@ -239,8 +242,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Lg. Straight <small class="visible-desktop scorebox-note">Sequence of 5</small></td>
-						<td class="hidden-tablet hidden-phone">Score 40</td>
+						<td>Lg. Straight <small class="visible-desktop scorebox-note">Sequence of 9</small></td>
+						<td class="hidden-tablet hidden-phone">Score 500</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.lg_straight.proposeVal(g.dice)" 
@@ -251,8 +254,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td>JAHTZEE <small class="visible-desktop scorebox-note">5 of a kind</small></td>
-						<td class="hidden-tablet hidden-phone">Score 50</td>
+						<td>NINEZEE <small class="visible-desktop scorebox-note">All the same</small></td>
+						<td class="hidden-tablet hidden-phone">Score 2500</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.yahtzee.proposeVal(g.dice)" 
@@ -264,7 +267,7 @@
 					</tr>
 					<tr>
 						<td>Chance</td>
-						<td class="hidden-tablet hidden-phone">Score Total of All 5 Dice</td>
+						<td class="hidden-tablet hidden-phone">Score Total of All Dice</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-mouseenter="p.chance.proposeVal(g.dice)" 
@@ -275,14 +278,15 @@
 						</td>
 					</tr>
 					<tr>
-						<td>JAHTZEE BONUS </td>
-						<td class="hidden-tablet hidden-phone">SCORE 100 PER</td>
+						<td>NINEZEE BONUS </td>
+						<td class="hidden-tablet hidden-phone">SCORE 5000 PER</td>
 						<td 	class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.yahtzee_bonus.final}"> 
 								{{p.yahtzee_bonus.val}}
 						</td>
 					</tr>
+					<!--
 					<tr class="hidden-tablet hidden-phone">
 						<td>TOTAL <small class="visible-desktop scorebox-note">Of Lower Section</small></td>
 						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
