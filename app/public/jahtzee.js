@@ -26,13 +26,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
   // ***************************************************************************
 
     function Dice(n,sides,lowest_val) { // creates a set of n "sides"-sided dice
-      this.n = n = n || 5
-      this.sides = sides = sides || 6
-      this.lowest_val = (lowest_val===undefined)? 1: lowest_val 
+      sides = sides || 6
+      lowest_val = (lowest_val===undefined)? 1: lowest_val 
       var dice = []
       for(var i = 1; i<=n; i++) dice.push(new Die(lowest_val,sides,lowest_val))
       dice.__proto__ = Dice.prototype // need to set proto explicitly to get array-like behavior
       dice.sides = sides
+      dice.lowest_val = lowest_val
       return dice }
 
     Dice.sortFn = function(a, b) {return(a.val - b.val)} // pre-defined fn for sort operations
@@ -43,7 +43,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var i = this.length 
       while(i--) if (this[i].selected) this[i].roll() }
 
-    Dice_.selectByArray = function (selection) { // takes an array of 5 booleans and selects dice accordingly
+    Dice_.selectByArray = function (selection) { // takes an array of booleans and selects dice accordingly
       var i = this.length 
       while (i--) this[i].selected = (selection[i]? true: false) }
 
@@ -88,7 +88,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       return true }
 
     Dice_.clone = function() { // return deep copy of this dice object
-      var retval = new Dice(this.n, this.sides, this.lowest_val)
+      var retval = new Dice(this.length, this.sides, this.lowest_val)
       var i = this.length 
       while (i--) {
         retval[i].val = this[i].val
@@ -478,13 +478,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.simple_scores[i].easyVal   = this.SimpleBox_easyVal
           this.simple_scores[i].avgBonus  = this.SimpleBox_avgBonus }
 
-        this.four_of_a_kind.easyVal       = this.NOfAKindBox_easyVal
-        this.three_of_a_kind.easyVal      = this.NOfAKindBox_easyVal
+        this.five_of_a_kind.easyVal       = this.NOfAKindBox_easyVal
+        this.seven_of_a_kind.easyVal      = this.NOfAKindBox_easyVal
+        this.two_values.easyVal           = this.NValues_easyVal
         this.yahtzee.easyVal              = this.YahtzeeBox_easyVal
         this.yahtzee.avgBonus             = this.YahtzeeBox_avgBonus
         this.yahtzee.prefScore            = this.YahtzeeBox_prefScore
         this.chance.easyVal               = this.ChanceBox_easyVal
-        this.full_house.easyVal           = this.FullHouseBox_easyVal
         this.sm_straight.easyVal          = this.SequenceOfNBox_easyVal
         this.lg_straight.easyVal          = this.SequenceOfNBox_easyVal }
 
@@ -503,7 +503,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         var game = this.game             // "
 
         // roll
-          if (rolls === 0 || (rolls < this.game.max_rolls && this.die_index >= this.games.dice_count)) { 
+          if (rolls === 0 || (rolls < this.game.max_rolls && this.die_index >= this.game.dice_count)) { 
             game.nextRoll()
             this.die_index = 0
             game.next_delay = game.base_delay // set base animation delay for view updates
@@ -514,7 +514,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             this.chosen_dice = this.chooseDice()
     
         // select each chosen dice, one at a time
-          if (this.die_index < this.games.dice_count && rolls < this.game.max_rolls) { 
+          if (this.die_index < this.game.dice_count && rolls < this.game.max_rolls) { 
             var i = this.die_index // which die are we selecting?
             game.dice[i].selected = this.chosen_dice[i].selected
             this.die_index++; 
@@ -533,22 +533,26 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       AIPlayer_.chooseDice = function() { // the key decision
 
         var a,b,c,d,e
-        var best_score = -Infinity, best_selection = [0,0,0,0,0]
+        var best_score = -Infinity, best_selection = [0,0,0,0,0,0,0,0,0]
 
-        // score each possible dice selection combo (there are 31 of these)
+        // score each possible dice selection combo 
           for (a=0; a<2; a++)
             for (b=0; b<2; b++)
               for (c=0; c<2; c++)
                 for (d=0; d<2; d++)
-                  for (e=0; e<2; e++) {
-                    var selection = [a,b,c,d,e]
-                    var trial_count = Math.pow(6,Math.max(a+b+c+d+e,0)) // at least one trial for each possible set of die values
-                    if (trial_count > 1) trial_count *= 5 // times enough to "get yahtzee" 5x on average
-                    var score = this.scoreSelection(selection, trial_count)
-                    /* scores[selection] = score  // for debugging */ 
-                    if (score > best_score) {
-                      best_score = score; 
-                      best_selection = selection } }
+                  for (e=0; e<2; e++) 
+                    for (f=0; f<2; f++) 
+                      for (g=0; g<2; g++) 
+                        for (h=0; h<2; h++) 
+                          for (i=0; i<2; i++) {
+                            var selection = [a,b,c,d,e,f,g,h,i]
+                            var trial_count = Math.pow(6,Math.max(a+b+c+d+e+f+g+h+i,0)) // at least one trial for each possible set of die values
+                            if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 5x on average
+                            var score = this.scoreSelection(selection, trial_count)
+                            /* scores[selection] = score  // for debugging */ 
+                            if (score > best_score) {
+                              best_score = score; 
+                              best_selection = selection } }
 
         // return the best die selection
           var chosen_dice = this.game.dice.clone()
@@ -580,7 +584,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     // Box-centric pieces of this Player's AI strategy for attachment in the constructor
 
       AIPlayer_.ScoreBox_easyVal = function() { 
-        // "easyVal" is a smart players's average score when targeting just this box with 3 rolls
+        // "easyVal" is a smart players's average score when targeting just this box with all rolls
         // override this in the various ScoreBox types
         return 0 }
 
@@ -596,7 +600,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
       AIPlayer_.ChanceBox_easyVal = function() {return 22.176 }   // derived 
 
-      AIPlayer_.FullHouseBox_easyVal = function() {return 9.138 } // derived 
+      AIPlayer_.NValues_easyVal = function() {return 9.138 } // derived 
 
       AIPlayer_.SequenceOfNBox_easyVal = function() { 
         if (this.n===4) return 17.994   // derived 
@@ -619,7 +623,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         return 100 * chance_of_another_yahtzee }
 
       AIPlayer_.ScoreBox_prefScore = function(dice) {
-        // a prefScore quantifies the "likability" of a box for the AI 
+        // a prefScore quantifies the "likability" of a box for the given dice 
         return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice) }
 
       AIPlayer_.YahtzeeBox_prefScore = function(dice) {
@@ -653,7 +657,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var fake_dice = this.game.dice.clone()
       fake_dice.selectByArray(selection)
       while (i--) { // for each trial
-        var ii=5; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
+        var ii=fake_dice.length; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
         ii = choosables_length
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
@@ -681,7 +685,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var this_score, max_score
       fake_dice.selectByArray(selection)
       while (i--) { // for each trial
-        var ii=5; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
+        var ii=fake_dice.length; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
         ii = choosables_length
         max_score = 0
         while (ii--) { // for each choosable box
