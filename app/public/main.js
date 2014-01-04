@@ -50,7 +50,7 @@
           // add sound around the nextRoll function
             var origNextRoll = $scope.g.nextRoll
             $scope.g.nextRoll = function() {
-              if($scope.g.roll_count < 3 && $scope.g.dice.selectedCount() > 0) 
+              if($scope.g.roll_count < $scope.g.max_rolls && $scope.g.dice.selectedCount() > 0) 
                 document.getElementById('roll-sound').play()
               origNextRoll.apply($scope.g, arguments) }
 
@@ -65,7 +65,7 @@
             var origNextRound = $scope.g.nextRound
             $scope.g.nextRound = function() {
               origNextRound.call($scope.g, arguments)
-              if($scope.g.round > 13) {
+              if($scope.g.round > $scope.g.max_rounds) {
                 if ($scope.g.winner.AI===false && $scope.g.players.length > 1) {
                   document.getElementById('fireworks-sound').play()
                   Fireworks.stopAfterMinutes(0.33)
