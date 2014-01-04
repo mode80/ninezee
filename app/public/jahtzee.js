@@ -1,5 +1,3 @@
-// JSHint: /*globals angular*/ /*jshint asi: true, es5: true, proto: true */
-
 function Jahtzee() { // packages the functionality for a game of Jahtzee
 
   // Die 
@@ -34,6 +32,15 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       dice.sides = sides
       dice.lowest_val = lowest_val
       return dice }
+
+
+    Dice.possibleSequenceCount = function(n,k) { 
+      // return the sequence count for n k-sided dice, as given by (n+d-1)!/n!(d-1)!
+      // see http://www.murderousmaths.co.uk/books/unknownform.htm
+      // cheat with lookup tables for 6 and 10 sided dice
+      if (k==10) return [1,10,55,220,715,2002,5005,11440,24310,48620,92378][n]
+      if (k==6) return [1,6,56,126,252,462,792,1287,2002,3003][n]
+      throw "invalid k" }
 
     Dice.sortFn = function(a, b) {return(a.val - b.val)} // pre-defined fn for sort operations
 
@@ -177,10 +184,9 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
   // Yahtzee
   // ***************************************************************************
-    function YahtzeeBox(player, n, score) { // the one and only yathzee box
-      n = n || 5
+    function YahtzeeBox(player, score) { // the one and only yathzee box
       this.score = score || 50
-      NOfAKindBox.call(this, player, n) } // it's basically a special NOfAKindBox with n="all dice"
+      NOfAKindBox.call(this, player, player.game.dice.length) } // it's basically a special NOfAKindBox with n="all dice"
 
     var YahtzeeBox_ = YahtzeeBox.prototype = Object.create(NOfAKindBox.prototype)
 
@@ -222,7 +228,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           val_counts[last]===Math.ceil(dice.length/2)
         )
       )
-          return 25
+          return 25 
       else 
           return 0 }
 
@@ -503,18 +509,18 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         var game = this.game             // "
 
         // roll
-          if (rolls === 0 || (rolls < this.game.max_rolls && this.die_index >= this.game.dice_count)) { 
+          if (rolls === 0 || (rolls < game.max_rolls && this.die_index >= game.dice.length)) { 
             game.nextRoll()
             this.die_index = 0
             game.next_delay = game.base_delay // set base animation delay for view updates
             return }
     
         // choose dice
-          if (this.die_index === 0 && rolls < this.game.max_rolls && game.dice.selectedCount()>0) 
+          if (this.die_index === 0 && rolls < game.max_rolls && game.dice.selectedCount()>0) 
             this.chosen_dice = this.chooseDice()
     
         // select each chosen dice, one at a time
-          if (this.die_index < this.game.dice_count && rolls < this.game.max_rolls) { 
+          if (this.die_index < game.dice.length && rolls < game.max_rolls) { 
             var i = this.die_index // which die are we selecting?
             game.dice[i].selected = this.chosen_dice[i].selected
             this.die_index++; 
@@ -522,7 +528,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             return }
 
         // choose a box 
-          if (rolls === this.game.max_rolls) { 
+          if (rolls === game.max_rolls) { 
             var chosen_box = this.chooseBox()
             if (chosen_box.val === null) {    
               chosen_box.proposeVal(game.dice)
@@ -530,9 +536,11 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
               chosen_box.lockVal(game.dice) }
             game.next_delay = game.base_delay * 2 } }
 
-      AIPlayer_.chooseDice = function() { // the key decision
+      AIPlayer_.chooseDice = function() { // the key decision 
 
-        var a,b,c,d,e
+        // TODO make this generic for n k-sided dice?
+
+        var a,b,c,d,e,f,g,h,i
         var best_score = -Infinity, best_selection = [0,0,0,0,0,0,0,0,0]
 
         // score each possible dice selection combo 
@@ -546,8 +554,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                         for (h=0; h<2; h++) 
                           for (i=0; i<2; i++) {
                             var selection = [a,b,c,d,e,f,g,h,i]
-                            var trial_count = Math.pow(6,Math.max(a+b+c+d+e+f+g+h+i,0)) // at least one trial for each possible set of die values
-                            if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 5x on average
+                            var trial_count = Dice.possibleSequenceCount(a+b+c+d+e+f+g+h+i,10) // at least one trial for each possible set of die sequences 
+                            if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 1x on average
                             var score = this.scoreSelection(selection, trial_count)
                             /* scores[selection] = score  // for debugging */ 
                             if (score > best_score) {
@@ -580,7 +588,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
               best_score = pref_score } } }
         return best_box }
 
-
     // Box-centric pieces of this Player's AI strategy for attachment in the constructor
 
       AIPlayer_.ScoreBox_easyVal = function() { 
@@ -589,38 +596,47 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         return 0 }
 
       AIPlayer_.SimpleBox_easyVal = function() { 
-        return this.n * 2.103 }         // derived from statistical sampling 
+        return this.n * 4 }         // derived from statistical sampling 
 
       AIPlayer_.NOfAKindBox_easyVal = function() { 
+        if (this.n===5) return 25
+        if (this.n===7) return 35 
         if (this.n===3) return 14.342    // derived "
         if (this.n===4) return 5.366 }   // derived "
 
       AIPlayer_.YahtzeeBox_easyVal = function() {
         return 2.297 }                  // derived "
 
-      AIPlayer_.ChanceBox_easyVal = function() {return 22.176 }   // derived 
+      AIPlayer_.ChanceBox_easyVal = function() {return 45 }   // derived 
 
-      AIPlayer_.NValues_easyVal = function() {return 9.138 } // derived 
+      AIPlayer_.NValues_easyVal = function() {
+        if (this.n===2) return 9 } // derived 
 
       AIPlayer_.SequenceOfNBox_easyVal = function() { 
+        if (this.n===7) return 35
+        if (this.n===9) return 45 
         if (this.n===4) return 17.994   // derived 
         if (this.n===5) return 10.088 } // derived
 
       AIPlayer_.SimpleBox_avgBonus = function(dice) { 
         // avg expected future contribution to an upper bonus
         // TODO this could be smarter
+        var bonus_points = 125 
+        var bonus_threshold = 225
         var n_count = this.calcVal(dice) / this.n
-        var typical_bonus_portion = this.n*3/63
-        var typical_bonus = 35 * typical_bonus_portion
-        if (n_count>=3) 
-          return typical_bonus * n_count / 3
+        var half_die_count = this.player.game.dice.length / 2
+        var typical_bonus_portion = this.n * 5 / bonus_threshold
+        var typical_bonus = bonus_points * typical_bonus_portion
+        if (n_count>=5) 
+          return typical_bonus * (n_count / 5)
         else
-          return -1 * typical_bonus * (3-n_count) / 3 }
+          return -1 * typical_bonus * (5-n_count) / 5 }
 
       AIPlayer_.YahtzeeBox_avgBonus = function(dice) {
+        var bonus_points = 5000
         var rounds_remaining = this.player.game.max_rounds - this.player.game.round
-        var chance_of_another_yahtzee = 2.297 * rounds_remaining // roughly anyway
-        return 100 * chance_of_another_yahtzee }
+        var chance_of_another_yahtzee = 2.000 * rounds_remaining // roughly anyway
+        return bonus_points * chance_of_another_yahtzee }
 
       AIPlayer_.ScoreBox_prefScore = function(dice) {
         // a prefScore quantifies the "likability" of a box for the given dice 

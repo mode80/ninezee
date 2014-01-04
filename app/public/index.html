@@ -11,7 +11,10 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta names="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+	<link href="../assets/css/bootstrap.css" rel="stylesheet">	
+	<!--
 	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">	
+	-->
 	<link href="main.css" rel="stylesheet">
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -358,7 +361,7 @@
 			<button
 				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
-				ng-click="g.newPlayer('MixBot')"> 
+				ng-click="g.newPlayer('MaxBot')"> 
 				Add Bot <i class="icon-cog icon-white"></i>
 			</button>
 			<br><br>
@@ -398,9 +401,13 @@
 <audio id="fireworks-sound" src="../assets/wav/fireworks.wav" preload="auto"></audio> 
 
 <!-- ================================================== -->
+<!--
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.3/angular.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js"></script>
+-->
+<script src="../assets/js/angular.min.js"></script>
+<script src="../assets/js/bootstrap.min.js"></script>
 <script src="../assets/js/fireworks.js"></script>
 <script src="../assets/js/bootbox.min.js"></script>
 <script src="jahtzee.js"></script>
