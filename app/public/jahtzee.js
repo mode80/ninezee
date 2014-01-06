@@ -1,3 +1,5 @@
+/*jshint asi: true, proto: true, evil:true */
+
 function Jahtzee() { // packages the functionality for a game of Jahtzee
 
   // Die 
@@ -78,10 +80,22 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     Dice_.sortedCopy = function() { return this.slice().sort(Dice.sortFn) }
 
+    Dice_.valArray = function() { 
+      var retvals = []
+      var i = this.length
+      while (i--) retvals[i] = this[i].val
+      return retvals 
+    }
+
+    Dice_.setVals = function(val_array) {
+      var i = val_array.length
+      while(i--) this[i].val = val_array[i]
+    }
+
     Dice_.sortedVals = function() { 
       var vals_to_sort = []
       var i = this.length
-      while (i--) vals_to_sort.push(this[i].val)
+      while (i--) vals_to_sort[i] = this[i].val
       return vals_to_sort.sort() 
     }
 
@@ -275,8 +289,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var i = dice.length    
       while (i--) {
         var die_val = sorted_vals[i]
-        if (die_val === last_val - 1) in_a_row++
-        else if (die_val < last_val && in_a_row < this.n) in_a_row = 1 // reset sequence count when there's a "gap"
+        if (die_val === last_val - 1) in_a_row++; else in_a_row = 1
+        // else if (die_val < last_val && in_a_row < this.n) in_a_row = 1 // reset sequence count when there's a "gap"
         last_val = die_val }
       yahtzee_wildcard = ( // will be true when we're dealing with a yahtzee that counts as a straight per official rules
         (this.player.yahtzee.final) && // a first yahtzee has been scored already, so this is an "extra"
@@ -410,10 +424,10 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           this.five_of_a_kind   = new NOfAKindBox(this, 5)
           this.seven_of_a_kind  = new NOfAKindBox(this, 7)
           this.two_values       = new NValues(this, 2, 100)
-          this.sm_straight      = new SequenceOfNBox(this, 7, 100)
-          this.lg_straight      = new SequenceOfNBox(this, 9, 500)
+          this.sm_straight      = new SequenceOfNBox(this, 7, 50)
+          this.lg_straight      = new SequenceOfNBox(this, 9, 100)
           this.chance           = new ChanceBox(this)
-          this.yahtzee          = new YahtzeeBox(this, 2500)
+          this.yahtzee          = new YahtzeeBox(this, 500)
 
         // define groups for totalling etc
           this.simple_scores    = new ScoreBoxGroup()
@@ -509,7 +523,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         var game = this.game             // "
 
         // roll
-          if (rolls === 0 || (rolls < game.max_rolls && this.die_index >= game.dice.length)) { 
+          if (!this.choosing && ( rolls===0 || (rolls < game.max_rolls && this.die_index >= game.dice.length))) { 
             game.nextRoll()
             this.die_index = 0
             game.next_delay = game.base_delay // set base animation delay for view updates
@@ -517,14 +531,29 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     
         // choose dice
           if (this.die_index === 0 && rolls < game.max_rolls && game.dice.selectedCount()>0) 
-            this.chosen_dice = this.chooseDice()
-    
-        // select each chosen dice, one at a time
-          if (this.die_index < game.dice.length && rolls < game.max_rolls) { 
+            if (this.target_trial_count === 0 ) {
+              // prep and kick off async die selection analysis
+              this.choosing = true
+              this.chooseDice() 
+            }
+            if (this.target_trial_count > 0 && (this.target_trial_count - this.trials_completed) > 0) {
+              // keep waiting // TODO update progress bar?
+            } else if(this.die_index === 0){ 
+              // it's done
+              this.chosen_dice = this.game.dice.clone()
+              this.chosen_dice.selectByArray(this.best_selection)
+              this.target_trial_count = 0
+              this.trials_completed = 0
+              this.best_selection_score = 0 
+              this.choosing = false
+            }
+
+        // visibly select the dice once they're chosen, one at a time
+          if (this.choosing===false && this.die_index < game.dice.length && rolls < game.max_rolls) { 
             var i = this.die_index // which die are we selecting?
             game.dice[i].selected = this.chosen_dice[i].selected
             this.die_index++; 
-            game.next_delay = this.die_index * (game.base_delay / 5) // fine tuned animation delay 
+            game.next_delay = this.die_index * (game.base_delay / 10) // fine tuned animation delay 
             return }
 
         // choose a box 
@@ -556,18 +585,11 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                             var selection = [a,b,c,d,e,f,g,h,i]
                             var trial_count = Dice.possibleSequenceCount(a+b+c+d+e+f+g+h+i,10) // at least one trial for each possible set of die sequences 
                             if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 1x on average
-                            var score = this.scoreSelection(selection, trial_count)
-                            /* scores[selection] = score  // for debugging */ 
-                            if (score > best_score) {
-                              best_score = score; 
-                              best_selection = selection } }
+                            this.scoreSelection(selection, trial_count) // this kicks of async work with Player-level properties updated then evaluated inside nextAction()
+                          }
+      }
 
-        // return the best die selection
-          var chosen_dice = this.game.dice.clone()
-          chosen_dice.selectByArray(best_selection)
-          return chosen_dice }
-
-      AIPlayer_.scoreSelection = function(selection, trials ) { 
+      AIPlayer_.scoreSelection = function(selection, trials, dice ) { 
         // score how good a given die selection possibility is  
         // this is the heart of the AI "smarts"
         // override this in AIPlayer subclasses to make bots with different strategies
@@ -599,8 +621,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         return this.n * 4 }         // derived from statistical sampling 
 
       AIPlayer_.NOfAKindBox_easyVal = function() { 
-        if (this.n===5) return 25
-        if (this.n===7) return 35 
+        if (this.n===5) return 15
+        if (this.n===7) return 4 
         if (this.n===3) return 14.342    // derived "
         if (this.n===4) return 5.366 }   // derived "
 
@@ -633,7 +655,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           return -1 * typical_bonus * (5-n_count) / 5 }
 
       AIPlayer_.YahtzeeBox_avgBonus = function(dice) {
-        var bonus_points = 5000
+        var bonus_points = 1000
         var rounds_remaining = this.player.game.max_rounds - this.player.game.round
         var chance_of_another_yahtzee = 2.000 * rounds_remaining // roughly anyway
         return bonus_points * chance_of_another_yahtzee }
@@ -651,35 +673,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             if (calc_val > 0) avg_bonus = this.avgBonus(dice)
           else if (calc_val > 0) { // rescore as the best available other box 
             calc_val = this.player.chooseBox(dice).calcVal(dice) 
-            avg_bonus = 100 } }
+            avg_bonus = 1000 } }
         return calc_val - this.easyVal() + avg_bonus }
-
-
-  // HejBot 
-  // ***************************************************************************
-
-    function HejBot(name, game){ // creates an AI player that hedges his bets
-      this.constructor = HejBot
-      AIPlayer.apply(this, arguments) } // call super
-
-    var HejBot_ = HejBot.prototype = Object.create(AIPlayer.prototype)
-
-    HejBot_.scoreSelection = function(selection, trials) { 
-      // returns a typical -average- score across all available boxes for the given die selection 
-      // this strategy leads toward "keeping options open"
-      var total = 0
-      var i = trials || 1
-      var choosables_length = this.choosables.cached_length
-      var fake_dice = this.game.dice.clone()
-      fake_dice.selectByArray(selection)
-      while (i--) { // for each trial
-        var ii=fake_dice.length; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
-        ii = choosables_length
-        while (ii--) { // for each choosable box
-          var box = this.choosables[ii]
-          if (!box.final || box instanceof YahtzeeBox) {
-            total += box.prefScore(fake_dice) } } } 
-      return total / trials }
 
 
   // MaxBot 
@@ -687,17 +682,51 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     function MaxBot(name, game) { // creates an AI player that sets his sights and goes for it
       this.constructor = MaxBot
-      HejBot.apply(this, arguments) } // call super
+
+      this.best_selection = [] 
+      this.best_selection_score = 0 
+      this.target_trial_count = 0
+      this.trials_completed = 0
+
+      var that = this
+
+      function workerReply(e){
+        var gotten = e.data
+        that.trials_completed += gotten.trials_completed
+        if (gotten.score > that.best_selection_score) {
+          that.best_selection = gotten.selection
+          that.best_selection_score = gotten.score
+        }
+      }
+
+      try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
+        this.worker1 = new Worker("maxBotWorker.js")
+        this.worker1.onmessage = workerReply
+      } catch(err) {
+        //ignore errors that stem from recursive loading webworker inside the webworker
+      }
+
+      AIPlayer.apply(this, arguments) // call super
+    }
 
     var MaxBot_ = MaxBot.prototype = Object.create(AIPlayer.prototype)
-    
-    MaxBot_.scoreSelection = function(selection, trials) { 
+
+    MaxBot_.scoreSelection = function(selection, trials){
+
+      this.target_trial_count += trials
+      this.worker1.postMessage({"selection": selection, "trials": trials, "dicevals": this.game.dice.valArray(), "id":1 })
+
+    }
+        
+    MaxBot_.scoreSelectionChunk = function(selection, trials, dicevals) { 
+
       // returns a typical -best- score across available boxes for the given die selection
       // this strategy tends to target a specific box, disregarding fallback options
       var total = 0
       var i = trials || 1
       var choosables_length = this.choosables.cached_length
       var fake_dice = this.game.dice.clone()
+      fake_dice.setVals(dicevals)
       var this_score, max_score
       fake_dice.selectByArray(selection)
       while (i--) { // for each trial
@@ -711,24 +740,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             if (this_score > max_score) max_score = this_score } }
         total += max_score }
       return total / trials }
-
-
-  // MixBot 
-  // ***************************************************************************
-
-    function MixBot(name, game) { // creates an AI player that uses a hybrid strategy
-      this.constructor = MixBot
-      HejBot.apply(this, arguments) } // call super
-
-    var MixBot_ = MixBot.prototype = Object.create(AIPlayer.prototype)
-
-    MixBot_.scoreSelection = function(selection, trials) {
-      // this strategy hedges bets on the first choose, then "goes for one" on the second
-      if (this.game.roll_count===1)
-        return HejBot.prototype.scoreSelection.apply(this, arguments)
-      else // if (this.game.roll_count===2)
-        return MaxBot.prototype.scoreSelection.apply(this, arguments) }
-  
 
   // ***************************************************************************
   // Game

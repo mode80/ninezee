@@ -1,4 +1,4 @@
-/*globals Jahtzee*/
+/*globals Jahtzee, console*/
 
 function generateEasyVals(trial_count) {
 
@@ -11,9 +11,12 @@ function generateEasyVals(trial_count) {
 
   var i = p.choosables.length
   
-  while (i--) { // each box
+//  while (i--) { // each box
 
-    var box = p.choosables[i]
+//    var box = p.choosables[i]
+var box = p.choosables[13]
+
+    var timestamp = Date.now() 
     
     // first make only this box available
     ii = p.choosables.length
@@ -30,10 +33,12 @@ function generateEasyVals(trial_count) {
         if (box.final) { // just finished choosing
           box.runavg += box.val / trials
           g.round = 1
-          break } } }
+          break } } 
+//    }
 
     console.log(box)
-    console.log(box.runavg) } }
+    console.log(box.runavg) 
+    console.log(Date.now() - timestamp) } }
 
 function battlePlayers(trials, player1, player2, etc) {
   //takes a trial_count followed by list of Player class names to battle 
