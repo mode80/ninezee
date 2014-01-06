@@ -687,6 +687,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       this.best_selection_score = 0 
       this.target_trial_count = 0
       this.trials_completed = 0
+      this.workers = []
+      this.worker_index = 0
 
       var that = this
 
@@ -700,8 +702,14 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       }
 
       try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
-        this.worker1 = new Worker("maxBotWorker.js")
-        this.worker1.onmessage = workerReply
+        this.workers[0] = new Worker("maxBotWorker.js")
+        this.workers[1] = new Worker("maxBotWorker.js")
+        this.workers[2] = new Worker("maxBotWorker.js")
+        this.workers[3] = new Worker("maxBotWorker.js")
+        this.workers[0].onmessage = workerReply
+        this.workers[1].onmessage = workerReply
+        this.workers[2].onmessage = workerReply
+        this.workers[3].onmessage = workerReply
       } catch(err) {
         //ignore errors that stem from recursive loading webworker inside the webworker
       }
@@ -714,7 +722,9 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     MaxBot_.scoreSelection = function(selection, trials){
 
       this.target_trial_count += trials
-      this.worker1.postMessage({"selection": selection, "trials": trials, "dicevals": this.game.dice.valArray(), "id":1 })
+      this.worker_index = (this.worker_index + 1) % 4 // cycle through all 4
+      this.worker = this.workers[this.worker_index] 
+      this.worker.postMessage({"selection": selection, "trials": trials, "dicevals": this.game.dice.valArray(), "id":1 })
 
     }
         
