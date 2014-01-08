@@ -1,6 +1,6 @@
 /*globals Jahtzee, console*/
 
-function generateEasyVals(trial_count) {
+function generateEasyVals(trial_count,box_index) {
 
   var j = new Jahtzee()
   var g = new j.Game()
@@ -9,36 +9,42 @@ function generateEasyVals(trial_count) {
   
   var trials = trial_count || 10000
 
-  var i = p.choosables.length
-  
-//  while (i--) { // each box
+  // var i = p.choosables.length
+  // while (i--) { // each box
+    //  var box = p.choosables[i]
+    var box = p.choosables[box_index] 
 
-//    var box = p.choosables[i]
-var box = p.choosables[13]
-
-    var timestamp = Date.now() 
+    box.timestamp = Date.now() 
     
     // first make only this box available
-    ii = p.choosables.length
-    while (ii--) p.choosables[ii].final = true
-    box.final = false
+      ii = p.choosables.length
+      while (ii--) p.choosables[ii].final = true
+      box.final = false
 
     box.runavg = 0
+    box.final = false
+    box.val = null
     ii = trials
-    while (ii--) { // each trial
-      box.final = false
-      box.val = null
-      while (true) {
-        p.nextAction()
-        if (box.final) { // just finished choosing
-          box.runavg += box.val / trials
-          g.round = 1
-          break } } 
-//    }
+      box.iid = window.setInterval( fn , 0)
 
-    console.log(box)
-    console.log(box.runavg) 
-    console.log(Date.now() - timestamp) } }
+  // }
+
+  function fn() {
+    p.nextAction()
+    if (box.final) { // just finished choosing
+      box.runavg += box.val / trials
+      g.round = 1
+      ii--
+      if (ii===0) {
+        window.clearInterval(box.iid)
+        console.log(box)
+        console.log(box.runavg) 
+        console.log(Date.now() - box.timestamp) 
+      }
+    } 
+  }
+
+}
 
 function battlePlayers(trials, player1, player2, etc) {
   //takes a trial_count followed by list of Player class names to battle 

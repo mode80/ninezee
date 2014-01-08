@@ -289,8 +289,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       var i = dice.length    
       while (i--) {
         var die_val = sorted_vals[i]
-        if (die_val === last_val - 1) in_a_row++; else in_a_row = 1
-        // else if (die_val < last_val && in_a_row < this.n) in_a_row = 1 // reset sequence count when there's a "gap"
+        if (die_val === last_val - 1) in_a_row++ 
+        else if (die_val !== last_val) in_a_row = 1
         last_val = die_val }
       yahtzee_wildcard = ( // will be true when we're dealing with a yahtzee that counts as a straight per official rules
         (this.player.yahtzee.final) && // a first yahtzee has been scored already, so this is an "extra"
@@ -490,7 +490,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         var i 
         i = this.choosables.length
         while (i--) {
-          this.choosables[i].prefScore    = this.ScoreBox_prefScore
+          this.choosables[i].likability   = this.ScoreBox_likability
           this.choosables[i].avgBonus     = this.ScoreBox_easyVal }
 
         i = this.simple_scores.length
@@ -503,7 +503,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         this.two_values.easyVal           = this.NValues_easyVal
         this.yahtzee.easyVal              = this.YahtzeeBox_easyVal
         this.yahtzee.avgBonus             = this.YahtzeeBox_avgBonus
-        this.yahtzee.prefScore            = this.YahtzeeBox_prefScore
         this.chance.easyVal               = this.ChanceBox_easyVal
         this.sm_straight.easyVal          = this.SequenceOfNBox_easyVal
         this.lg_straight.easyVal          = this.SequenceOfNBox_easyVal }
@@ -517,7 +516,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         // takes the next action based on the game state
         // will be called in a loop with view updates between calls
 
-        if (this.game.round > this.max_rounds) return // bail if game over already
+        if (this.game.round > this.game.max_rounds) return // bail if game over already
 
         var rolls = this.game.roll_count // abbreviation var
         var game = this.game             // "
@@ -530,8 +529,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             return }
     
         // choose dice
-          if (this.die_index === 0 && rolls < game.max_rolls && game.dice.selectedCount()>0) 
-            if (this.target_trial_count === 0 ) {
+          if (this.die_index === 0 && rolls < game.max_rolls && game.dice.selectedCount()>0) {
+            if (this.choosing !== true) {
               // prep and kick off async die selection analysis
               this.choosing = true
               this.chooseDice() 
@@ -539,7 +538,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             if (this.target_trial_count > 0 && (this.target_trial_count - this.trials_completed) > 0) {
               // keep waiting // TODO update progress bar?
             } else if(this.die_index === 0){ 
-              // it's done
+              // it's done seleting for this roll
               this.chosen_dice = this.game.dice.clone()
               this.chosen_dice.selectByArray(this.best_selection)
               this.target_trial_count = 0
@@ -547,6 +546,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
               this.best_selection_score = 0 
               this.choosing = false
             }
+          }
 
         // visibly select the dice once they're chosen, one at a time
           if (this.choosing===false && this.die_index < game.dice.length && rolls < game.max_rolls) { 
@@ -570,7 +570,6 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         // TODO make this generic for n k-sided dice?
 
         var a,b,c,d,e,f,g,h,i
-        var best_score = -Infinity, best_selection = [0,0,0,0,0,0,0,0,0]
 
         // score each possible dice selection combo 
           for (a=0; a<2; a++)
@@ -604,10 +603,10 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         while (i--) {
           var this_box = this.choosables[i]
           if (!this_box.final) {
-            var pref_score = this_box.prefScore(game_dice) 
-            if (pref_score > best_score) {
+            var score = this_box.likability(game_dice) 
+            if (score > best_score) {
               best_box = this_box
-              best_score = pref_score } } }
+              best_score = score} } }
         return best_box }
 
     // Box-centric pieces of this Player's AI strategy for attachment in the constructor
@@ -656,25 +655,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
       AIPlayer_.YahtzeeBox_avgBonus = function(dice) {
         var bonus_points = 1000
-        var rounds_remaining = this.player.game.max_rounds - this.player.game.round
-        var chance_of_another_yahtzee = 2.000 * rounds_remaining // roughly anyway
+        var pct_rounds_remaining = this.player.game.round / this.player.game.max_rounds 
+        var chance_of_another_yahtzee = 0.33 * pct_rounds_remaining // roughly anyway
         return bonus_points * chance_of_another_yahtzee }
 
-      AIPlayer_.ScoreBox_prefScore = function(dice) {
-        // a prefScore quantifies the "likability" of a box for the given dice 
-        return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice) }
-
-      AIPlayer_.YahtzeeBox_prefScore = function(dice) {
-        var avg_bonus = 0
-        var calc_val = 0
-        if (this.val !== 0) { // not zeroed out
-          calc_val = this.calcVal(dice)
-          if (!this.final)  // first yahtzee available
-            if (calc_val > 0) avg_bonus = this.avgBonus(dice)
-          else if (calc_val > 0) { // rescore as the best available other box 
-            calc_val = this.player.chooseBox(dice).calcVal(dice) 
-            avg_bonus = 1000 } }
-        return calc_val - this.easyVal() + avg_bonus }
+      AIPlayer_.ScoreBox_likability = function(dice) {
+        // quantifies the "likability" of a box for the given dice 
+          return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice) }
 
 
   // MaxBot 
@@ -683,33 +670,31 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     function MaxBot(name, game) { // creates an AI player that sets his sights and goes for it
       this.constructor = MaxBot
 
-      this.best_selection = [] 
-      this.best_selection_score = 0 
+      this.best_selection = [0,0,0,0,0,0,0,0,0] 
+      this.best_selection_score = -Infinity 
       this.target_trial_count = 0
       this.trials_completed = 0
       this.workers = []
       this.worker_index = 0
 
-      var that = this
-
       function workerReply(e){
         var gotten = e.data
-        that.trials_completed += gotten.trials_completed
-        if (gotten.score > that.best_selection_score) {
-          that.best_selection = gotten.selection
-          that.best_selection_score = gotten.score
+        this.trials_completed += gotten.trials_completed
+        if (gotten.score > this.best_selection_score) {
+          this.best_selection = gotten.selection
+          this.best_selection_score = gotten.score
         }
       }
 
       try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
         this.workers[0] = new Worker("maxBotWorker.js")
-        this.workers[1] = new Worker("maxBotWorker.js")
-        this.workers[2] = new Worker("maxBotWorker.js")
-        this.workers[3] = new Worker("maxBotWorker.js")
-        this.workers[0].onmessage = workerReply
-        this.workers[1].onmessage = workerReply
-        this.workers[2].onmessage = workerReply
-        this.workers[3].onmessage = workerReply
+        //this.workers[1] = new Worker("maxBotWorker.js")
+        //this.workers[2] = new Worker("maxBotWorker.js")
+        //this.workers[3] = new Worker("maxBotWorker.js")
+        this.workers[0].onmessage = workerReply.bind(this)
+        //this.workers[1].onmessage = workerReply
+        //this.workers[2].onmessage = workerReply
+        //this.workers[3].onmessage = workerReply
       } catch(err) {
         //ignore errors that stem from recursive loading webworker inside the webworker
       }
@@ -722,7 +707,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     MaxBot_.scoreSelection = function(selection, trials){
 
       this.target_trial_count += trials
-      this.worker_index = (this.worker_index + 1) % 4 // cycle through all 4
+      this.worker_index = (this.worker_index + 1) % 1 // cycle through all 4
       this.worker = this.workers[this.worker_index] 
       this.worker.postMessage({"selection": selection, "trials": trials, "dicevals": this.game.dice.valArray(), "id":1 })
 
@@ -745,8 +730,8 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         max_score = 0
         while (ii--) { // for each choosable box
           var box = this.choosables[ii]
-          if (!box.final || box instanceof YahtzeeBox) { // it's available for scoring
-            this_score = box.prefScore(fake_dice)
+          if (!box.final){// || box instanceof YahtzeeBox) { // it's available for scoring
+            this_score = box.likability(fake_dice)
             if (this_score > max_score) max_score = this_score } }
         total += max_score }
       return total / trials }
