@@ -394,6 +394,18 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       this.cached_length = this.length 
       return this }
 
+    ScoreBoxGroup_.getFinalsArray = function(){
+      var i = this.length
+      var retval = []
+      while (i--) retval[i] = this[i].final 
+      return retval
+    }
+
+    ScoreBoxGroup_.setFinalsByArray = function(final_array) {
+      var i = this.length
+      while (i--) this[i].final = final_array[i] 
+    } 
+
 
   // ***************************************************************************
   // Player 
@@ -622,7 +634,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         this.target_trial_count += trials
         this.worker_index = (this.worker_index + 1) % 1 // cycle through all 4
         this.worker = this.workers[this.worker_index] 
-        this.worker.postMessage({"selection": selection, "trials": trials, "dicevals": dice.valArray(), "id":1 })
+        this.worker.postMessage({
+          "selection": selection, 
+          "trials": trials, 
+          "dicevals": dice.valArray(), 
+          "finals": this.choosables.getFinalsArray(), 
+          "id":1 
+        })
 
       }
           

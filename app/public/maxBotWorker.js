@@ -8,10 +8,11 @@ var p = g.newPlayer('MaxBot')
 
 self.addEventListener('message', function(e){
 	var given = e.data
-	var gotten = {} 
-	gotten.score = p.scoreSelectionChunk(given.selection, given.trials, given.dicevals)
-	gotten.trials_completed = given.trials
-	gotten.selection = given.selection
-	self.postMessage(gotten)
+	var returning = {} 
+	p.choosables.setFinalsByArray(given.finals)
+	returning.score = p.scoreSelectionChunk(given.selection, given.trials, given.dicevals)
+	returning.trials_completed = given.trials
+	returning.selection = given.selection
+	self.postMessage(returning)
 }, false);
 
