@@ -32,7 +32,9 @@ function generateEasyVals(trial_count,box_index) {
   function fn() {
     p.nextAction()
     if (box.final) { // just finished choosing
+      box.final = false
       box.runavg += box.val / trials
+      box.val = null
       g.round = 1
       ii--
       if (ii===0) {

@@ -517,13 +517,13 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
         try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
           this.workers[0] = new Worker("maxBotWorker.js")
-          //this.workers[1] = new Worker("maxBotWorker.js")
-          //this.workers[2] = new Worker("maxBotWorker.js")
-          //this.workers[3] = new Worker("maxBotWorker.js")
+          this.workers[1] = new Worker("maxBotWorker.js")
+          this.workers[2] = new Worker("maxBotWorker.js")
+          this.workers[3] = new Worker("maxBotWorker.js")
           this.workers[0].onmessage = workerReply.bind(this)
-          //this.workers[1].onmessage = workerReply
-          //this.workers[2].onmessage = workerReply
-          //this.workers[3].onmessage = workerReply
+          this.workers[1].onmessage = workerReply.bind(this)
+          this.workers[2].onmessage = workerReply.bind(this)
+          this.workers[3].onmessage = workerReply.bind(this)
         } catch(err) {
           //ignore errors that stem from recursive loading webworker inside the webworker
         }
@@ -632,14 +632,14 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
       AIPlayer_.scoreSelection = function(selection, trials, dice){
 
         this.target_trial_count += trials
-        this.worker_index = (this.worker_index + 1) % 1 // cycle through all 4
+        this.worker_index = (this.worker_index + 1) % 4 // cycle through all 4
         this.worker = this.workers[this.worker_index] 
         this.worker.postMessage({
           "selection": selection, 
           "trials": trials, 
           "dicevals": dice.valArray(), 
           "finals": this.choosables.getFinalsArray(), 
-          "id":1 
+          "id": this.worker_index 
         })
 
       }
@@ -691,7 +691,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         // return 0 }
 
       AIPlayer_.SimpleBox_easyVal = function() { return 0 }
-        // return this.n * 4 }         // derived from statistical sampling 
+        // return this.n * 4.155 }         // derived from statistical sampling 
 
       AIPlayer_.NOfAKindBox_easyVal = function() { return 0 }
         // if (this.n===5) return 15
