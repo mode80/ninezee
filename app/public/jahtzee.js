@@ -485,6 +485,37 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         this.die_index = 0 // incremented inside .nextAction() when selecting
         this.AI = true
 
+      // stuff for worker threads
+
+        this.best_selection = [0,0,0,0,0,0,0,0,0] 
+        this.best_selection_score = -Infinity 
+        this.target_trial_count = 0
+        this.trials_completed = 0
+        this.workers = []
+        this.worker_index = 0
+
+        function workerReply(e){
+          var gotten = e.data
+          this.trials_completed += gotten.trials_completed
+          if (gotten.score > this.best_selection_score) {
+            this.best_selection = gotten.selection
+            this.best_selection_score = gotten.score
+          }
+        }
+
+        try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
+          this.workers[0] = new Worker("maxBotWorker.js")
+          //this.workers[1] = new Worker("maxBotWorker.js")
+          //this.workers[2] = new Worker("maxBotWorker.js")
+          //this.workers[3] = new Worker("maxBotWorker.js")
+          this.workers[0].onmessage = workerReply.bind(this)
+          //this.workers[1].onmessage = workerReply
+          //this.workers[2].onmessage = workerReply
+          //this.workers[3].onmessage = workerReply
+        } catch(err) {
+          //ignore errors that stem from recursive loading webworker inside the webworker
+        }
+
       // attach Player-specific AI strategy functions to corresponding boxes
 
         var i 
@@ -565,9 +596,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
               chosen_box.lockVal(game.dice) }
             game.next_delay = game.base_delay * 2 } }
 
-      AIPlayer_.chooseDice = function() { // the key decision 
-
-        // TODO make this generic for n k-sided dice?
+      AIPlayer_.chooseDice = function() { // the key decision // TODO make this generic for n k-sided dice?
 
         var a,b,c,d,e,f,g,h,i
 
@@ -584,15 +613,42 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                             var selection = [a,b,c,d,e,f,g,h,i]
                             var trial_count = Dice.possibleSequenceCount(a+b+c+d+e+f+g+h+i,10) // at least one trial for each possible set of die sequences 
                             if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 1x on average
-                            this.scoreSelection(selection, trial_count) // this kicks of async work with Player-level properties updated then evaluated inside nextAction()
+                            this.scoreSelection(selection, trial_count, this.game.dice) // this kicks of async work with Player-level properties updated then evaluated inside nextAction()
                           }
       }
 
-      AIPlayer_.scoreSelection = function(selection, trials, dice ) { 
-        // score how good a given die selection possibility is  
-        // this is the heart of the AI "smarts"
-        // override this in AIPlayer subclasses to make bots with different strategies
-        return 0 }
+      AIPlayer_.scoreSelection = function(selection, trials, dice){
+
+        this.target_trial_count += trials
+        this.worker_index = (this.worker_index + 1) % 1 // cycle through all 4
+        this.worker = this.workers[this.worker_index] 
+        this.worker.postMessage({"selection": selection, "trials": trials, "dicevals": dice.valArray(), "id":1 })
+
+      }
+          
+      AIPlayer_.scoreSelectionChunk = function(selection, trials, dicevals) { 
+
+        // returns a typical -best- score across available boxes for the given die selection
+        // this strategy tends to target a specific box, disregarding fallback options
+        var total = 0
+        var i = trials || 1
+        var choosables_length = this.choosables.cached_length
+        var fake_dice = this.game.dice.clone()
+        fake_dice.setVals(dicevals)
+        var this_score, max_score
+        fake_dice.selectByArray(selection)
+        while (i--) { // for each trial
+          var ii=fake_dice.length; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
+          ii = choosables_length
+          max_score = 0
+          while (ii--) { // for each choosable box
+            var box = this.choosables[ii]
+            if (!box.final){// || box instanceof YahtzeeBox) { // it's available for scoring
+              this_score = box.likability(fake_dice)
+              if (this_score > max_score) max_score = this_score } }
+          total += max_score }
+        return total / trials }
+
 
       AIPlayer_.chooseBox = function() {
         // return the highest scoring box with the current gamedice values
@@ -611,55 +667,56 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     // Box-centric pieces of this Player's AI strategy for attachment in the constructor
 
-      AIPlayer_.ScoreBox_easyVal = function() { 
-        // "easyVal" is a smart players's average score when targeting just this box with all rolls
-        // override this in the various ScoreBox types
-        return 0 }
+      AIPlayer_.ScoreBox_easyVal = function() { return 0 }
+        // // "easyVal" is a smart players's average score when targeting just this box with all rolls
+        // // override this in the various ScoreBox types
+        // return 0 }
 
-      AIPlayer_.SimpleBox_easyVal = function() { 
-        return this.n * 4 }         // derived from statistical sampling 
+      AIPlayer_.SimpleBox_easyVal = function() { return 0 }
+        // return this.n * 4 }         // derived from statistical sampling 
 
-      AIPlayer_.NOfAKindBox_easyVal = function() { 
-        if (this.n===5) return 15
-        if (this.n===7) return 4 
-        if (this.n===3) return 14.342    // derived "
-        if (this.n===4) return 5.366 }   // derived "
+      AIPlayer_.NOfAKindBox_easyVal = function() { return 0 }
+        // if (this.n===5) return 15
+        // if (this.n===7) return 4 
+        // if (this.n===3) return 14.342    // derived "
+        // if (this.n===4) return 5.366 }   // derived "
 
-      AIPlayer_.YahtzeeBox_easyVal = function() {
-        return 2.297 }                  // derived "
+      AIPlayer_.YahtzeeBox_easyVal = function() { return 0 } 
+        // return 2.297 }                  // derived "
 
-      AIPlayer_.ChanceBox_easyVal = function() {return 45 }   // derived 
+      AIPlayer_.ChanceBox_easyVal = function() { return 0 } 
+        // return 45 }   // derived 
 
-      AIPlayer_.NValues_easyVal = function() {
-        if (this.n===2) return 9 } // derived 
+      AIPlayer_.NValues_easyVal = function() { return 0 }
+        // if (this.n===2) return 9 } // derived 
 
-      AIPlayer_.SequenceOfNBox_easyVal = function() { 
-        if (this.n===7) return 35
-        if (this.n===9) return 45 
-        if (this.n===4) return 17.994   // derived 
-        if (this.n===5) return 10.088 } // derived
+      AIPlayer_.SequenceOfNBox_easyVal = function() { return 0 }
+        // if (this.n===7) return 35
+        // if (this.n===9) return 45 
+        // if (this.n===4) return 17.994   // derived 
+        // if (this.n===5) return 10.088 } // derived
 
-      AIPlayer_.SimpleBox_avgBonus = function(dice) { 
-        // avg expected future contribution to an upper bonus
-        // TODO this could be smarter
-        var bonus_points = 125 
-        var bonus_threshold = 225
-        var n_count = this.calcVal(dice) / this.n
-        var half_die_count = this.player.game.dice.length / 2
-        var typical_bonus_portion = this.n * 5 / bonus_threshold
-        var typical_bonus = bonus_points * typical_bonus_portion
-        if (n_count>=5) 
-          return typical_bonus * (n_count / 5)
-        else
-          return -1 * typical_bonus * (5-n_count) / 5 }
+      AIPlayer_.SimpleBox_avgBonus = function(dice) { return 0 } 
+        // // avg expected future contribution to an upper bonus
+        // // TODO this could be smarter
+        // var bonus_points = 125 
+        // var bonus_threshold = 225
+        // var n_count = this.calcVal(dice) / this.n
+        // var half_die_count = this.player.game.dice.length / 2
+        // var typical_bonus_portion = this.n * 5 / bonus_threshold
+        // var typical_bonus = bonus_points * typical_bonus_portion
+        // if (n_count>=5) 
+        //   return typical_bonus * (n_count / 5)
+        // else
+        //   return -1 * typical_bonus * (5-n_count) / 5 }
 
-      AIPlayer_.YahtzeeBox_avgBonus = function(dice) {
-        var bonus_points = 1000
-        var pct_rounds_remaining = this.player.game.round / this.player.game.max_rounds 
-        var chance_of_another_yahtzee = 0.33 * pct_rounds_remaining // roughly anyway
-        return bonus_points * chance_of_another_yahtzee }
+      AIPlayer_.YahtzeeBox_avgBonus = function(dice) { return 0 }
+        // var bonus_points = 1000
+        // var pct_rounds_remaining = this.player.game.round / this.player.game.max_rounds 
+        // var chance_of_another_yahtzee = 0.33 * pct_rounds_remaining // roughly anyway
+        // return bonus_points * chance_of_another_yahtzee }
 
-      AIPlayer_.ScoreBox_likability = function(dice) {
+      AIPlayer_.ScoreBox_likability = function(dice) { 
         // quantifies the "likability" of a box for the given dice 
           return this.calcVal(dice) - this.easyVal() + this.avgBonus(dice) }
 
@@ -669,72 +726,10 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     function MaxBot(name, game) { // creates an AI player that sets his sights and goes for it
       this.constructor = MaxBot
-
-      this.best_selection = [0,0,0,0,0,0,0,0,0] 
-      this.best_selection_score = -Infinity 
-      this.target_trial_count = 0
-      this.trials_completed = 0
-      this.workers = []
-      this.worker_index = 0
-
-      function workerReply(e){
-        var gotten = e.data
-        this.trials_completed += gotten.trials_completed
-        if (gotten.score > this.best_selection_score) {
-          this.best_selection = gotten.selection
-          this.best_selection_score = gotten.score
-        }
-      }
-
-      try { // proxy out the workload to separate threads which each call scoreSelectionChunk for their portion
-        this.workers[0] = new Worker("maxBotWorker.js")
-        //this.workers[1] = new Worker("maxBotWorker.js")
-        //this.workers[2] = new Worker("maxBotWorker.js")
-        //this.workers[3] = new Worker("maxBotWorker.js")
-        this.workers[0].onmessage = workerReply.bind(this)
-        //this.workers[1].onmessage = workerReply
-        //this.workers[2].onmessage = workerReply
-        //this.workers[3].onmessage = workerReply
-      } catch(err) {
-        //ignore errors that stem from recursive loading webworker inside the webworker
-      }
-
       AIPlayer.apply(this, arguments) // call super
     }
 
     var MaxBot_ = MaxBot.prototype = Object.create(AIPlayer.prototype)
-
-    MaxBot_.scoreSelection = function(selection, trials){
-
-      this.target_trial_count += trials
-      this.worker_index = (this.worker_index + 1) % 1 // cycle through all 4
-      this.worker = this.workers[this.worker_index] 
-      this.worker.postMessage({"selection": selection, "trials": trials, "dicevals": this.game.dice.valArray(), "id":1 })
-
-    }
-        
-    MaxBot_.scoreSelectionChunk = function(selection, trials, dicevals) { 
-
-      // returns a typical -best- score across available boxes for the given die selection
-      // this strategy tends to target a specific box, disregarding fallback options
-      var total = 0
-      var i = trials || 1
-      var choosables_length = this.choosables.cached_length
-      var fake_dice = this.game.dice.clone()
-      fake_dice.setVals(dicevals)
-      var this_score, max_score
-      fake_dice.selectByArray(selection)
-      while (i--) { // for each trial
-        var ii=fake_dice.length; while (ii--) if (fake_dice[ii].selected) fake_dice[ii].roll() //inline rollSelected
-        ii = choosables_length
-        max_score = 0
-        while (ii--) { // for each choosable box
-          var box = this.choosables[ii]
-          if (!box.final){// || box instanceof YahtzeeBox) { // it's available for scoring
-            this_score = box.likability(fake_dice)
-            if (this_score > max_score) max_score = this_score } }
-        total += max_score }
-      return total / trials }
 
   // ***************************************************************************
   // Game
