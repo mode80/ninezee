@@ -624,7 +624,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                           for (i=0; i<2; i++) {
                             var selection = [a,b,c,d,e,f,g,h,i]
                             var trial_count = Dice.possibleSequenceCount(a+b+c+d+e+f+g+h+i,10) // at least one trial for each possible set of die sequences 
-                            if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 1x on average
+                            if (trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
                             this.scoreSelection(selection, trial_count, this.game.dice) // this kicks of async work with Player-level properties updated then evaluated inside nextAction()
                           }
       }
@@ -661,7 +661,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
           max_score = 0
           while (ii--) { // for each choosable box
             var box = this.choosables[ii]
-            if (!box.final){// || box instanceof YahtzeeBox) { // it's available for scoring
+            if (!box.final) {
               this_score = box.likability(fake_dice)
               if (this_score > max_score) max_score = this_score } }
           total += max_score }
@@ -690,43 +690,39 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
         // // override this in the various ScoreBox types
         // return 0 }
 
-      AIPlayer_.SimpleBox_easyVal = function() { return 0 }
-        // return this.n * 4.155 }         // derived from statistical sampling 
+      AIPlayer_.SimpleBox_easyVal = function() { 
+        return this.n * 4.155 }          // derived from statistical sampling 
 
-      AIPlayer_.NOfAKindBox_easyVal = function() { return 0 }
-        // if (this.n===5) return 15
-        // if (this.n===7) return 4 
-        // if (this.n===3) return 14.342    // derived "
-        // if (this.n===4) return 5.366 }   // derived "
+      AIPlayer_.NOfAKindBox_easyVal = function() {
+         if (this.n===5) return 37.84 
+         if (this.n===7) return 3.59 }
 
       AIPlayer_.YahtzeeBox_easyVal = function() { return 0 } 
         // return 2.297 }                  // derived "
 
-      AIPlayer_.ChanceBox_easyVal = function() { return 0 } 
-        // return 45 }   // derived 
+      AIPlayer_.ChanceBox_easyVal = function() {
+        return 62.82 }   // derived 
 
-      AIPlayer_.NValues_easyVal = function() { return 0 }
-        // if (this.n===2) return 9 } // derived 
+      AIPlayer_.NValues_easyVal = function() {
+        if (this.n===2) return 13 } // derived 
 
-      AIPlayer_.SequenceOfNBox_easyVal = function() { return 0 }
-        // if (this.n===7) return 35
-        // if (this.n===9) return 45 
-        // if (this.n===4) return 17.994   // derived 
-        // if (this.n===5) return 10.088 } // derived
+      AIPlayer_.SequenceOfNBox_easyVal = function() { 
+        if (this.n===7) return 38
+        if (this.n===9) return 22 }
 
-      AIPlayer_.SimpleBox_avgBonus = function(dice) { return 0 } 
-        // // avg expected future contribution to an upper bonus
-        // // TODO this could be smarter
-        // var bonus_points = 125 
-        // var bonus_threshold = 225
-        // var n_count = this.calcVal(dice) / this.n
-        // var half_die_count = this.player.game.dice.length / 2
-        // var typical_bonus_portion = this.n * 5 / bonus_threshold
-        // var typical_bonus = bonus_points * typical_bonus_portion
-        // if (n_count>=5) 
-        //   return typical_bonus * (n_count / 5)
-        // else
-        //   return -1 * typical_bonus * (5-n_count) / 5 }
+      AIPlayer_.SimpleBox_avgBonus = function(dice) { 
+        // avg expected future contribution to an upper bonus
+        // TODO this could be smarter
+        var bonus_points = 125 
+        var bonus_threshold = 225
+        var n_count = this.calcVal(dice) / this.n
+        var half_die_count = dice.length / 2
+        var typical_bonus_portion = this.n * 5 / bonus_threshold
+        var typical_bonus = bonus_points * typical_bonus_portion
+        if (n_count>=5) 
+          return typical_bonus * (n_count / 5)
+        else
+          return -1 * typical_bonus * (5-n_count) / 5 }
 
       AIPlayer_.YahtzeeBox_avgBonus = function(dice) { return 0 }
         // var bonus_points = 1000
