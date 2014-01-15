@@ -143,6 +143,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
     ScoreBox_.lockVal = function(dice) { // update this box with a final score based on the given dice
       if (this.player.ready() && !this.final) {
         this.final = true
+        this.contenteditable = false 
         this.val = this.calcVal(dice)
         this.player.yahtzee_bonus.lockVal(dice) // any box update could affect yahtzee bonus
         this.player.refreshTotals()
@@ -150,15 +151,19 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
 
     ScoreBox_.proposeVal = function(dice) { // pretend to score this box with the given dice, but without finalizing it
       if (this.player.ready() && this.val === null) {
+        this.contenteditable = true
         this.val = this.calcVal(dice)
         this.player.yahtzee_bonus.proposeVal(dice)
-        this.player.refreshTotals() } }
+        this.player.refreshTotals() 
+        return this.val } }
 
     ScoreBox_.unproposeVal = function(dice) { // reverse temporary effects of proposeVal()
       if (this.player.ready() && !this.final) {
+        this.contenteditable = false 
         this.val = null
         this.player.yahtzee_bonus.unproposeVal(dice)
-        this.player.refreshTotals() } }
+        this.player.refreshTotals() 
+        return this.val } }
 
 
   // SimpleBox 
@@ -586,7 +591,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
               this.chosen_dice.selectByArray(this.best_selection)
               this.target_trial_count = 0
               this.trials_completed = 0
-              this.best_selection_score = 0 
+              this.best_selection_score = -Infinity 
               this.choosing = false
             }
           }
@@ -624,7 +629,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
                           for (i=0; i<2; i++) {
                             var selection = [a,b,c,d,e,f,g,h,i]
                             var trial_count = Dice.possibleSequenceCount(a+b+c+d+e+f+g+h+i,10) // at least one trial for each possible set of die sequences 
-                            if (trial_count > 1) trial_count *= 10 // times enough to "get yahtzee" 10x on average
+                            if (trial_count > 1) trial_count *= 1 // times enough to "get yahtzee" 1x on average
                             this.scoreSelection(selection, trial_count, this.game.dice) // this kicks of async work with Player-level properties updated then evaluated inside nextAction()
                           }
       }

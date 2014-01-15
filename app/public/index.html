@@ -43,121 +43,120 @@
 						<td><strong>UPPER SECTION</strong></td>
 						<td class="hidden-tablet hidden-phone">HOW TO SCORE</td>
 						<td ng-repeat="p in g.players" >
-						<input 
-							id="player-name" 
-					 		type="text" 
-					 		size="{{p.name.length || 8}}" 
-					 		ng-model="p.name" 
-							ng-class="{'current-player' : (p == g.player), 'text-success' : (p.winner == true)}"> 
-						</input>
+							<input 
+						 		type="text" 
+						 		size="{{p.name.length || 8}}" 
+						 		ng-model="p.name" 
+								ng-class="{'current-player' : (p == g.player), 'text-success' : (p.winner == true)}"> 
+							</input>
 						</td>
 					</tr>
 					<tr>
 						<td>Aces <small class="visible-desktop scorebox-note">= 1</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Aces</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
- 								ng-mouseenter="p.aces.proposeVal(g.dice)"
-								ng-mouseleave="p.aces.unproposeVal(g.dice)" 
-								ng-click="p.aces.lockVal(g.dice)" 
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.aces.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.aces)"
+								ng-mouseleave="p.aces.unproposeval(g.dice)" 
 								ng-class="{temp : !p.aces.final, interactive : !p.aces.final && p == g.player }"> 
-								{{p.aces.val}} 
 						</td>
 					</tr>
 					<tr>
 						<td>Twos <small class="visible-desktop scorebox-note">= 2</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Twos</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.twos.proposeVal(g.dice)" 
-								ng-mouseleave="p.twos.unproposeVal(g.dice)" 
-								ng-click="p.twos.lockVal(g.dice)" 
-								ng-class="{temp: !p.twos.final, interactive : !p.twos.final && p == g.player }"> 
-								{{p.twos.val}} 
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.twos.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.twos)"
+								ng-mouseleave="p.twos.unproposeval(g.dice)" 
+								ng-class="{temp : !p.twos.final, interactive : !p.twos.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Threes <small class="visible-desktop scorebox-note">= 3</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Threes</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.threes.proposeVal(g.dice)" 
-								ng-mouseleave="p.threes.unproposeVal(g.dice)" 
-								ng-click="p.threes.lockVal(g.dice)" 
-								ng-class="{temp: !p.threes.final, interactive : !p.threes.final && p == g.player }">
-								{{p.threes.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.threes.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.threes)"
+								ng-mouseleave="p.threes.unproposeval(g.dice)" 
+								ng-class="{temp : !p.threes.final, interactive : !p.threes.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Fours <small class="visible-desktop scorebox-note">= 4</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Fours</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.fours.proposeVal(g.dice)" 
-								ng-mouseleave="p.fours.unproposeVal(g.dice)" 
-								ng-click="p.fours.lockVal(g.dice)" 
-								ng-class="{temp: !p.fours.final, interactive : !p.fours.final && p == g.player }">
-								{{p.fours.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.fours.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.fours)"
+								ng-mouseleave="p.fours.unproposeval(g.dice)" 
+								ng-class="{temp : !p.fours.final, interactive : !p.fours.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Fives <small class="visible-desktop scorebox-note">= 5</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Fives</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.fives.proposeVal(g.dice)" 
-								ng-mouseleave="p.fives.unproposeVal(g.dice)" 
-								ng-click="p.fives.lockVal(g.dice)" 
-								ng-class="{temp: !p.fives.final, interactive : !p.fives.final && p == g.player }">
-								{{p.fives.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.fives.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.fives)"
+								ng-mouseleave="p.fives.unproposeval(g.dice)" 
+								ng-class="{temp : !p.fives.final, interactive : !p.fives.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Sixes <small class="visible-desktop scorebox-note">= 6</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Sixes</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.sixes.proposeVal(g.dice)" 
-								ng-mouseleave="p.sixes.unproposeVal(g.dice)" 
-								ng-click="p.sixes.lockVal(g.dice)" 
-								ng-class="{temp: !p.sixes.final, interactive : !p.sixes.final && p == g.player }">
-								{{p.sixes.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.sixes.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.sixes)"
+								ng-mouseleave="p.sixes.unproposeval(g.dice)" 
+								ng-class="{temp : !p.sixes.final, interactive : !p.sixes.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Sevens<small class="visible-desktop scorebox-note">= 7</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Sevens</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.sevens.proposeVal(g.dice)" 
-								ng-mouseleave="p.sevens.unproposeVal(g.dice)" 
-								ng-click="p.sevens.lockVal(g.dice)" 
-								ng-class="{temp: !p.sevens.final, interactive : !p.sevens.final && p == g.player }">
-								{{p.sevens.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.sevens.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.sevens)"
+								ng-mouseleave="p.sevens.unproposeval(g.dice)" 
+								ng-class="{temp : !p.sevens.final, interactive : !p.sevens.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Eights<small class="visible-desktop scorebox-note">= 8</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Eights</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.eights.proposeVal(g.dice)" 
-								ng-mouseleave="p.eights.unproposeVal(g.dice)" 
-								ng-click="p.eights.lockVal(g.dice)" 
-								ng-class="{temp: !p.eights.final, interactive : !p.eights.final && p == g.player }">
-								{{p.eights.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.eights.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.eights)"
+								ng-mouseleave="p.eights.unproposeval(g.dice)" 
+								ng-class="{temp : !p.eights.final, interactive : !p.eights.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Nines<small class="visible-desktop scorebox-note">= 9</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Nines</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.nines.proposeVal(g.dice)" 
-								ng-mouseleave="p.nines.unproposeVal(g.dice)" 
-								ng-click="p.nines.lockVal(g.dice)" 
-								ng-class="{temp: !p.nines.final, interactive : !p.nines.final && p == g.player }">
-								{{p.nines.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.nines.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.nines)"
+								ng-mouseleave="p.nines.unproposeval(g.dice)" 
+								ng-class="{temp : !p.nines.final, interactive : !p.nines.final && p == g.player }"> 
 						</td>
 					</tr>					
 					<!--
@@ -199,91 +198,91 @@
 					<tr>
 						<td>5 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.five_of_a_kind.proposeVal(g.dice)" 
-								ng-mouseleave="p.five_of_a_kind.unproposeVal(g.dice)" 
-								ng-click="p.five_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: !p.five_of_a_kind.final, interactive : !p.five_of_a_kind.final && p == g.player }">
-								{{p.five_of_a_kind.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.five_of_a_kind.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.five_of_a_kind)"
+								ng-mouseleave="p.five_of_a_kind.unproposeval(g.dice)" 
+								ng-class="{temp : !p.five_of_a_kind.final, interactive : !p.five_of_a_kind.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>7 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.seven_of_a_kind.proposeVal(g.dice)" 
-								ng-mouseleave="p.seven_of_a_kind.unproposeVal(g.dice)" 
-								ng-click="p.seven_of_a_kind.lockVal(g.dice)" 
-								ng-class="{temp: !p.seven_of_a_kind.final, interactive : !p.seven_of_a_kind.final && p == g.player }">
-								{{p.seven_of_a_kind.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.seven_of_a_kind.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.seven_of_a_kind)"
+								ng-mouseleave="p.seven_of_a_kind.unproposeval(g.dice)" 
+								ng-class="{temp : !p.seven_of_a_kind.final, interactive : !p.seven_of_a_kind.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Two Values</td>
 						<td class="hidden-tablet hidden-phone">Score 100</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.two_values.proposeVal(g.dice)" 
-								ng-mouseleave="p.two_values.unproposeVal(g.dice)" 
-								ng-click="p.two_values.lockVal(g.dice)" 
-								ng-class="{temp: !p.two_values.final, interactive : !p.two_values.final && p == g.player }">
-								{{p.two_values.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.two_values.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.two_values)"
+								ng-mouseleave="p.two_values.unproposeval(g.dice)" 
+								ng-class="{temp : !p.two_values.final, interactive : !p.two_values.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Sm. Straight <small class="visible-desktop scorebox-note">Sequence of 7</small></td>
 						<td class="hidden-tablet hidden-phone">Score 50</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.sm_straight.proposeVal(g.dice)" 
-								ng-mouseleave="p.sm_straight.unproposeVal(g.dice)" 
-								ng-click="p.sm_straight.lockVal(g.dice)" 
-								ng-class="{temp: !p.sm_straight.final, interactive : !p.sm_straight.final && p == g.player }">
-								{{p.sm_straight.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.sm_straight.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.sm_straight)"
+								ng-mouseleave="p.sm_straight.unproposeval(g.dice)" 
+								ng-class="{temp : !p.sm_straight.final, interactive : !p.sm_straight.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Lg. Straight <small class="visible-desktop scorebox-note">Sequence of 9</small></td>
 						<td class="hidden-tablet hidden-phone">Score 100</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.lg_straight.proposeVal(g.dice)" 
-								ng-mouseleave="p.lg_straight.unproposeVal(g.dice)" 
-								ng-click="p.lg_straight.lockVal(g.dice)" 
-								ng-class="{temp: !p.lg_straight.final, interactive : !p.lg_straight.final && p == g.player }">
-								{{p.lg_straight.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.lg_straight.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.lg_straight)"
+								ng-mouseleave="p.lg_straight.unproposeval(g.dice)" 
+								ng-class="{temp : !p.lg_straight.final, interactive : !p.lg_straight.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>NINEZEE <small class="visible-desktop scorebox-note">All the same</small></td>
 						<td class="hidden-tablet hidden-phone">Score 500</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.yahtzee.proposeVal(g.dice)" 
-								ng-mouseleave="p.yahtzee.unproposeVal(g.dice)" 
-								ng-click="p.yahtzee.lockVal(g.dice)" 
-								ng-class="{temp: !p.yahtzee.final, interactive : !p.yahtzee.final && p == g.player }">
-								{{p.yahtzee.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.yahtzee.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.yahtzee)"
+								ng-mouseleave="p.yahtzee.unproposeval(g.dice)" 
+								ng-class="{temp : !p.yahtzee.final, interactive : !p.yahtzee.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>Chance</td>
 						<td class="hidden-tablet hidden-phone">Score Total of All Dice</td>
-						<td 	class="box"
-								ng-repeat="p in g.players"
-								ng-mouseenter="p.chance.proposeVal(g.dice)" 
-								ng-mouseleave="p.chance.unproposeVal(g.dice)" 
-								ng-click="p.chance.lockVal(g.dice)" 
-								ng-class="{temp: !p.chance.final, interactive : !p.chance.final && p == g.player }">
-								{{p.chance.val}}
+						<td class="box" ng-repeat="p in g.players">
+							<input type="text" size="3" maxlength="3"
+								value="{{p.chance.val}}"
+								ng-keydown="keydown($event,p)"
+								ng-keyup="keyup($event, p.chance)"
+								ng-mouseleave="p.chance.unproposeval(g.dice)" 
+								ng-class="{temp : !p.chance.final, interactive : !p.chance.final && p == g.player }"> 
 						</td>
 					</tr>
 					<tr>
 						<td>NINEZEE BONUS </td>
 						<td class="hidden-tablet hidden-phone">SCORE 1000 PER</td>
-						<td 	class="box"
+						<td class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.yahtzee_bonus.final}"> 
 								{{p.yahtzee_bonus.val}}
@@ -311,8 +310,8 @@
 					-->
 					<tr>
 						<td>GRAND TOTAL</td>
-						<td  class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
-						<td 	class="box"
+						<td class="hidden-tablet hidden-phone"><i class="icon-arrow-right"></i></td>
+						<td class="box"
 								ng-repeat="p in g.players"
 								ng-class="{temp: !p.grand_total.final}">
 								{{p.grand_total.val}}
@@ -402,12 +401,12 @@
 
 <!-- ================================================== -->
 <!--
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.3/angular.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js"></script>
--->
-<script src="../assets/js/angular.min.js"></script>
 <script src="../assets/js/bootstrap.min.js"></script>
+<script src="../assets/js/angular.min.js"></script>
+-->
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.7/angular.min.js"></script>
 <script src="../assets/js/fireworks.js"></script>
 <script src="../assets/js/bootbox.min.js"></script>
 <script src="jahtzee.js"></script>

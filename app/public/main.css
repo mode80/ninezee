@@ -12,17 +12,6 @@ body {
     background-color: #e8e8ef;
 }
 
-#player-name {
-    text-align:center;
-    border:0;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-    margin:0;
-    padding:0;
-    width:auto;
-}
-
 .container {
     background-color: #e8e8ef;
     border-radius: 5px;
@@ -111,10 +100,6 @@ body {
     margin: 0 auto;
 }
 
-.box {
-    font-weight: bold;
-    font-size: 18;
-}
 
 .interactive:hover {
     background-color: #eaf7ff;
@@ -124,20 +109,32 @@ body {
     color: #ddd;
 }
 
+input[type="text"].temp {
+    color: #ddd;
+}
+
 .strong {
-        font-weight: bold;
+    font-weight: bold;
 }
 
 .hidden {
     visibility: hidden;
 }
 
-.name-input {
-    margin: 0;
-    padding: 0;
+input[type="text"] {
+    font-weight: bold;
+    font-size: 16px;
+    text-align:center;
+    border:0; 
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin:0;
+    padding:0;
+    width:auto;
 }
 
-#player-name.current-player {
+input[type="text"].current-player {
     background: #fdffe2;
 }
 

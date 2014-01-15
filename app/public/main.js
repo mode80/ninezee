@@ -17,7 +17,7 @@
             var phase = $scope.$root.$$phase
             if(phase !== '$apply' && phase !== '$digest') $scope.$apply(fn) }
 
-      // expose ability to create a new game to the view
+      // expose ability to create a new game to the view etc
 
         $scope.confirmNewGame = function() { 
           bootbox.confirm('Sure you want to start over?', function(bool){ if(bool) $scope.newGame() }) /**/}
@@ -25,6 +25,29 @@
         $scope.toggleDie = function(die) {
           if ($scope.g.toggleDie(die) === false)
             bootbox.alert('No cheating!') }
+
+        $scope.keydown = function(e,p) {
+          var charCode = e.which || e.keyCode
+          var charStr = String.fromCharCode(charCode)
+          var valid = (p == $scope.g.player && ('1234567890'.indexOf(charStr) > -1 || charCode == 8 || charCode == 46 || charCode == 13))
+          if (!valid) e.preventDefault()
+        }
+
+        $scope.keyup = function(e,box) {
+          var el = e.target
+          var txt = el.value
+          var answer = box.calcVal($scope.g.dice)
+          clearInterval(window.iid1||0); clearInterval(window.iid2||0)
+          window.iid1 = setInterval(function(){el.value = box.proposeVal($scope.g.dice)},5000) // hint at the answer...
+          window.iid2 = setInterval(function(){el.value = box.unproposeVal($scope.g.dice)},5100) // briefly (with progressively longer hints)
+          if (txt === answer.toString() ) {
+            box.proposeVal($scope.g.dice)
+            box.lockVal($scope.g.dice)
+            clearInterval(window.iid1); clearInterval(window.iid2)
+            document.getElementById('lock-sound').play()
+            e.target.blur()
+          }
+        }
 
         $scope.newGame = function() {
 
@@ -54,12 +77,12 @@
                 document.getElementById('roll-sound').play()
               origNextRoll.apply($scope.g, arguments) }
 
-          // add sound around the lockVal function
-            if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
-              $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
-              $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
-                document.getElementById('lock-sound').play()
-                $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments) } }
+          // // add sound around the lockVal function
+          //   if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
+          //     $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
+          //     $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
+          //       document.getElementById('lock-sound').play()
+          //       $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments) } }
 
           // add sound + effects to the nextRound function
             var origNextRound = $scope.g.nextRound
