@@ -4,6 +4,7 @@
 /* TODO
 - fix die size issue on safari
 - icon
+- make separate repo for 9z
 - precompute markov chain for fast replacement of AI simulation strategy
 - balloons instead of fireworks for jax
 */
