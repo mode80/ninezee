@@ -117,7 +117,7 @@ body {
     color: #ddd;
 }
 
-input[type="text"].temp {
+input[type="number"].temp {
     color: #ddd;
 }
 
@@ -129,7 +129,28 @@ input[type="text"].temp {
     visibility: hidden;
 }
 
-input[type="text"] {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    display: none; 
+    -webkit-appearance: none;
+    margin: 0; 
+}
+
+input[type="number"] {
+    font-weight: bold;
+    font-size: 16px;
+    text-align:center;
+    border:0; 
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    margin:0;
+    padding:0;
+    width:65px;
+}
+
+input[type="text"].current-player {
+    background: #fdffe2;
     font-weight: bold;
     font-size: 16px;
     text-align:center;
@@ -140,10 +161,6 @@ input[type="text"] {
     margin:0;
     padding:0;
     width:auto;
-}
-
-input[type="text"].current-player {
-    background: #fdffe2;
 }
 
 .version {

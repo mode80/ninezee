@@ -55,7 +55,7 @@
 						<td>Aces <small class="visible-desktop scorebox-note">= 1</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Aces</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.aces.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.aces)"
@@ -67,7 +67,7 @@
 						<td>Twos <small class="visible-desktop scorebox-note">= 2</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Twos</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.twos.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.twos)"
@@ -79,7 +79,7 @@
 						<td>Threes <small class="visible-desktop scorebox-note">= 3</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Threes</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.threes.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.threes)"
@@ -91,7 +91,7 @@
 						<td>Fours <small class="visible-desktop scorebox-note">= 4</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Fours</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.fours.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.fours)"
@@ -103,7 +103,7 @@
 						<td>Fives <small class="visible-desktop scorebox-note">= 5</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Fives</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.fives.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.fives)"
@@ -115,7 +115,7 @@
 						<td>Sixes <small class="visible-desktop scorebox-note">= 6</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Sixes</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.sixes.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.sixes)"
@@ -127,7 +127,7 @@
 						<td>Sevens<small class="visible-desktop scorebox-note">= 7</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Sevens</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.sevens.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.sevens)"
@@ -139,7 +139,7 @@
 						<td>Eights<small class="visible-desktop scorebox-note">= 8</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Eights</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.eights.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.eights)"
@@ -151,7 +151,7 @@
 						<td>Nines<small class="visible-desktop scorebox-note">= 9</small></td>
 						<td class="hidden-tablet hidden-phone">Sum Only Nines</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.nines.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.nines)"
@@ -199,7 +199,7 @@
 						<td>5 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.five_of_a_kind.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.five_of_a_kind)"
@@ -211,7 +211,7 @@
 						<td>7 of a kind</td>
 						<td class="hidden-tablet hidden-phone">Sum Total Of All Dice</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.seven_of_a_kind.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.seven_of_a_kind)"
@@ -223,7 +223,7 @@
 						<td>Two Values</td>
 						<td class="hidden-tablet hidden-phone">Score 100</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.two_values.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.two_values)"
@@ -235,7 +235,7 @@
 						<td>Sm. Straight <small class="visible-desktop scorebox-note">Sequence of 7</small></td>
 						<td class="hidden-tablet hidden-phone">Score 50</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.sm_straight.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.sm_straight)"
@@ -247,7 +247,7 @@
 						<td>Lg. Straight <small class="visible-desktop scorebox-note">Sequence of 9</small></td>
 						<td class="hidden-tablet hidden-phone">Score 100</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.lg_straight.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.lg_straight)"
@@ -259,7 +259,7 @@
 						<td>NINEZEE <small class="visible-desktop scorebox-note">All the same</small></td>
 						<td class="hidden-tablet hidden-phone">Score 500</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.yahtzee.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.yahtzee)"
@@ -271,7 +271,7 @@
 						<td>Chance</td>
 						<td class="hidden-tablet hidden-phone">Score Total of All Dice</td>
 						<td class="box" ng-repeat="p in g.players">
-							<input type="number" size="4" maxlength="4"
+							<input type="number" 
 								value="{{p.chance.val}}"
 								ng-keydown="keydown($event,p)"
 								ng-keyup="keyup($event, p.chance)"
