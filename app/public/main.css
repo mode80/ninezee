@@ -149,8 +149,7 @@ input[type="number"] {
     width:65px;
 }
 
-input[type="text"].current-player {
-    background: #fdffe2;
+input[type="text"] {
     font-weight: bold;
     font-size: 16px;
     text-align:center;
@@ -161,6 +160,10 @@ input[type="text"].current-player {
     margin:0;
     padding:0;
     width:auto;
+}
+
+input[type="text"].current-player {
+    background: #fdffe2;
 }
 
 .version {
