@@ -82,14 +82,8 @@
             $scope.g.nextRoll = function() {
               if($scope.g.roll_count < $scope.g.max_rolls && $scope.g.dice.selectedCount() > 0) 
                 document.getElementById('roll-sound').play()
-              origNextRoll.apply($scope.g, arguments) }
-
-          // // add sound around the lockVal function
-          //   if ($scope.g.player.aces.__proto__.__proto__.origLockVal === undefined) {
-          //     $scope.g.player.aces.__proto__.__proto__.origLockVal = $scope.g.player.aces.__proto__.__proto__.lockVal
-          //     $scope.g.player.aces.__proto__.__proto__.lockVal = function() {
-          //       document.getElementById('lock-sound').play()
-          //       $scope.g.player.aces.__proto__.__proto__.origLockVal.apply(this, arguments) } }
+              origNextRoll.apply($scope.g, arguments) 
+            }
 
           // add sound + effects to the nextRound function
             var origNextRound = $scope.g.nextRound

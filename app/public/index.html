@@ -325,7 +325,7 @@
 					id=die{{$index+1}}
 					ng-click="toggleDie(die)"
 			>
-				<img class="die-img" ng-src="../assets/img/d10_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.svg" >
+				<img class="die-img" style="height:56px; width:69px" ng-src="../assets/img/d10_{{die.val}}{{{true:'_selected', false:''}[die.selected]}}.png" >
 			</p>
 		</div>
 
@@ -344,21 +344,21 @@
 			<button class="section-btn btn-large btn-block btn-info" ng-click="g.dice.selectInverse()"> Select <i class="icon-resize-small icon-white" ></i></button>
 			<br><br>
 			<button class="section-btn btn-large btn-block btn-info"ng-click="confirmNewGame()">
-				New Game <i class="icon-star-empty icon-white"></i>
+				New Game <i class="icon-star-empty icon-white hidden-tablet hidden-phone"></i>
 			</button>
 
 			<button 
 				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
 				ng-click="g.newPlayer()"> 
-				Add Player <i class="icon-user icon-white"></i>
+				Add Player <i class="icon-user icon-white hidden-tablet hidden-phone"></i>
 			</button>
 
 			<button
 				class="section-btn btn-large btn-block btn-info" 
 				ng-hide="g.started"
 				ng-click="g.newPlayer('MaxBot')"> 
-				Add Bot <i class="icon-cog icon-white"></i>
+				Add Bot <i class="icon-cog icon-white hidden-tablet hidden-phone"></i>
 			</button>
 			<br><br>
 			<small class=version>v.9.3</small>
@@ -370,37 +370,32 @@
 </div>
 
 <div id="preloaded-images">
-   <img src="../assets/img/d10_0.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_1.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_2.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_3.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_4.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_5.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_6.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_7.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_8.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_9.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_0_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_1_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_2_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_3_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_4_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_5_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_6_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_7_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_8_selected.svg" width="1" height="1" alt="" />
-   <img src="../assets/img/d10_9_selected.svg" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_0.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_1.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_2.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_3.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_4.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_5.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_6.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_7.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_8.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_9.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_0_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_1_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_2_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_3_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_4_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_5_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_6_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_7_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_8_selected.png" width="1" height="1" alt="" />
+   <img src="../assets/img/d10_9_selected.png" width="1" height="1" alt="" />
 </div>
 
 <audio id="roll-sound" src="../assets/wav/roll.wav" preload="auto"></audio> <!-- Thank you Mike Koenig for recording the dice roll sound -->
 <audio id="lock-sound" src="../assets/wav/switch3.wav" preload="auto"></audio> 
 <audio id="fireworks-sound" src="../assets/wav/fireworks.wav" preload="auto"></audio> 
 
-<!-- ================================================== -->
-<!--
-<script src="../assets/js/bootstrap.min.js"></script>
-<script src="../assets/js/angular.min.js"></script>
--->
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.7/angular.min.js"></script>
 <script src="../assets/js/fireworks.js"></script>
