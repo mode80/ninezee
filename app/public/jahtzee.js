@@ -577,7 +577,7 @@ function Jahtzee() { // packages the functionality for a game of Jahtzee
             return }
     
         // choose dice
-          if (this.die_index === 0 && rolls < game.max_rolls && game.dice.selectedCount()>0) {
+          if (this.die_index === 0 && rolls < game.max_rolls ) {
             if (this.choosing !== true) {
               // prep and kick off async die selection analysis
               this.choosing = true

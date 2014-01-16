@@ -4,6 +4,14 @@ h1 {
     color: #333;
 }
 
+table.scorecard tr { 
+    padding: 4px 8px 5px 8px;
+}
+
+table.scorecard td { 
+    padding: 4px 8px 5px 8px;
+}
+
 audio { 
     display:none;
 }

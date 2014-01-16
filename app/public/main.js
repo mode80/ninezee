@@ -1,6 +1,12 @@
 /*globals angular, Jahtzee, Fireworks, bootbox*/
 /*jshint asi: true, proto: true*/
 
+/* TODO
+- fix die size issue on safari
+- icon
+- precompute markov chain for fast replacement of AI simulation strategy
+- balloons instead of fireworks for jax
+*/
 
 // the main app module
   var app = angular.module('jahtzee_app', []).service('jahtzee_service', Jahtzee)
