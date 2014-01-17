@@ -1,6 +1,7 @@
-Jahtzee
+Ninezee
 =======
 
-An exploration of javascript front-end development. Also Jax likes it. 
+A twist on Yahtzee using 10-sided dice. Nine of them. Hence the name. (Also a clandestine arithmetic tutor for kids.)
 
-Play it live at [jahtzee.com](http://jahtzee.com)
+Play it live at [ninezee.com](http://ninezee.com)
+
