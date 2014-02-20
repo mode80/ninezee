@@ -27,11 +27,12 @@
       // expose ability to create a new game to the view etc
 
         $scope.confirmNewGame = function() { 
-          bootbox.confirm('Sure you want to start over?', function(bool){ if(bool) $scope.newGame() }) /**/}
+          $scope.newGame() 
+        }
 
         $scope.toggleDie = function(die) {
-          if ($scope.g.toggleDie(die) === false)
-            bootbox.alert('No cheating!') }
+          $scope.g.toggleDie(die)
+        }
 
         $scope.keydown = function(e,p) {
           var charCode = e.which || e.keyCode
